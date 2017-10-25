@@ -1,0 +1,141 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: c++ cast types
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: C++ named cast
+
+* named casts
+  Programmers should seriously consider banning C-style casts from their own programs. Where explicit type conversion is necessary, static_cast , reinterpret_cast , const_cast , or a combination of these can do what a C-style cast can. The named casts should be preferred because they are more explicit and more visible.
+  If you feel tempted to use an explicit type conversion, take the time to consider if it is really necessary. In C++, explicit type conversion is unnecessary in most cases when C needs it and also in many cases in which earlier versions of C++ needed it. In many programs, explicit type conversion can be completely avoided; in others, its use can be localized to a few routines.
+
+** static_cast
+  A static_cast is used for all conversions that are well-defined. These include “safe” conversions that the compiler would allow you to do without a cast and less-safe conversions that are nonetheless well-defined. The types of conversions covered by static_cast include typical castless conversions, narrowing (information-losing) conversions, forcing a conversion from a void*, implicit type conversions, and static navigation of class hierarchies
+#+NAME: static_cast
+#+BEGIN_SRC cpp :tangle static_cast.cpp :exports code :noweb yes :results none :flags -std=c++11
+  void func(int) {}
+
+  int main() {
+      int i = 0x7fff; // Max pos value = 32767
+      long l;
+      float f;
+      // (1) Typical castless conversions:
+      l = i;
+      f = i;
+      // Also works:
+      l = static_cast<long>(i);
+      f = static_cast<float>(i);
+
+      // (2) Narrowing conversions:
+      i = l; // May lose digits
+      //
+      // i = {l}
+      // will cause:
+      //     warning: narrowing conversion of ‘l’ from ‘long int’ to ‘int’ inside { } [-Wnarrowing]
+      //
+      i = f; // May lose info
+      //
+      // i = {f}
+      // will cause:
+      //     warning: narrowing conversion of ‘f’ from ‘float’ to ‘int’ inside { } [-Wnarrowing]
+      //
+      // Says "I know," eliminates warnings:
+      i = static_cast<int>(l);
+      i = static_cast<int>(f);
+      char c = static_cast<char>(i);
+      ++c;                        // -Wunused-but-set-variable
+      // (3) Forcing a conversion from void* :
+      <<void_star_cast>>
+      // (4) Implicit type conversions, normally
+      // performed by the compiler:
+      double d = 0.0;
+      int x = d; // Automatic type conversion
+      x = static_cast<int>(d); // More explicit
+      ++x;                     // -Wunused-but-set-variable
+      func(d); // Automatic type conversion
+      func(static_cast<int>(d)); // More explicit
+  } ///:~
+#+END_SRC
+
+    Assigning from a void* is not allowed without a cast in C++ (unlike C). This is dangerous and requires that programmers know what they’re doing. The static_cast, at least, is easier to locate than the old standard cast when you’re hunting for bugs.
+#+NAME: void_star_cast
+#+BEGIN_SRC cpp :exports code :noweb yes :results none
+      void* vp = &i;
+      // Old way produces a dangerous conversion:
+      float* fp = (float*)vp;
+      // The new way is equally dangerous:
+      fp = static_cast<float*>(vp);
+      ++(*fp);                    // -Wunused-but-set-variable
+#+END_SRC
+
+** const_cast
+   If you want to convert from a const to a nonconst or from a volatile to a nonvolatile, you use const_cast. This is the only conversion allowed with const_cast; if any other conversion is involved it must be done using a separate expression or you’ll get a compile-time error.
+   If you take the address of a const object, you produce a pointer to a const, and this cannot be assigned to a nonconst pointer without a cast. The old-style cast will accomplish this, but the const_cast is the appropriate one to use. The same holds true for volatile.
+   A const_cast changes only a low-level const in its operand.
+#+NAME: const_cast
+#+BEGIN_SRC cpp :tangle const_cast.cpp :exports code :noweb no :results none :flags -std=c++11
+  int main() {
+      const int i = 0;
+      int* j = (int*)&i;          // Deprecated old-style form
+      j = const_cast<int*>(&i);   // Prefered
+      // Can't do simultaneous additional casting:
+      //! long* l = const_cast<long*>(&i); // Error
+      volatile int k = 0;
+      int* u = const_cast<int*>(&k);
+  }
+#+END_SRC
+
+** reinterpret_cast
+   This is the least safe of the casting mechanisms, and the one most likely to produce bugs. A reinterpret_cast pretends that an object is just a bit pattern that can be treated (for some dark purpose) as if it were an entirely different type of object. You’ll virtually always need to reinterpret_cast back to the original type (or otherwise treat the variable as its original type) before doing anything else with it.
+
+#+NAME: reinterpret_cast
+#+BEGIN_SRC cpp :tangle reinterpret_cast.cpp :exports code :noweb yes :results output :flags -std=c++11
+  #include <iostream>
+  using std::cout;
+  using std::endl;
+  <<main_example>>
+      <<stroustrup>>
+  }
+#+END_SRC
+
+  The idea of reinterpret_cast is that when you use it, what you get is so foreign that it cannot be used for the type’s original purpose unless you cast it back. Here, we see the cast back to an X* in the call to print, but of course since you still have the original identifier you can also use that. But the xp is only useful as an int*, which is truly a “reinterpretation” of the original X.
+#+NAME: main_example
+#+BEGIN_SRC cpp :results none :exports none
+  const int sz = 3;
+
+  struct X { int a[sz]; };
+
+  void print(X* x) {
+      for (int i = 0; i < sz; ++i)
+          cout << (x->a)[i] << ' ';
+      cout << endl;
+  }
+
+  int main() {
+      X x;
+      print(&x);
+      int* xp = reinterpret_cast<int*>(&x);
+      for (int* i = xp; i != xp + sz; ++i)
+          *i = 0;
+      // Can't use xp as an X* at this point
+      // unless you cast it back
+      print(reinterpret_cast<X*>(xp));
+      // You can also use just original identifier
+      print(&x);
+
+      // Stroustrup's example
+#+END_SRC
+
+#+NAME: stroustrup
+#+BEGIN_SRC cpp :results none :exports none
+        char c = 'a';
+        //! int* p1 = &c; // Error: no implicit char* to int* conversion
+        //! int* p2 = static_cast<int*>(&c); // Error: no implicit char* to int* conversion
+        int* p3 = reinterpret_cast<int*>(&c); // OK: on your head be it
+#+END_SRC
+
+#+RESULTS: reinterpret_cast
+: 4196944 0 4196368
+: 0 0 0
+: 0 0 0

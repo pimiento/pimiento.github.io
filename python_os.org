@@ -1,0 +1,156 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: python Linux
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: модуль os в Python
+
+**  Основные функции в модуле *os*
+   #+BEGIN_SRC python :exports both :results output
+     import os
+
+     print("%s\n%s\n%s\n%s" % (
+         os.name,
+         os.environ['SHELL'],        # os.environ will print too much text
+         # os.getlogin(), # bug in Python, better use pwd.getpwuid(os.getuid()).pw_name
+         os.getpid(),
+         os.uname(),
+     ))
+   #+END_SRC
+
+   #+RESULTS:
+   : posix
+   : /bin/zsh
+   : 6497
+   : posix.uname_result(sysname='Linux', nodename='tpad', release='3.19.0-28-generic', version='#30~14.04.1-Ubuntu SMP Tue Sep 1 09:32:55 UTC 2015', machine='x86_64')
+
+** Аттрибуты файлов и директорий
+
+   #+BEGIN_SRC python :exports both :results output
+     import os
+
+     print(os.access("/tmp", os.R_OK | os.W_OK))
+     print(os.access("/", os.W_OK))
+     print(os.access("/bin/bash", os.R_OK | os.X_OK))
+   #+END_SRC
+
+   #+RESULTS:
+   : True
+   : False
+   : True
+
+   #+BEGIN_SRC python :exports both :results output
+     import os
+     import grp
+     import stat
+
+     def perm(st):
+         is_dir = 'd' if stat.S_ISDIR(st.st_mode) else '-'
+         d = {'7': 'rwx', '6': 'rw-', '5': 'r-x', '4': 'r--',
+              '3': '-wx', '2': '-w-', '1': '--x', '0': '---'}
+         p = str(oct(st.st_mode)[-3:])
+         return is_dir + ''.join(d.get(x, x) for x in p)
+
+     filepath = "/tmp/test.txt"
+     with open(filepath, "w") as f:
+         s1 = os.stat(filepath)
+         os.chdir("/tmp")
+         print('test.txt' in os.listdir())
+         os.chmod(filepath, 2486)
+         os.chown(filepath, s1.st_uid, os.getgroups()[0])
+         s2 = os.stat(filepath)
+         print("before: %s\tafter: %s" % (perm(s1), perm(s2)))
+         print("before: %s\tafter: %s" % (
+             grp.getgrgid(s1.st_gid).gr_name, grp.getgrgid(s2.st_gid).gr_name
+         ))
+
+     os.unlink(filepath)
+   #+END_SRC
+
+   #+RESULTS:
+   : True
+   : before: -rw-r--r--	after: -rw-rw-rw-
+   : before: pimiento	after: adm
+
+** Работа с процессами
+   #+BEGIN_SRC python :exports both :results output
+     import os
+
+     if os.name == "nt":
+         command = "dir"
+     else:
+         command = "ls -l"
+
+     print(os.system(command))
+   #+END_SRC
+
+   #+RESULTS:
+   #+begin_example
+   total 88
+   -rw-r--r-- 1 pimiento pimiento  7981 янв.  30 12:16 decorators.org
+   -rw-r--r-- 1 pimiento pimiento  4059 янв.  16 22:37 export_to_gfm.org
+   -rw-r--r-- 1 pimiento pimiento 35141 янв.  16 22:56 LICENSE
+   -rw-r--r-- 1 pimiento pimiento  2206 янв.  16 22:33 pdftk_and_djvu.org
+   -rw-r--r-- 1 pimiento pimiento  3394 янв.  16 22:38 publish_to_blogger.org
+   -rw-r--r-- 1 pimiento pimiento 13902 янв.  30 14:43 python_gc.org
+   -rw-r--r-- 1 pimiento pimiento  5643 янв.  30 19:12 python_graphs.org
+   -rw-r--r-- 1 pimiento pimiento  2171 февр.  4 12:32 python_os.org
+   -rw-r--r-- 1 pimiento pimiento   116 янв.  16 22:53 README.md
+   0
+#+end_example
+
+*** Запуск нового процесса
+    #+BEGIN_SRC python :exports both :results output
+      import os
+      import sys
+
+      program = "echo"
+      arguments = ["Hello and goodbye!"]
+      os.execvp(program, (program,) + tuple(arguments))
+    #+END_SRC
+
+    #+RESULTS:
+    : Hello and goodbye!
+
+    #+BEGIN_SRC python :results output :exports both
+      import os
+
+
+      def run(program, *args):
+          pid = os.fork()
+          if not pid:                 # child process
+              os.execvp(program, (program,) + args)
+          print("I'm parent")
+          return os.wait()[0]
+
+      run("echo", "Hello from fork!")
+      print("goodbye")
+    #+END_SRC
+
+    #+RESULTS:
+    : Hello from fork!
+    : I'm parent
+    : goodbye
+
+    *fork* вернёт нулевой /pid/ для нового процесса (возврат значения *fork* будет первым, что произойдёт в этом процессе) и не-нулевое значение для оригинального процесса. В случае с /Windows/ надо пользоваться функцией *spawn*, так *fork* в /Windows/ не поддерживается.
+
+*** Python daemon
+    #+BEGIN_SRC python :exports both :results output
+      import os
+      import time
+
+      pid = os.fork()
+      if pid:
+          os._exit(0)                 # kill original
+
+      print("daemon started")
+      time.sleep(1)
+      print("daemon terminated")
+    #+END_SRC
+
+    #+RESULTS:
+    : daemon started
+    : daemon terminated
+
+    Это очень примитивный пример демона на Python, так как необходимо ещё позаботиться о перенаправлении /stdout/ и /stderr/ в dev-null и о закрытии /stdin/. Необходимо позаботиться о вызове os.setpgrp чтобы сигналы, посланные процессу не вызывали проблем для нашего демона. О демонах в UNIX я напишу когда-нибудь отдельно и подробно, на основе книги APUE.

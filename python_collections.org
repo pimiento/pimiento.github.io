@@ -1,0 +1,121 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: python
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: Модуль collections в Python
+
+** Некоторые интересные классы из модуля *collections*
+   Для начала, нам необходимо импортировать модуль
+   #+name: collections
+   #+BEGIN_SRC python :exports code
+   import collections
+   #+END_SRC
+
+** Counter
+   Это подкласс класса *dict*.
+
+*** метод elements
+    Возвращает /итератор/ над элементами counter-а, где каждый ключ будет повторён столько раз, каково значение этого ключа.
+    #+BEGIN_SRC python :results output :exports both :noweb yes
+      <<collections>>
+
+      c = collections.Counter(a=4, b=2, c=0, d=-2)
+      print(list(c.elements()))
+    #+END_SRC
+
+    #+RESULTS:
+    : ['a', 'a', 'a', 'a', 'b', 'b']
+
+*** метод most_common
+    Возвращает лист пар в порядке убывания значений.
+    #+BEGIN_SRC python :results output :exports both :noweb yes
+      <<collections>>
+      print(collections.Counter('abracadabra').most_common(3))
+    #+END_SRC
+
+    #+RESULTS:
+    : [('a', 5), ('r', 2), ('b', 2)]
+
+*** Сложение и вычитание
+    #+BEGIN_SRC python :results output :exports both :noweb yes
+      <<collections>>
+
+      a = collections.Counter(a=4, b=2, c=0, d=-2)
+      b = collections.Counter(a=1, b=2, c=3, d=4)
+
+      print(a + b)
+      print(a - b)
+      print(a & b)
+      print(a | b)
+      a.subtract(b)
+      print(a)
+    #+END_SRC
+
+    #+RESULTS:
+    : Counter({'a': 5, 'b': 4, 'c': 3, 'd': 2})
+    : Counter({'a': 3})
+    : Counter({'b': 2, 'a': 1})
+    : Counter({'a': 4, 'd': 4, 'c': 3, 'b': 2})
+    : Counter({'a': 3, 'b': 0, 'c': -3, 'd': -6})
+
+** Deque
+   #+BEGIN_SRC python :results output :exports both :noweb yes
+     <<collections>>
+
+     d = collections.deque([1, 2, 3, 4, 5])
+     d.append(6)
+     print(d)
+     d.appendleft(0)
+     print(d)
+     print(d.count(2))
+     d.clear()
+     print(d)
+     d.extend(['a', 'b', 'c'])
+     print(d)
+     d.extendleft(['x', 'y', 'z'])
+     print(d)
+     print(d.pop())
+     print(d)
+     print(d.popleft())
+     print(d)
+     d.remove('x')
+     print(d)
+     d.reverse()
+     print(d)
+     d.rotate(2)
+     print(d)
+   #+END_SRC
+
+   #+RESULTS:
+   #+begin_example
+   deque([1, 2, 3, 4, 5, 6])
+   deque([0, 1, 2, 3, 4, 5, 6])
+   1
+   deque([])
+   deque(['a', 'b', 'c'])
+   deque(['z', 'y', 'x', 'a', 'b', 'c'])
+   c
+   deque(['z', 'y', 'x', 'a', 'b'])
+   z
+   deque(['y', 'x', 'a', 'b'])
+   deque(['y', 'a', 'b'])
+   deque(['b', 'a', 'y'])
+   deque(['a', 'y', 'b'])
+#+end_example
+
+** namedtuple
+   *Immutable!*
+   #+BEGIN_SRC python :results output :exports both :noweb yes
+     <<collections>>
+
+     Point = collections.namedtuple('Point', ['x', 'y'])
+     p = Point(x=1, y=2)
+     print(p)
+     print(p.x)
+   #+END_SRC
+
+   #+RESULTS:
+   : Point(x=1, y=2)
+   : 1

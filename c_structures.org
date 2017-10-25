@@ -1,0 +1,344 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: C struct union typedef bit-field
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: структуры в C
+
+** Структура
+   Это совокупность нескольких переменных, часто различных типов, сгруппированных под единым именем для удобства обращения. Главное изменение, внесённое стандартом ANSI в работу со структурами, — это определение присваивания структур. Теперь структуры можно копировать, присваивать, передавать в функции и возвращать из функций.
+
+   Ключевое слово *struct* начинает объявление структуры, состоящее из списка объявлений элементов в фигурных скобках. После слова *struct* может стоять необязательный идентификатор, именуемый /меткой структуры/. Метка обозначает конкретный структурный тип; впоследствии её можно использовать для краткости, опуская всё, что находится в скобках при объявлении структур того же типа.
+   #+name: point
+   #+BEGIN_SRC c :exports code
+     struct point {
+         int x;
+         int y;
+     };
+   #+END_SRC
+
+   Переменные, перечисленные в объявлении структуры, называются её /членами/, /элементами/ или /полями/. Элемент структуры или её метка может иметь то же имя, что и обыкновенная переменная безо всякого конфликта, поскольку они всегда отличаются по контексту.
+
+   Объявление со словом *struct* фактически вводит новый тип данных. Поэтому допустимо такое объявление переменных:
+   #+BEGIN_SRC c :exports code
+     struct { int x; int y; } x, y z;
+   #+END_SRC
+   Данный код объявляет переменные $x, y, z$ определённого именованного типа и выделяет для них место в памяти. Объявление структуры, после которого нет списка переменных, не выделяет никакой памяти для объектов, а просто описывает форму структуры. Так же можно объявлять переменные, используя метку структуры:
+   #+BEGIN_SRC c :exports code
+     struct point pt;
+   #+END_SRC
+
+   Структуру можно инициализировать, поставив после её определения список значений-констант:
+   #+BEGIN_SRC c :exports code
+     struct point maxpt = { 320, 200 };
+   #+END_SRC
+
+   Обращение к элементам структуры выполняется следующим образом:
+   #+BEGIN_SRC C :exports both :includes <stdio.h> <math.h> :results output :flags -lm :noweb strip-export
+     <<point>>
+     struct point pt = { 1, 2 };
+     double dist = sqrt((double)pt.x * pt.x + (double)pt.y * pt.y);
+     printf("distance from O(0, 0) to pt(%d, %d) is %f", pt.x, pt.y, dist);
+   #+END_SRC
+
+   #+RESULTS:
+   : distance from O(0, 0) to pt(1, 2) is 2.236068
+
+   Структуры можно вкладывать друг в друга:
+   #+name: rect
+   #+BEGIN_SRC C :exports none :noweb strip-export
+     struct rect {
+         struct point pt1;
+         struct point pt2;
+     };
+   #+END_SRC
+   #+BEGIN_SRC C :exports both :results output :noweb yes
+     <<point>>
+     <<rect>>
+
+     struct rect screen = {{0, 0}, {10, 10}};
+     printf("rectangle with diagonal points: (%d, %d), (%d, %d)",
+            screen.pt1.x, screen.pt1.y,
+            screen.pt2.x, screen.pt2.y);
+   #+END_SRC
+
+   #+RESULTS:
+   : rectangle with diagonal points: (0, 0), (10, 10)
+
+*** Структуры и функции
+    Расширенными операциями над структурами являются копирование или присваивание структуры как целого, взятие её адреса операцией *&*, а так же обращение к её элементам. Копирование и присваивание включают также в себя передачу аргументов в функции и возвращение значений из функций. *Структуры нельзя сравнивать между собой.* Структуру можно инициализировать списком констант-инициализаторов для всех её полей.
+    #+BEGIN_SRC C :exports both :main no :results output :noweb strip-export
+      <<point>>
+      <<rect>>
+
+      struct point makepoint (int x, int y) {
+          return (struct point){x,y};
+      }
+
+      int main(void) {
+          struct rect screen;
+          struct point middle;
+          screen.pt1 = makepoint(0, 0);
+          screen.pt2 = makepoint(1000, 1000);
+          middle = makepoint((screen.pt1.x + screen.pt2.x) / 2,
+                             (screen.pt1.y + screen.pt2.y) / 2);
+          printf("middle point is (%d, %d)", middle.x, middle.y);
+          return 0;
+      }
+    #+END_SRC
+
+    #+RESULTS:
+    : middle point is (500, 500)
+
+    #+BEGIN_SRC C :noweb strip-export :results output :exports code :main no
+      <<point>>
+
+      struct point addpoint(struct point p1, struct point p2) {
+          p1.x += p2.x;
+          p1.y += p2.y;
+          return p1;
+      }
+    #+END_SRC
+    Вместо того чтобы помещать результат во временную переменную, мы инкрементировали компоненты структуры p1, чтобы подчеркнуть тот факт, что параметры-структуры передаются по значениям, как и любые другие параметры.
+
+    Если в функцию необходимо передать большую структуру, это лучше сделать передав указатель на неё, а не копию всех её данных. Указатели на структуры обладают всеми свойстваи указателей на обычные переменные.
+    #+BEGIN_SRC C :exports both :results output :noweb strip-export
+      <<point>>
+
+      struct point origin = {1, 2}, *pp = &origin;
+      printf("origin is (%d, %d)\n", (*pp).x, (*pp).y);
+    #+END_SRC
+
+    #+RESULTS:
+    : origin is (1, 2)
+
+    Указатели на структуры используются так часто, что для удобства записи ссылок по ним введено дополнительное обозначение: /p->элемент-структуры/
+    #+BEGIN_SRC C :exports both :results output :noweb strip-export
+      <<point>>
+
+      struct point origin = {1, 2}, *pp = &origin;
+      printf("origin is (%d, %d)", pp->x, pp->y);
+    #+END_SRC
+
+    #+RESULTS:
+    : origin is (1, 2)
+
+** Массивы структур
+   #+BEGIN_SRC C :results output :export both :main no :cmdline <<< '#include <stdio.h> int main (void) { int res = 0; puts("Hello World"); return res; }'
+     #include <stdio.h>
+     #include <ctype.h>
+     #include <string.h>
+
+     #define MAXWORD 100
+     #define BUFSIZE 100
+
+     struct key {
+         char *word;
+         int count;
+     } keytab[] = {
+         "auto", 0, "break", 0, "case", 0, "char", 0, "const", 0, "continue", 0, "default", 0,
+         "do", 0, "double", 0, "else", 0, "enum", 0, "extern", 0, "float", 0, "for", 0,
+         "goto", 0, "if", 0, "int", 0, "long", 0, "register", 0, "return", 0, "short", 0,
+         "signed", 0, "sizeof", 0, "static", 0, "struct", 0, "switch", 0, "typedef", 0,
+         "union", 0, "unsigned", 0, "void", 0, "volatile", 0, "while", 0
+     };
+
+     #define NKEYS (sizeof keytab / sizeof keytab[0])
+
+     char buf[BUFSIZE];
+     int bufp = 0;
+
+     int getword(char *, int);
+     int binsearch(char *, struct key *, int);
+     int getch(void);
+     void ungetch(int c);
+
+     int main(void) {
+         int n;
+         char word[MAXWORD];
+         while (getword(word, MAXWORD) != EOF) {
+             if (isalpha(word[0]))
+                 if ((n = binsearch(word, keytab, NKEYS)) >= 0)
+                     keytab[n].count++;
+         }
+         for (n = 0; n < NKEYS; n++) {
+             if (keytab[n].count > 0)
+                 printf("%4d %s\n", keytab[n].count, keytab[n].word);
+         }
+         return 0;
+     }
+
+     int binsearch(char *word, struct key *tab, int n) {
+         int cond;
+         int low, high, mid;
+
+         low = 0;
+         high = n - 1;
+         while (low <= high) {
+             mid = (low+high) / 2;
+             if ((cond = strcmp(word, tab[mid].word)) < 0)
+                 high = mid - 1;
+             else if (cond > 0)
+                 low = mid + 1;
+             else
+                 return mid;
+         }
+         return -1;
+     }
+
+     int getword(char *word, int lim) {
+         int c;
+         char *w = word;
+         while (isspace(c = getch()))
+             ;
+         if (c != EOF)
+             ,*w++ = c;
+         if (!(isalpha(c) || c == '_')) {
+             ,*w = '\0';
+             return c;
+         }
+         for (;--lim>0;w++) {
+             if (!isalnum(*w = getch())) {
+                 ungetch(*w);
+                 break;
+             }
+         }
+         ,*w = '\0';
+         return word[0];
+     }
+
+     int getch(void) {
+         return (bufp > 0) ? buf[--bufp] : getchar();
+     }
+
+     void ungetch(int c) {
+         if (bufp >= BUFSIZE) printf("ungetch too many characters\n");
+         else buf[bufp++] = c;
+     }
+   #+END_SRC
+
+   #+RESULTS:
+   : 2 int
+   : 1 return
+   : 1 void
+
+** typedef
+   Имя нового типа, объявляемое в *typedef*, стоит не сразу после ключевого слова, а на месте имени переменной. Синтаксически ключевое слово *typedef* можно считать аналогом идентификатора класса памяти: *extern*, *static* и т.п. Новые типы, определяемые с помощью *typedef*, начинаются с прописной буквы, чтобы можно было их легко различить.
+   #+BEGIN_SRC c :exports code :main no
+     typedef struct tnode *Treeptr;
+
+     typedef struct tnode {
+         char *word;
+         int count;
+         struct tnode *left;
+         struct tnode *right;
+     } Trenode;
+
+     Treeptr talloc(void) {
+         return (Treeptr)malloc(sizeof(Treenode));
+     }
+   #+END_SRC
+   Фактически, оператор *typedef* очень напоминает директиву *#define* с тем исключением, что, поскольку он анализируется компилятором, он может допускать такие текстовые подстановки, которые препроцессору не по силам. Например:
+   #+BEGIN_SRC c :exports code :main no
+     typedef int (*PFI)(char*, char*);
+   #+END_SRC
+   Здесь опеределяется тип /PFI/ — "указатель на функцию от двух аргументов типа char*, возвращающую int". Этот тип можно использовать, например, таким образом:
+   #+BEGIN_SRC c :exports code :main no
+     PFI strcmp, numcmp;
+   #+END_SRC
+
+** Объединения
+   Это переменная, которая может содержать объекты различных типов и размеров (но не одновременно); при этом удовлетворение требований к размеру и выравниванию возлагается на компилятор. С помощью объединений можно работать с данными различных типов в пределах одного участка памяти, не привнося в программу элементы низкоуровневого, машинно-зависимого программирования.
+   #+BEGIN_SRC c :exports code :main no
+     union u_tag {
+         int ival;
+         float fval;
+         char *sval;
+     } u;
+   #+END_SRC
+   Переменная *u* будет иметь достаточную длину, чтобы содержать данные самого длинного из трёх типов; конкретный размер зависит от системы и реализации. Переменной *u* можно присваивать данные любого типа, а затем использовать их в выражениях (строго по правилам работы с конкретным типом). Извлекать можно данные только того типа, который был помещён при последнем обращении к переменной. Следить и помнить, какие именно данные были помещены в объединение, — это забота программиста; если поместить значение одного типа, а извлечь его как значение другого, результат будет системно-зависимым и трудно предсказуемым.
+
+   Обращение к элементам объединения выполняется так же, как к элементам структуры:
+   #+BEGIN_QUOTE
+   имя-объединения.элемент
+   указатель-на-объединение->элемент
+   #+END_QUOTE
+   Пусть в переменной $utype$ хранится информация о типе данных, находящихся в текущий момент в объединении:
+   #+BEGIN_SRC c :exports code :main no
+     if (utype == INT)
+         printf("%d\n", u.ival);
+     else if (utype == FLOAT)
+         printf("%f\n", u.fval);
+     else if (utype == STRING)
+         printf("%s\n", u.sval);
+     else
+         printf("bad type %d in utype\n", utype);
+   #+END_SRC
+
+   Объединения могут применяться в структурах и массивах, и наоборот. Способ обращения к члену объединения в структуре (или к члену структуры в объединении) полностью идентичен обращению к элементу вложенной структуры.
+   #+BEGIN_SRC C :exports both :results output
+     #define INT 0
+     #define FLOAT 1
+     #define STRING 2
+
+     struct {
+         char *name;
+         int flags;
+         int utype;
+         union {
+             int ival;
+             float fval;
+             char *sval;
+         } u;
+     } symtab[] = {
+         "test", 4, STRING, "data"
+     };
+
+     printf("symtab[%s]: %s", symtab[0].name, symtab[0].u.sval);
+   #+END_SRC
+
+   #+RESULTS:
+   : symtab[test]: data
+
+   Фактически, объединение является структурой, в которой все элементы имеют нулевое смещение от её начала, сама она имеет достаточную длину, чтобы в неё поместился самый длинный элемент, и при этом выравнивание происходит правильно для всех типов данных в объединении. Над объединениями разрешено выполнять те же операции, что и над структурами: присваивать или копировать как единое целое, брать адрес и обращаться к отдельным элементам.
+   #+BEGIN_SRC C :exports both :results output :noweb strip-export
+     <<point>>
+     <<rect>>
+
+     union {
+         struct point pt;
+         struct rect r;
+     } g;
+
+     struct point pt1 = {1, 2};
+     struct rect r1 = { {1, 2}, {10, 11} };
+     g.pt = pt1;
+     printf("g: %d, %d\n", g.pt.x, g.pt.y);
+
+     g.r = r1;
+     printf("g: (%d, %d), (%d, %d)", g.r.pt1.x, g.r.pt1.y, g.r.pt2.x, g.r.pt2.y);
+   #+END_SRC
+
+   #+RESULTS:
+   : g: 1, 2
+   : g: (1, 2), (10, 11)
+
+** Битовые поля
+   Внутри системно-зависимой единицы памяти, которую мы будем называть "/словом/", можно задать /битовое поле/ (/bit-field/) — совокупность идущих подряд битов. Синтаксис определения и использования полей основан на структурах.
+   #+BEGIN_SRC c :exports code :main no
+     struct {
+         unsigned int is_keyword :1;
+         unsigned int is_extern  :1;
+         unsigned int is_static  :1;
+     } flags;
+   #+END_SRC
+   Данный код является заменой коду на константах:
+   #+BEGIN_SRC c :exports code :main no
+     #define KEYWORD  01
+     #define EXTERNAL 02
+     #define STATIC   04
+
+     enum { KEYWORD = 01, EXTERNAL = 02, STATIC = 04 };
+   #+END_SRC
+   В переменной *flags* содержится три однобитных поля. Число после двоеточия задаёт ширину поля в битах. Поля объявлены как *unsigned int*, чтобы гарантированно быть велечинами без знака. Практически всё, что связано с битовыми полями, является системно-зависимым. Например, только в конкретной реализации определяется, могут ли поля перекрывать границы слов. Поля не обязаны иметь имена; безымянные поля (двоеточия с размером после них) часто используются для пропуска и резервирования отдельных битов. Для принудительного выравнивания по границе следующего слова можно использовать специальное значение длины поля, равное $0$. Совокупность полей — не массив, и у них нет адресов, поэтому операция & к ним неприменима.

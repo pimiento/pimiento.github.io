@@ -1,0 +1,281 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: python gc
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: GC в Python
+
+** Как Python управляет памятью
+   Детали того как Python управляет памятью зависят от реализации Python. Стандартная реализация Python на C использует подсчёт ссылок для выявления /недостежимых/ объектов и отдельный механизм для отслеживания и управления циклическими ссылками, периодически вызывая алгоритм обнаружения циклических ссылок, который смотрит на /недостижимые циклы/ и удаляет объект, входящие в такие циклические зависимости. Модуль *gc* предоставляет интерфейс для принудительного вызова функций /сборки мусора/, получения статистики и оптимизации параметров коллектора.
+
+    Иногда объекты остаются в /трейсбэках/ и не могут быть деаллоцированы, как мы того ожидаем. Чтобы очистить /трейсбэки/:
+    #+BEGIN_SRC python
+      import sys
+      sys.exc_clear()
+      sys.exc_traceback = sys.last_traceback = None
+    #+END_SRC
+
+*** getrefcount
+    #+BEGIN_SRC python :results output :exports both
+      import sys
+      foobar = "Hello World"
+      barfoo = foobar
+      print(sys.getrefcount(foobar))
+      print(sys.getrefcount(barfoo))
+      del foobar
+      print(sys.getrefcount(barfoo))
+    #+END_SRC
+
+    #+RESULTS:
+    : 5
+    : 5
+    : 4
+
+    Всегда отнимаем единицы от getrefcount — она автоматически добавляется при вызове функции. (В оригинале статьи sys.getrefcount(foobar) -> 3, sys.getrefcount(barfoo) -> 3). Когда удаляется ссылка, счётчик уменьшается на единицу. Когда он становится равным нулю — удаляется сам объект. Это — *decref* (по названию макроса в C API, делающего всю работу).
+
+*** Дерево и decref
+    #+BEGIN_SRC python
+      import sys
+
+
+      class Parent(object):
+
+          def __init__(self):
+              self.children = []
+
+          def add(self, ch):
+              self.children.append(ch)
+              ch.parent = self
+
+
+      class Child(object):
+
+          def __init__(self):
+              self.parent = None
+
+      p = Parent()
+      p.add(Child())
+    #+END_SRC
+
+
+    Parent имеет ссылку на child, а тот в свою очередь — на родителя. Объекты останутся в памяти, даже если мы удалим все внешние ссылки на них. Результат — мусор!
+
+*** Garbage Collector
+    Для решения предыдущей проблемы в Python появился GC (с 2.1+). В GC реализован /cycle finder/, который отыскивает циклические зависимости. Т.е. если объект ссылается на другой объект, а второй объект ссылается на первый и никто не ссылается на них снаружи, то эти объекты попадут под GC и их успешно разименуют. Пиковое потребление памяти при этом может быть довольно большим. Проблемы возникают, когда один из объектов циклической зависимости имеет метод __del__ или написан как /extension/, т.е. не на Python. Для решения таких проблем появился модуль *weakref* — слабая ссылка, которая как бы видит другой объект, но при этом не увеличивает его счётчик.
+** Сборщик мусора
+   Сборщик мусора имеет три поколения (0, 1, 2). При создании объекта, он попадает в /нулевое поколение/. У каждого поколения есть *счётчик* и *порог*:
+   + При добавлении объекта в поколение счётчик увеличивается.
+   + При выбывании из поколения счётчик уменьшается.
+   + Когда *счётчик превысит пороговое значение* — по всем объектам из поколения пройдётся сборщик мусора. Кого найдёт — удалит.
+   + Все выжившие в поколении объекты перемещаются в следующее (0 → 1, 1 → 2, 1 → 2). Из второго поколения объекты никуда не попадают и _остаются там навечно_.
+   + Перемещённые в следующее поколение объекты меняют соответствующий счётчик, и операция может повториться уже для следующего поколения.
+   + Счётчик текущего поколения сбрасывается.
+
+   Объекты, подлежащие уничтожение, но имеющие переопределённый метод __del__, не могут быть собраны. Причина проста: эти объекты могут ссылаться друг на друга. Python не способен определить безопасный порядок вызова __del__. Если вызвать деструкторы в произвольном порядке, то можно получить ситуацию вида:
+   + Деструктор объекта $a$ для работы требует объект $b$.
+   + Последний в своём деструкторе обращается к объекту $a$.
+   + При вызове __del__ у $a$ деструктор $b$ не сможет отработать нормально. Ссылка на $a$ будет значение None.
+
+   Чтобы не заставлять программиста корректно разрешать такие ситуации было принято решение не уничтожать подобные объекты а просто перемещать их в gc.garbage.
+** Слабые ссылки, weakref
+   Обычно, объекты не будут удалены пока не будут удалены все ссылки на них:
+   #+BEGIN_SRC python :results output :exports both
+     class Foo(object):
+         def __init__(self):
+             self.obj = None
+             print('created')
+         def __del__(self):
+             print('destroyed')
+         def show(self):
+             print(self.obj)
+         def store(self, obj):
+             self.obj = obj
+
+     print("> a = Foo()")
+     a = Foo()
+     print("> b = a")
+     b = a
+     print("> del a")
+     del a
+     print("> del b")
+     del b
+   #+END_SRC
+
+   #+RESULTS:
+   : > a = Foo()
+   : created
+   : > b = a
+   : > del a
+   : > del b
+   : destroyed
+
+   Слабые ссылки, напротив, не увеличивают счётчик ссылок на объект. Существование слабой ссылки на объект никогда не воспрепятствует уничтожению объекта. Т.о., если на объект указывают только слабые ссылки, то это этот объект будет уничтожен.
+   #+BEGIN_SRC python :results output :exports both
+     import weakref
+
+     class Foo(object):
+         def __init__(self):
+             self.obj = None
+             print('created')
+         def __del__(self):
+             print('destroyed')
+         def show(self):
+             print(self.obj)
+         def store(self, obj):
+             self.obj = obj
+
+     print("> a = Foo()")
+     a = Foo()
+     print("> b = weakref.ref(a)")
+     b = weakref.ref(a)
+     print("> a == b()")
+     print(a == b())
+     print("b().show()")
+     b().show()
+     print("del a")
+     del a
+     print("b() is None")
+     print(b() is None)
+   #+END_SRC
+
+   #+RESULTS:
+   #+begin_example
+   > a = Foo()
+   created
+   > b = weakref.ref(a)
+   > a == b()
+   True
+   b().show()
+   None
+   del a
+   destroyed
+   b() is None
+   True
+#+end_example
+*** Proxy
+    В качестве более простой альтернативы *weakref.ref* можно использовать *weakref.proxy*. Proxy-объект ведёт себя как /сильная/ ссылка на объект, но выбрасывает /exception/ когда используется послет того как оригинальный объект был удалён.
+    #+BEGIN_SRC python :results output :exports both
+      import weakref
+
+      class Foo(object):
+          def __init__(self):
+              self.obj = None
+              print('created')
+          def __del__(self):
+              print('destroyed')
+          def show(self):
+              print(self.obj)
+          def store(self, obj):
+              self.obj = obj
+
+      print("> a = Foo()")
+      a = Foo()
+      print("> b = weakref.proxy(a)")
+      b = weakref.proxy(a)
+      print("> b.store('fish')")
+      b.store('fish')
+      print("> b.show()")
+      b.show()
+      print("> del a")
+      del a
+      print("> b.show() # -> will produce exception ReferenceError")
+      # b.show() -> will produce exception
+    #+END_SRC
+
+    #+RESULTS:
+    : > a = Foo()
+    : created
+    : > b = weakref.proxy(a)
+    : > b.store('fish')
+    : > b.show()
+    : fish
+    : > del a
+    : destroyed
+    : > b.show()
+*** Циклические ссылки, Cyclic references
+    Необходимость в слабых ссылках возрастает когда объекты имеющие сильные ссылки образуют /циклы/.
+    #+BEGIN_SRC python :results output
+      class Foo(object):
+          def __init__(self):
+              self.obj = None
+              print('created')
+          def __del__(self):
+              print('destroyed')
+          def show(self):
+              print(self.obj)
+          def store(self, obj):
+              self.obj = obj
+
+      a = Foo()
+      # created
+      b = Foo()
+      # created
+      a.store(b)
+      b.store(a)
+      del a
+      del b
+    #+END_SRC
+    Метод-деструктор для $a$ и $b$ никогда не будет вызван и объекты будут жить в памяти до момента окончания работы интерпретатора. Подобные примеры циклической зависимости могут быть в двусвязных списках, в деревьях. Решение проблемы — хранить слабые ссылки.
+    #+BEGIN_SRC python :results output
+      import weakref
+
+      class Foo(object):
+          def __init__(self):
+              self.obj = None
+              print('created')
+          def __del__(self):
+              print('destroyed')
+          def show(self):
+              print(self.obj)
+          def store(self, obj):
+              self.obj = weakref.ref(obj)
+
+      a = Foo()
+      # created
+      b = Foo()
+      # created
+      c = Foo()
+      # created
+      a.store(b)
+      b.store(c)
+      c.store(a)
+      del a
+      # destroyed
+      del b
+      # destroyed
+      del c
+      # destroyed
+    #+END_SRC
+
+*** Dead-on-arrival
+    Модуль *weakref* не может создавать слабые ссылки для всяких объектов. Например, попытка создать слабую ссылку на /list/, /tuple/, /dictionary/, /numeric/, /string/ или /None/ вызовет возникновение *TypeError*. Но иногда создание слабой ссылки падает молча
+    #+BEGIN_SRC python :results output
+      import weakref
+
+      class Foo(object):
+          def __init__(self):
+              self.obj = None
+              print('created')
+          def __del__(self):
+              print('destroyed')
+          def show(self):
+              print(self.obj)
+          def store(self, obj):
+              self.obj = weakref.ref(obj)
+
+      a = Foo()
+      # created
+      b = Foo()
+      # created
+      a.store(b.show)                 # store creates a weak reference
+      a.show()
+      # <weakref at 0x7f0542a095e8; dead>
+    #+END_SRC
+    Причина такого поведения в том, что (bound method) b.show создаётся и передаётся в метод Foo.store. Этот метод сохраняет слабую ссылку на b.show и переменную-экземпляр a.obj. Когда /store/ метод заканчивает свою работу, то больше не существует сильной ссылки на метод b.show и таким образом, он автоматически уничтожается. Такая ссылка на b.show называется dead-on-arrival.
+
+** Ссылки
+   - [[http://effbot.org/pyfaq/how-does-python-manage-memory.htm][How does Python manage memory]]
+   - [[http://asvetlov.blogspot.ru/2013/05/gc.html][Python GC]]
+   - [[http://asvetlov.blogspot.ru/2008/11/blog-post.html][Управление памятью в Python]]
+   - [[https://mindtrove.info/python-weak-references/][Python Weakref References]]

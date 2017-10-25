@@ -1,0 +1,126 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: python
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: GIL в Python
+
+
+** Потоки в Python
+   Python threads — это настоящие потоки (POSIX threads или Windows threads), полностью контролируемые ОС. Рассмотрим поточное выполнение в процессе интерпретатора Python (CPython, написанного на C):
+   #+BEGIN_SRC python :results none :exports code
+     import time
+     import threading
+
+     class CountdownThread(threading.Thread):
+         def __init__(self, count):
+             threading.Thread.__init__(self)
+             self.count = count
+         def run(self):
+             while self.count > 0:
+                 print("Counting down", self.count)
+                 self.count -= 1
+                 time.sleep(2)
+             return
+   #+END_SRC
+   Многопоточная программа на /C/ не должна как-то отдельно регистрировать свои потоки — достаточно вызова API (pthread_create или CreateThread) для запуска потока. Интерпретатор Python для своей работы требует ряда структур.
+
+** Структуры интерпретатора, обеспечивающие многопоточную работу
+   - PyInterpreterState :: содержит глобальное состояние интерпретатора: загруженные модули /modules/, указатель на первый (главный) поток /tstate_head/ и разное другое:
+   #+BEGIN_SRC c :export code
+     struct PyInterpreterState {
+         PyIterpreterState *next;
+         PyThreadState *tstate_head;
+
+         PyObject *modules;
+         PyObject *sysdict;
+         PyObject *builtins;
+         PyObject *modules_reloading;
+
+         PyObject *codec_search_path;
+         PyObject *codec_search_cache;
+         PyObject *codec_error_registry;
+     };
+   #+END_SRC
+
+   - PyThreadState :: позволяет узнать какой кадр стека (frame) исполняется и какой номер у потока с точки зрения операционной системы.
+   #+BEGIN_SRC c :exports code
+     struct PyThreadState {
+         PyThreadState *next;
+         PyInterpreterState *interp;
+
+         PyFrameObject *frame;
+         int recursion_depth;
+
+         Py_tracefunc c_profilefunc;
+         Py_tracefunc c_tracefunc;
+         PyObject *c_profileobj;
+         PyObject *c_traceobj;
+
+         PyObject *exc_type;
+         PyObject *exc_value;
+         PyObject *exc_traceback;
+
+         PyObject *dict;             /* Stores per-thread state */
+
+         long thread_id;
+     };
+   #+END_SRC
+
+   - PyFrameObject :: это объект кадра стека. Имеет указатель на предыдущий кадр /f_back/, исполняемый код /f_code/ и последнюю выполненную в этом коде инструкцию /f_lasti/, указатель на свой поток /f_tstate/ и серию из глобального, локального и встроенного пространства имён (/f_globals/, /f_locals/, /f_builtins/).
+   #+BEGIN_SRC c :exports code
+     struct PyFrameObject {
+         PyObject_VAR_HEAD
+         PyFrameObject *f_back;      /* previous frame, or NULL */
+         PyCodeObject *f_code;       /* code segment */
+         PyObject *f_builtins;       /* builtin symbol table (PyDictObject) */
+         PyObject *f_globals;        /* global symbol table (PyDictObject) */
+         PyObject *f_locals;         /* local symbol table (any mapping) */
+
+         PyThreadState *f_state;
+         int f_lasti;                /* Last instruction if called */
+     };
+   #+END_SRC
+
+   Важно понимать, что все три необходимых для исполнения структуры взаимно связаны между собой и /PyThreadState_GET()/ возвращает указатель на текущий работающий поток.
+
+** GIL
+
+*** Старый GIL: 2.x и 3.0/3.1
+    GIL переключается каждые 100 инструкций (или на IO операциях). Сам GIL устроен как нерекурсиваная блокировка. Только что освободивший GIL поток скорее всего обратно сразу же его не получит (если алгоритм переключения потоков в ОС "справедливо" распределяет время работы потоков), а отдаст управление другому потоку и сам встанет в ожидание. Проблемы GIL:
+    - GIL переключается даже в однопоточной программе. Формально, /interpreter_lock/ создаётся не сразу при старте интерпретатора. Но импорт модуля /threading/ или /sqlite3/ создаст GIL даже без создания второго потока. На практике правильней считать, что GIL есть всегда.
+    - GIL переключается постоянно, независимо от того требует ли другой поток переключения или они все заблокированы ожиданием ввода-вывода или объектами синхронизации.
+    - Потоки соревнуются за захват GIL. Например, потоки, интенсивно использующие IO, получают более высокий приоритет чем чисто вычислительные. Это может негативно сказываться на производительности не-IO потоков.
+    - Переключение происходит по количеству выполненых инструкций интерпретатора Python. Время инструкций может сильно отличаться: простое сложение или создание списка на миллион элементов.
+
+    #+BEGIN_SRC python :results output :exports both
+      import sys
+
+      i = sys.getcheckinterval()
+      sys.setcheckinterval(i)
+      print("check interval is: %d" % i)
+    #+END_SRC
+
+    #+RESULTS:
+    : check interval is: 100
+
+    В силу слабой связности интервала переключения со временем исполнения эти функции практически бесполезны.
+
+*** Новый GIL
+    Использует усовершенствованную схему, базирующуюся на времени. Кроме того, добавлен специальный механизм для предотвращения повторного захвата GIL.
+    - Поток, владеющий GIL, не отдаст его пока его об этом не попросят.
+    - Если уж отдал по просьбе, то подождёт окончания переключения и не будет сразу же пытаться захватить GIL назад.
+    - Поток, у которого не получилось захватить GIL, сначала выждет 5мс и лишь потом пошлёт запрос на переключение, принуждая текущего владельца освободить ресурс. Таким образом, переключение происходит не чаще чем раз в 5мс, если только владелец не отдаст GIL добровольно перед выполнением системного вызова.
+
+    #+BEGIN_SRC python :exports both :results output
+      import sys
+
+      print(sys.getswitchinterval())
+      # sys.steswitchinterval(i)
+    #+END_SRC
+
+    #+RESULTS:
+    : 0.005
+
+** GIL и системный вызовы

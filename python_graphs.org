@@ -1,0 +1,145 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: python math
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: работа с графами в Python
+
+** Граф
+   Будет использоваться ненаправленный связный граф V=6 E=6. Существует две популярные методики представления графов: матрица смежности (эффективна с плотными графами) и список связей (эффективно с разряженными графами). Будем использовать второй способ.
+   #+name: graph
+   #+BEGIN_SRC python :exports code
+     graph = {'A': ['B', 'C'],
+              'B': ['A', 'D', 'E'],
+              'C': ['A', 'F'],
+              'D': ['B'],
+              'E': ['B', 'F'],
+              'F': ['C', 'E']}
+   #+END_SRC
+
+   [[http://eddmann.com/uploads/depth-first-search-and-breadth-first-search-in-python/graph.png]]
+** Depth-First Search — Поиск вглубину
+   Алгоритм поиска вглубину: исследуем сначала все возможные вершины (из выбранного корня) доступные из текущей, прежде чем возвращаться назад. Данный алгоритм можно реализовать как рекурсивно, так и итеративно. Последовательность действий:
+   - Помечаем текущую вершину как посещённую
+   - Исследуем каждую соседнюю вершину не включённую в список уже посещённых
+
+   - Вариант с [[http://eddmann.com/posts/depth-first-search-and-breadth-first-search-in-python/][DFS and BFS in Python]] (модифицированный, т.к. set не поддерживает упорядоченность элементов)
+   #+BEGIN_SRC python :exports both :noweb yes :results output
+     <<graph>>
+
+     def dfs(graph, start):
+         visited, stack = [], [start]
+         while stack:
+             vertex = stack.pop()
+             if vertex not in visited:
+                 visited.append(vertex)
+                 stack.extend(set(graph[vertex]) - set(visited))
+         return visited
+
+     print(dfs(graph, 'A'))
+   #+END_SRC
+
+   #+RESULTS:
+
+   - Вариант с [[https://code.activestate.com/recipes/576723-dfs-and-bfs-graph-traversal/][DFS and BFS graph traversal (Python recipe)]] (модифицированный, т.к. для реализации стека нам необходимо добавлять элементы в конец списка, а не в начало)
+   #+BEGIN_SRC python :results output :noweb yes :exports both
+     <<graph>>
+
+
+     def iteractive_dfs(graph, start, path=None):
+         """iterative depth first search from start"""
+         if path is None:
+             path = []
+         q = [start]
+         while q:
+             v = q.pop()
+             if v not in path:
+                 path = path + [v]
+                 q += graph[v]
+         return path
+
+     print(iteractive_dfs(graph, 'A'))
+   #+END_SRC
+
+   #+RESULTS:
+   : ['A', 'C', 'F', 'E', 'B', 'D']
+
+
+** DFS Paths — поиск пути между двумя вершинами
+   #+BEGIN_SRC python :noweb yes :results output :export both
+     <<graph>>
+
+     def dfs_paths(graph, start, goal):
+         stack = [(start, [start])]  # (vertex, path)
+         while stack:
+             (vertex, path) = stack.pop()
+             for next in set(graph[vertex]) - set(path):
+                 if next == goal:
+                     yield path + [next]
+                 else:
+                     stack.append((next, path + [next]))
+
+     print(list(dfs_paths(graph, 'A', 'F')))
+   #+END_SRC
+
+   #+RESULTS:
+   : [['A', 'B', 'E', 'F'], ['A', 'C', 'F']]
+** Bread-Firsth Search — Поиск вширину
+   Позволяет найти кратчайший путь между двумя вершинами. Довольно сложно реализовать рекурсивно, гораздо проще реализовать его с использованием /очереди/.
+   #+BEGIN_SRC python :noweb yes :results output :exports both
+     <<graph>>
+     from queue import deque
+
+
+     def bfs(graph, start):
+         visited, queue = [], deque([start])
+         while queue:
+             vertex = queue.pop()
+             if vertex not in visited:
+                 visited.append(vertex)
+                 queue.extendleft(set(graph[vertex]) - set(visited))
+         return visited
+
+     print(bfs(graph, 'A'))
+   #+END_SRC
+
+   #+RESULTS:
+   : ['A', 'C', 'B', 'F', 'E', 'D']
+** BFS Paths
+   #+BEGIN_SRC python :noweb yes :results output :exports both
+     from queue import deque
+     <<graph>>
+
+
+     def bfs_paths(graph, start, goal):
+         queue = deque([(start, [start])])
+         while queue:
+             (vertex, path) = queue.pop()
+             for next in set(graph[vertex]) - set(path):
+                 if next == goal:
+                     yield path + [next]
+                 else:
+                     queue.appendleft((next, path+[next]))
+
+     print(list(bfs_paths(graph, 'A', 'F')))
+
+
+     def shortest_path(graph, start, goal):
+         try:
+             return next(bfs_paths(graph, start, goal))
+         except StopIteration:
+             return None
+
+     print(shortest_path(graph, 'A', 'F'))
+     print(shortest_path(graph, 'E', 'D'))
+     print(shortest_path(graph, 'A', 'D'))
+     print(shortest_path(graph, 'F', 'D'))
+   #+END_SRC
+
+   #+RESULTS:
+   : [['A', 'C', 'F'], ['A', 'B', 'E', 'F']]
+   : ['A', 'C', 'F']
+   : ['E', 'B', 'D']
+   : ['A', 'B', 'D']
+   : ['F', 'E', 'B', 'D']

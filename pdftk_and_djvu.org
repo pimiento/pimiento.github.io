@@ -1,0 +1,41 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: Linux PDF DJVU
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: PDFTK и DJVU
+
+* PDFTK и DJVU
+  Понадобилось мне для дела обучения одной эквадорской девочки русскому языку научиться разным фокусам с PDF и DJVU. И подсказали мне полезнейшие утилиты для работы с PDF и DJVU из командной строки: *PDFTK* и *DDJVU*
+
+** PDFTK
+   Эта консольная утилита работы с PDF умеет следующие вещи:
+
+   - Объединять несколько документов в один
+   - Разбивать документ на несколько
+   - Менять порядок страниц в документе
+   - Шифровать/дешифровать документ
+   - Заполнять PDF Forms с помощью
+   - Добавлять водяные знаки, штампы
+   - Узнавать/изменять/добавлять закладки и метадату
+   - Разбить документ на одностраничные документы
+   - Сжать или распаковать страницы в документе
+   - Попытаться починить порченый документ
+
+   В моём случае меня интересовала возможность создавать из несколько PDF документов в один.
+
+   #+BEGIN_SRC shell
+     pdftk A=eor.pdf B=sazov1.pdf C=hprc.pdf D=brr.pdf \
+         cat A32 B13 B10 A33-35 C7-8 D7 B12 output урок1.pdf
+   #+END_SRC
+
+** DDJVU
+   *ddjvu* нужен для перевода *djvu* файла или отдельных его страниц в картинку или pdf. Использовал я его для конвертации djvu документа в pdf документ, чтобы в дальнейшем можно было работать над этим pdf документов при помощи *pdftk*
+
+   #+BEGIN_SRC shell
+     ddjvu -format=pdf ../Essentials_of_Russian.djvu eor.pdf
+   #+END_SRC
+
+** Полезные ссылки
+   [[https://www.pdflabs.com/docs/pdftk-cli-examples/][pdflabs.com]]

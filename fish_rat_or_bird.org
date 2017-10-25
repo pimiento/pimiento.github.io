@@ -1,0 +1,41 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: combynatorics math
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: fish, rat, bird
+
+** Задача:
+   Вычислить число перестановок всех букв английского алфавита, которые не содержат в себе подстрок fish,  rat или bird.
+
+** Решение:
+   0. $A$ — число перестановок, содержащих *fish*. $B$ — число перестановок, содержащих *rat*. $C$ — число перестановок, содержащих *bird*.
+   1. Всего число перестановок букв английского алфавита *26!*.
+   2. Из этого числа надо вычесть число вхождений слова *fish*. Слово *fish* состоит из 4 букв, значит остаётся ещё 22 буквы алфавита. Итого, *23!*.
+   3. Вычтем число вхождений слова *rat*: *24!*.
+   4. Вычтем число вхождений слова *bird*: *23!*.
+   5. Формула включений-исключений для нашего примера имеет вид
+      #+BEGIN_LaTeX
+      \|A \cup B \cup C\| = \|A\| + \|B\| + \|C\| - \|A \cap B\| - \|A \cap C\| - \|B \cap C\| - \|A \cap B \cap C\|.
+      #+END_LaTeX
+      Но так как *fish* и *bird* содержат общий символ *i*, то
+      #+BEGIN_LaTeX
+      \|A \cap C\| = \empty,
+      #+END_LaTeX
+      а так как *bird* и *rat* содержат общий символ *r*, то
+      #+BEGIN_LaTeX
+      \|B \cap C\| = \empty,
+      #+END_LaTeX
+      и значит
+      #+BEGIN_LaTeX
+      \|A \cap B \cap C\| = \empty.
+      #+END_LaTeX
+      Тогда остаётся только
+      #+BEGIN_LaTeX
+      \|A \cup B \cup C\| = \|A\| + \|B\| + \|C\| - \|A \cap B\|
+      #+END_LaTeX
+      Это число строк в которых содержится или слово *fish* , или слово *rat*, или слово *bird*, или они вместе (вместе могут быть только *fish* и *rat*). Так как нам надо вычислить количество перестановок, где эти строки не встречаются, то вычтем всё из общего числа перестановок и получим
+      #+BEGIN_LaTeX
+      26! - \|A\| + \|B\| + \|C\| - \|A \cap B\| = 26! - 23! - 24! - 23! + 21!.
+      #+END_LaTeX

@@ -1,0 +1,53 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: C vararg
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: переменное число аргументов функции в C
+
+** Списки аргументов переменной длины
+   В стандартном заголовочном файле _<stdarg.h>_ имеется набор макроопределений, дающих способ перебора списка аргументов. Реализация этого заголовочного файла системно-зависима, однако интерфейс всегда единообразный. Для объявления переменной, ссылающейся по очереди на каждый аргумент, имеется тип *va_list*. Макрос *va_start* инициализирует переменную типа *va_list* так, чтобы переменная указывала на первый безымянный аргумент. Функция должна иметь как минимум один аргумент с именем; последний именнованный аргумент используется макросом *va_start* для инициализации своей работы. Каждый вызов *va_arg* возвращает один аргумент и передвигает указатель типа *va_list* на следующий. Чтобы определить, какого типа аргумент нужно возвращать и на сколько передвигать указатель, *va_arg* использует заданное ему имя типа. Макрос *va_end* выполняет необходимые завершающие операции. Его необходимо вызвать до выхода из функции.
+   #+BEGIN_SRC C :results output :main no :exports both
+     #include <stdarg.h>
+
+     void minprintf(char *fmt, ...) {
+         va_list ap;
+         char *p, *sval;
+         int ival;
+         double dval;
+
+         va_start(ap, fmt);          /* установить ap на 1-ый аргумент без имени  */
+         for (p = fmt; *p; p++) {
+             if (*p != '%') {
+                 putchar(*p);
+                 continue;
+             }
+             switch (*++p) {
+             case 'd':
+                 ival = va_arg(ap, int);
+                 printf("%d", ival);
+                 break;
+             case 'f':
+                 dval = va_arg(ap, double);
+                 printf("%f", dval);
+                 break;
+             case 's':
+                 for (sval = va_arg(ap, char*); *sval; putchar(*sval++));
+                 break;
+             default:
+                 putchar(*sval);
+                 break;
+             }
+         }
+         va_end(ap);
+     }
+
+     int main(void) {
+         minprintf("can print %s: %d %f", "some text with numbers", 42, 3.1415);
+         return 0;
+     }
+   #+END_SRC
+
+   #+RESULTS:
+   : can print some text with numbers: 42 3.141500
