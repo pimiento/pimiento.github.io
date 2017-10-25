@@ -1,0 +1,727 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2017-10-25 Wed 22:10 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>GC в Python</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Pavel Vavilin" />
+<meta name="keywords" content="python gc" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+
+<script type="text/javascript" src="org-info.js">
+/**
+ *
+ * @source: org-info.js
+ *
+ * @licstart  The following is the entire license notice for the
+ *  JavaScript code in org-info.js.
+ *
+ * Copyright (C) 2012-2017 Free Software Foundation, Inc.
+ *
+ *
+ * The JavaScript code in this tag is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU
+ * General Public License (GNU GPL) as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.  The code is distributed WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+ *
+ * As additional permission under GNU GPL version 3 section 7, you
+ * may distribute non-source (e.g., minimized or compacted) forms of
+ * that code without the copy of the GNU GPL normally required by
+ * section 4, provided you include this license notice and a URL
+ * through which recipients can access the Corresponding Source.
+ *
+ * @licend  The above is the entire license notice
+ * for the JavaScript code in org-info.js.
+ *
+ */
+</script>
+
+<script type="text/javascript">
+
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+
+<!--/*--><![CDATA[/*><!--*/
+org_html_manager.set("TOC_DEPTH", "3");
+org_html_manager.set("LINK_HOME", "https://pimiento.github.io/");
+org_html_manager.set("LINK_UP", "https://pimiento.github.io/");
+org_html_manager.set("LOCAL_TOC", "1");
+org_html_manager.set("VIEW_BUTTONS", "0");
+org_html_manager.set("MOUSE_HINT", "underline");
+org_html_manager.set("FIXED_TOC", "0");
+org_html_manager.set("TOC", "1");
+org_html_manager.set("VIEW", "1");
+org_html_manager.setup();  // activate after the parameters are set
+/*]]>*///-->
+</script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="https://pimiento.github.io/"> UP </a>
+ |
+ <a accesskey="H" href="https://pimiento.github.io/"> HOME </a>
+</div><div id="content">
+<h1 class="title">GC в Python</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org3b2b6c1">1. Как Python управляет памятью</a>
+<ul>
+<li><a href="#orgc44ef78">1.1. getrefcount</a></li>
+<li><a href="#org9f88008">1.2. Дерево и decref</a></li>
+<li><a href="#org7a6e6f0">1.3. Garbage Collector</a></li>
+</ul>
+</li>
+<li><a href="#orgb88f6bd">2. Сборщик мусора</a></li>
+<li><a href="#orge2a7ade">3. Слабые ссылки, weakref</a>
+<ul>
+<li><a href="#org33e5e2b">3.1. Proxy</a></li>
+<li><a href="#org8932764">3.2. Циклические ссылки, Cyclic references</a></li>
+<li><a href="#org8b1602e">3.3. Dead-on-arrival</a></li>
+</ul>
+</li>
+<li><a href="#org585ff50">4. Ссылки</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org3b2b6c1" class="outline-2">
+<h2 id="org3b2b6c1"><span class="section-number-2">1</span> Как Python управляет памятью</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Детали того как Python управляет памятью зависят от реализации Python. Стандартная реализация Python на C использует подсчёт ссылок для выявления <i>недостежимых</i> объектов и отдельный механизм для отслеживания и управления циклическими ссылками, периодически вызывая алгоритм обнаружения циклических ссылок, который смотрит на <i>недостижимые циклы</i> и удаляет объект, входящие в такие циклические зависимости. Модуль <b>gc</b> предоставляет интерфейс для принудительного вызова функций <i>сборки мусора</i>, получения статистики и оптимизации параметров коллектора.
+</p>
+
+<p>
+Иногда объекты остаются в <i>трейсбэках</i> и не могут быть деаллоцированы, как мы того ожидаем. Чтобы очистить <i>трейсбэки</i>:
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">import</span> sys
+sys.exc_clear()
+<span style="color: #ffffff;">sys.exc_traceback</span> = <span style="color: #ffffff;">sys.last_traceback</span> = <span style="color: #7fffd4;">None</span>
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgc44ef78" class="outline-3">
+<h3 id="orgc44ef78"><span class="section-number-3">1.1</span> getrefcount</h3>
+<div class="outline-text-3" id="text-1-1">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">import</span> sys
+<span style="color: #ffffff;">foobar</span> = <span style="color: #ffa500;">"Hello World"</span>
+<span style="color: #ffffff;">barfoo</span> = foobar
+<span style="color: #00ff00; font-weight: bold;">print</span>(sys.getrefcount(foobar))
+<span style="color: #00ff00; font-weight: bold;">print</span>(sys.getrefcount(barfoo))
+<span style="color: #00ff00; font-weight: bold;">del</span> foobar
+<span style="color: #00ff00; font-weight: bold;">print</span>(sys.getrefcount(barfoo))
+</pre>
+</div>
+
+<pre class="example">
+5
+5
+4
+
+</pre>
+
+<p>
+Всегда отнимаем единицы от getrefcount — она автоматически добавляется при вызове функции. (В оригинале статьи sys.getrefcount(foobar) -&gt; 3, sys.getrefcount(barfoo) -&gt; 3). Когда удаляется ссылка, счётчик уменьшается на единицу. Когда он становится равным нулю — удаляется сам объект. Это — <b>decref</b> (по названию макроса в C API, делающего всю работу).
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9f88008" class="outline-3">
+<h3 id="org9f88008"><span class="section-number-3">1.2</span> Дерево и decref</h3>
+<div class="outline-text-3" id="text-1-2">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">import</span> sys
+
+
+<span style="color: #00ff00; font-weight: bold;">class</span> <span style="color: #00ffff;">Parent</span>(<span style="color: #b0c4de; font-weight: bold;">object</span>):
+
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__init__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">self</span>.children = []
+
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">add</span>(<span style="color: #00ff00; font-weight: bold;">self</span>, ch):
+        <span style="color: #00ff00; font-weight: bold;">self</span>.children.append(ch)
+        <span style="color: #ffffff;">ch.parent</span> = <span style="color: #00ff00; font-weight: bold;">self</span>
+
+
+<span style="color: #00ff00; font-weight: bold;">class</span> <span style="color: #00ffff;">Child</span>(<span style="color: #b0c4de; font-weight: bold;">object</span>):
+
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__init__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">self</span>.parent = <span style="color: #7fffd4;">None</span>
+
+<span style="color: #ffffff;">p</span> = Parent()
+p.add(Child())
+</pre>
+</div>
+
+
+<p>
+Parent имеет ссылку на child, а тот в свою очередь — на родителя. Объекты останутся в памяти, даже если мы удалим все внешние ссылки на них. Результат — мусор!
+</p>
+</div>
+</div>
+
+<div id="outline-container-org7a6e6f0" class="outline-3">
+<h3 id="org7a6e6f0"><span class="section-number-3">1.3</span> Garbage Collector</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+Для решения предыдущей проблемы в Python появился GC (с 2.1+). В GC реализован <i>cycle finder</i>, который отыскивает циклические зависимости. Т.е. если объект ссылается на другой объект, а второй объект ссылается на первый и никто не ссылается на них снаружи, то эти объекты попадут под GC и их успешно разименуют. Пиковое потребление памяти при этом может быть довольно большим. Проблемы возникают, когда один из объектов циклической зависимости имеет метод <span class="underline"><span class="underline">del</span></span> или написан как <i>extension</i>, т.е. не на Python. Для решения таких проблем появился модуль <b>weakref</b> — слабая ссылка, которая как бы видит другой объект, но при этом не увеличивает его счётчик.
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-orgb88f6bd" class="outline-2">
+<h2 id="orgb88f6bd"><span class="section-number-2">2</span> Сборщик мусора</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Сборщик мусора имеет три поколения (0, 1, 2). При создании объекта, он попадает в <i>нулевое поколение</i>. У каждого поколения есть <b>счётчик</b> и <b>порог</b>:
+</p>
+<ul class="org-ul">
+<li>При добавлении объекта в поколение счётчик увеличивается.</li>
+<li>При выбывании из поколения счётчик уменьшается.</li>
+<li>Когда <b>счётчик превысит пороговое значение</b> — по всем объектам из поколения пройдётся сборщик мусора. Кого найдёт — удалит.</li>
+<li>Все выжившие в поколении объекты перемещаются в следующее (0 → 1, 1 → 2, 1 → 2). Из второго поколения объекты никуда не попадают и <span class="underline">остаются там навечно</span>.</li>
+<li>Перемещённые в следующее поколение объекты меняют соответствующий счётчик, и операция может повториться уже для следующего поколения.</li>
+<li>Счётчик текущего поколения сбрасывается.</li>
+</ul>
+
+<p>
+Объекты, подлежащие уничтожение, но имеющие переопределённый метод <span class="underline"><span class="underline">del</span></span>, не могут быть собраны. Причина проста: эти объекты могут ссылаться друг на друга. Python не способен определить безопасный порядок вызова <span class="underline"><span class="underline">del</span></span>. Если вызвать деструкторы в произвольном порядке, то можно получить ситуацию вида:
+</p>
+<ul class="org-ul">
+<li>Деструктор объекта \(a\) для работы требует объект \(b\).</li>
+<li>Последний в своём деструкторе обращается к объекту \(a\).</li>
+<li>При вызове <span class="underline"><span class="underline">del</span></span> у \(a\) деструктор \(b\) не сможет отработать нормально. Ссылка на \(a\) будет значение None.</li>
+</ul>
+
+<p>
+Чтобы не заставлять программиста корректно разрешать такие ситуации было принято решение не уничтожать подобные объекты а просто перемещать их в gc.garbage.
+</p>
+</div>
+</div>
+<div id="outline-container-orge2a7ade" class="outline-2">
+<h2 id="orge2a7ade"><span class="section-number-2">3</span> Слабые ссылки, weakref</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Обычно, объекты не будут удалены пока не будут удалены все ссылки на них:
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">class</span> <span style="color: #00ffff;">Foo</span>(<span style="color: #b0c4de; font-weight: bold;">object</span>):
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__init__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">self</span>.obj = <span style="color: #7fffd4;">None</span>
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">'created'</span>)
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__del__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">'destroyed'</span>)
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">show</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #00ff00; font-weight: bold;">self</span>.obj)
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">store</span>(<span style="color: #00ff00; font-weight: bold;">self</span>, obj):
+        <span style="color: #00ff00; font-weight: bold;">self</span>.obj = obj
+
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"&gt; a = Foo()"</span>)
+<span style="color: #ffffff;">a</span> = Foo()
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"&gt; b = a"</span>)
+<span style="color: #ffffff;">b</span> = a
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"&gt; del a"</span>)
+<span style="color: #00ff00; font-weight: bold;">del</span> a
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"&gt; del b"</span>)
+<span style="color: #00ff00; font-weight: bold;">del</span> b
+</pre>
+</div>
+
+<pre class="example">
+&gt; a = Foo()
+created
+&gt; b = a
+&gt; del a
+&gt; del b
+destroyed
+
+</pre>
+
+<p>
+Слабые ссылки, напротив, не увеличивают счётчик ссылок на объект. Существование слабой ссылки на объект никогда не воспрепятствует уничтожению объекта. Т.о., если на объект указывают только слабые ссылки, то это этот объект будет уничтожен.
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">import</span> weakref
+
+<span style="color: #00ff00; font-weight: bold;">class</span> <span style="color: #00ffff;">Foo</span>(<span style="color: #b0c4de; font-weight: bold;">object</span>):
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__init__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">self</span>.obj = <span style="color: #7fffd4;">None</span>
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">'created'</span>)
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__del__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">'destroyed'</span>)
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">show</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #00ff00; font-weight: bold;">self</span>.obj)
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">store</span>(<span style="color: #00ff00; font-weight: bold;">self</span>, obj):
+        <span style="color: #00ff00; font-weight: bold;">self</span>.obj = obj
+
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"&gt; a = Foo()"</span>)
+<span style="color: #ffffff;">a</span> = Foo()
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"&gt; b = weakref.ref(a)"</span>)
+<span style="color: #ffffff;">b</span> = weakref.ref(a)
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"&gt; a == b()"</span>)
+<span style="color: #00ff00; font-weight: bold;">print</span>(a == b())
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"b().show()"</span>)
+b().show()
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"del a"</span>)
+<span style="color: #00ff00; font-weight: bold;">del</span> a
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"b() is None"</span>)
+<span style="color: #00ff00; font-weight: bold;">print</span>(b() <span style="color: #00ff00; font-weight: bold;">is</span> <span style="color: #7fffd4;">None</span>)
+</pre>
+</div>
+
+<pre class="example">
+&gt; a = Foo()
+created
+&gt; b = weakref.ref(a)
+&gt; a == b()
+True
+b().show()
+None
+del a
+destroyed
+b() is None
+True
+</pre>
+</div>
+<div id="outline-container-org33e5e2b" class="outline-3">
+<h3 id="org33e5e2b"><span class="section-number-3">3.1</span> Proxy</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+В качестве более простой альтернативы <b>weakref.ref</b> можно использовать <b>weakref.proxy</b>. Proxy-объект ведёт себя как <i>сильная</i> ссылка на объект, но выбрасывает <i>exception</i> когда используется послет того как оригинальный объект был удалён.
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">import</span> weakref
+
+<span style="color: #00ff00; font-weight: bold;">class</span> <span style="color: #00ffff;">Foo</span>(<span style="color: #b0c4de; font-weight: bold;">object</span>):
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__init__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">self</span>.obj = <span style="color: #7fffd4;">None</span>
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">'created'</span>)
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__del__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">'destroyed'</span>)
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">show</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #00ff00; font-weight: bold;">self</span>.obj)
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">store</span>(<span style="color: #00ff00; font-weight: bold;">self</span>, obj):
+        <span style="color: #00ff00; font-weight: bold;">self</span>.obj = obj
+
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"&gt; a = Foo()"</span>)
+<span style="color: #ffffff;">a</span> = Foo()
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"&gt; b = weakref.proxy(a)"</span>)
+<span style="color: #ffffff;">b</span> = weakref.proxy(a)
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"&gt; b.store('fish')"</span>)
+b.store(<span style="color: #ffa500;">'fish'</span>)
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"&gt; b.show()"</span>)
+b.show()
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"&gt; del a"</span>)
+<span style="color: #00ff00; font-weight: bold;">del</span> a
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"&gt; b.show() # -&gt; will produce exception ReferenceError"</span>)
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">b.show() -&gt; will produce exception</span>
+</pre>
+</div>
+
+<pre class="example">
+&gt; a = Foo()
+created
+&gt; b = weakref.proxy(a)
+&gt; b.store('fish')
+&gt; b.show()
+fish
+&gt; del a
+destroyed
+&gt; b.show() # -&gt; will produce exception ReferenceError
+
+</pre>
+</div>
+</div>
+<div id="outline-container-org8932764" class="outline-3">
+<h3 id="org8932764"><span class="section-number-3">3.2</span> Циклические ссылки, Cyclic references</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+Необходимость в слабых ссылках возрастает когда объекты имеющие сильные ссылки образуют <i>циклы</i>.
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">class</span> <span style="color: #00ffff;">Foo</span>(<span style="color: #b0c4de; font-weight: bold;">object</span>):
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__init__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">self</span>.obj = <span style="color: #7fffd4;">None</span>
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">'created'</span>)
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__del__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">'destroyed'</span>)
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">show</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #00ff00; font-weight: bold;">self</span>.obj)
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">store</span>(<span style="color: #00ff00; font-weight: bold;">self</span>, obj):
+        <span style="color: #00ff00; font-weight: bold;">self</span>.obj = obj
+
+<span style="color: #ffffff;">a</span> = Foo()
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">created</span>
+<span style="color: #ffffff;">b</span> = Foo()
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">created</span>
+a.store(b)
+b.store(a)
+<span style="color: #00ff00; font-weight: bold;">del</span> a
+<span style="color: #00ff00; font-weight: bold;">del</span> b
+</pre>
+</div>
+<p>
+Метод-деструктор для \(a\) и \(b\) никогда не будет вызван и объекты будут жить в памяти до момента окончания работы интерпретатора. Подобные примеры циклической зависимости могут быть в двусвязных списках, в деревьях. Решение проблемы — хранить слабые ссылки.
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">import</span> weakref
+
+<span style="color: #00ff00; font-weight: bold;">class</span> <span style="color: #00ffff;">Foo</span>(<span style="color: #b0c4de; font-weight: bold;">object</span>):
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__init__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">self</span>.obj = <span style="color: #7fffd4;">None</span>
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">'created'</span>)
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__del__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">'destroyed'</span>)
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">show</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #00ff00; font-weight: bold;">self</span>.obj)
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">store</span>(<span style="color: #00ff00; font-weight: bold;">self</span>, obj):
+        <span style="color: #00ff00; font-weight: bold;">self</span>.obj = weakref.ref(obj)
+
+<span style="color: #ffffff;">a</span> = Foo()
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">created</span>
+<span style="color: #ffffff;">b</span> = Foo()
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">created</span>
+<span style="color: #ffffff;">c</span> = Foo()
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">created</span>
+a.store(b)
+b.store(c)
+c.store(a)
+<span style="color: #00ff00; font-weight: bold;">del</span> a
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">destroyed</span>
+<span style="color: #00ff00; font-weight: bold;">del</span> b
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">destroyed</span>
+<span style="color: #00ff00; font-weight: bold;">del</span> c
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">destroyed</span>
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org8b1602e" class="outline-3">
+<h3 id="org8b1602e"><span class="section-number-3">3.3</span> Dead-on-arrival</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+Модуль <b>weakref</b> не может создавать слабые ссылки для всяких объектов. Например, попытка создать слабую ссылку на <i>list</i>, <i>tuple</i>, <i>dictionary</i>, <i>numeric</i>, <i>string</i> или <i>None</i> вызовет возникновение <b>TypeError</b>. Но иногда создание слабой ссылки падает молча
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">import</span> weakref
+
+<span style="color: #00ff00; font-weight: bold;">class</span> <span style="color: #00ffff;">Foo</span>(<span style="color: #b0c4de; font-weight: bold;">object</span>):
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__init__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">self</span>.obj = <span style="color: #7fffd4;">None</span>
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">'created'</span>)
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__del__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">'destroyed'</span>)
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">show</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #00ff00; font-weight: bold;">self</span>.obj)
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">store</span>(<span style="color: #00ff00; font-weight: bold;">self</span>, obj):
+        <span style="color: #00ff00; font-weight: bold;">self</span>.obj = weakref.ref(obj)
+
+<span style="color: #ffffff;">a</span> = Foo()
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">created</span>
+<span style="color: #ffffff;">b</span> = Foo()
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">created</span>
+a.store(b.show)                 <span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">store creates a weak reference</span>
+a.show()
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">&lt;weakref at 0x7f0542a095e8; dead&gt;</span>
+</pre>
+</div>
+<p>
+Причина такого поведения в том, что (bound method) b.show создаётся и передаётся в метод Foo.store. Этот метод сохраняет слабую ссылку на b.show и переменную-экземпляр a.obj. Когда <i>store</i> метод заканчивает свою работу, то больше не существует сильной ссылки на метод b.show и таким образом, он автоматически уничтожается. Такая ссылка на b.show называется dead-on-arrival.
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org585ff50" class="outline-2">
+<h2 id="org585ff50"><span class="section-number-2">4</span> Ссылки</h2>
+<div class="outline-text-2" id="text-4">
+<ul class="org-ul">
+<li><a href="http://effbot.org/pyfaq/how-does-python-manage-memory.htm">How does Python manage memory</a></li>
+<li><a href="http://asvetlov.blogspot.ru/2013/05/gc.html">Python GC</a></li>
+<li><a href="http://asvetlov.blogspot.ru/2008/11/blog-post.html">Управление памятью в Python</a></li>
+<li><a href="https://mindtrove.info/python-weak-references/">Python Weakref References</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Pavel Vavilin</p>
+<p class="date">Created: 2017-10-25 Wed 22:10</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
