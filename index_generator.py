@@ -47,7 +47,7 @@ def get_index_page():
             keywords[tag].append(link_entry)
 
     # add blank field
-    lines.append("""<div id="data-blank-field" style="height:600px"></div>""")
+    lines.append("""<div id="data-blank-field" style="height:300px"></div>""")
 
     keys_iterator = iter(sorted(keywords.keys()))
     for tags in zip_longest(*[keys_iterator]*3, fillvalue=''):
