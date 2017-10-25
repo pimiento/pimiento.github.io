@@ -1,0 +1,771 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2017-10-25 Wed 17:11 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>структуры в C</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Pavel Vavilin" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+
+<script type="text/javascript" src="org-info.js">
+/**
+ *
+ * @source: org-info.js
+ *
+ * @licstart  The following is the entire license notice for the
+ *  JavaScript code in org-info.js.
+ *
+ * Copyright (C) 2012-2017 Free Software Foundation, Inc.
+ *
+ *
+ * The JavaScript code in this tag is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU
+ * General Public License (GNU GPL) as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.  The code is distributed WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+ *
+ * As additional permission under GNU GPL version 3 section 7, you
+ * may distribute non-source (e.g., minimized or compacted) forms of
+ * that code without the copy of the GNU GPL normally required by
+ * section 4, provided you include this license notice and a URL
+ * through which recipients can access the Corresponding Source.
+ *
+ * @licend  The above is the entire license notice
+ * for the JavaScript code in org-info.js.
+ *
+ */
+</script>
+
+<script type="text/javascript">
+
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+
+<!--/*--><![CDATA[/*><!--*/
+org_html_manager.set("TOC_DEPTH", "3");
+org_html_manager.set("LINK_HOME", "");
+org_html_manager.set("LINK_UP", "");
+org_html_manager.set("LOCAL_TOC", "1");
+org_html_manager.set("VIEW_BUTTONS", "0");
+org_html_manager.set("MOUSE_HINT", "underline");
+org_html_manager.set("FIXED_TOC", "0");
+org_html_manager.set("TOC", "1");
+org_html_manager.set("VIEW", "1");
+org_html_manager.setup();  // activate after the parameters are set
+/*]]>*///-->
+</script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="content">
+<h1 class="title">структуры в C</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org9f66544">1. Структура</a>
+<ul>
+<li><a href="#org9bce37d">1.1. Структуры и функции</a></li>
+</ul>
+</li>
+<li><a href="#org5d7d4ba">2. Массивы структур</a></li>
+<li><a href="#org6844630">3. typedef</a></li>
+<li><a href="#orge1a0b03">4. Объединения</a></li>
+<li><a href="#orgb5af3be">5. Битовые поля</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org9f66544" class="outline-2">
+<h2 id="org9f66544"><span class="section-number-2">1</span> Структура</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Это совокупность нескольких переменных, часто различных типов, сгруппированных под единым именем для удобства обращения. Главное изменение, внесённое стандартом ANSI в работу со структурами, — это определение присваивания структур. Теперь структуры можно копировать, присваивать, передавать в функции и возвращать из функций.
+</p>
+
+<p>
+Ключевое слово <b>struct</b> начинает объявление структуры, состоящее из списка объявлений элементов в фигурных скобках. После слова <b>struct</b> может стоять необязательный идентификатор, именуемый <i>меткой структуры</i>. Метка обозначает конкретный структурный тип; впоследствии её можно использовать для краткости, опуская всё, что находится в скобках при объявлении структур того же типа.
+</p>
+<div class="org-src-container">
+<pre class="src src-c" id="orgc7fcde1"><span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span> {
+    <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">x</span>;
+    <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">y</span>;
+};
+</pre>
+</div>
+
+<p>
+Переменные, перечисленные в объявлении структуры, называются её <i>членами</i>, <i>элементами</i> или <i>полями</i>. Элемент структуры или её метка может иметь то же имя, что и обыкновенная переменная безо всякого конфликта, поскольку они всегда отличаются по контексту.
+</p>
+
+<p>
+Объявление со словом <b>struct</b> фактически вводит новый тип данных. Поэтому допустимо такое объявление переменных:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #00ff00; font-weight: bold;">struct</span> { <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">x</span>; <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">y</span>; } <span style="color: #ffffff;">x</span>, <span style="color: #ffffff;">y</span> z;
+</pre>
+</div>
+<p>
+Данный код объявляет переменные \(x, y, z\) определённого именованного типа и выделяет для них место в памяти. Объявление структуры, после которого нет списка переменных, не выделяет никакой памяти для объектов, а просто описывает форму структуры. Так же можно объявлять переменные, используя метку структуры:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span> <span style="color: #ffffff;">pt</span>;
+</pre>
+</div>
+
+<p>
+Структуру можно инициализировать, поставив после её определения список значений-констант:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span> <span style="color: #ffffff;">maxpt</span> = { 320, 200 };
+</pre>
+</div>
+
+<p>
+Обращение к элементам структуры выполняется следующим образом:
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span> <span style="color: #ffffff;">pt</span> = { 1, 2 };
+<span style="color: #00ffff;">double</span> <span style="color: #ffffff;">dist</span> = sqrt((<span style="color: #00ffff;">double</span>)pt.x * pt.x + (<span style="color: #00ffff;">double</span>)pt.y * pt.y);
+printf(<span style="color: #ffa500;">"distance from O(0, 0) to pt(%d, %d) is %f"</span>, pt.x, pt.y, dist);
+</pre>
+</div>
+
+<p>
+Структуры можно вкладывать друг в друга:
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span> {
+    <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">x</span>;
+    <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">y</span>;
+};
+<span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">rect</span> {
+    <span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span> <span style="color: #ffffff;">pt1</span>;
+    <span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span> <span style="color: #ffffff;">pt2</span>;
+};
+
+<span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">rect</span> <span style="color: #ffffff;">screen</span> = {{0, 0}, {10, 10}};
+printf(<span style="color: #ffa500;">"rectangle with diagonal points: (%d, %d), (%d, %d)"</span>,
+       screen.pt1.x, screen.pt1.y,
+       screen.pt2.x, screen.pt2.y);
+</pre>
+</div>
+
+<pre class="example">
+rectangle with diagonal points: (0, 0), (10, 10)
+
+</pre>
+</div>
+
+<div id="outline-container-org9bce37d" class="outline-3">
+<h3 id="org9bce37d"><span class="section-number-3">1.1</span> Структуры и функции</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+Расширенными операциями над структурами являются копирование или присваивание структуры как целого, взятие её адреса операцией <b>&amp;</b>, а так же обращение к её элементам. Копирование и присваивание включают также в себя передачу аргументов в функции и возвращение значений из функций. <b>Структуры нельзя сравнивать между собой.</b> Структуру можно инициализировать списком констант-инициализаторов для всех её полей.
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span> <span style="color: #00ffff; font-weight: bold;">makepoint</span> (<span style="color: #00ffff;">int</span> <span style="color: #ffffff;">x</span>, <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">y</span>) {
+    <span style="color: #00ff00; font-weight: bold;">return</span> (<span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span>){x,y};
+}
+
+<span style="color: #00ffff;">int</span> <span style="color: #00ffff; font-weight: bold;">main</span>(<span style="color: #00ffff;">void</span>) {
+    <span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">rect</span> <span style="color: #ffffff;">screen</span>;
+    <span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span> <span style="color: #ffffff;">middle</span>;
+    screen.pt1 = makepoint(0, 0);
+    screen.pt2 = makepoint(1000, 1000);
+    middle = makepoint((screen.pt1.x + screen.pt2.x) / 2,
+                       (screen.pt1.y + screen.pt2.y) / 2);
+    printf(<span style="color: #ffa500;">"middle point is (%d, %d)"</span>, middle.x, middle.y);
+    <span style="color: #00ff00; font-weight: bold;">return</span> 0;
+}
+</pre>
+</div>
+
+<pre class="example">
+middle point is (500, 500)
+
+</pre>
+
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span> <span style="color: #00ffff; font-weight: bold;">addpoint</span>(<span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span> <span style="color: #ffffff;">p1</span>, <span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span> <span style="color: #ffffff;">p2</span>) {
+    p1.x += p2.x;
+    p1.y += p2.y;
+    <span style="color: #00ff00; font-weight: bold;">return</span> p1;
+}
+</pre>
+</div>
+<p>
+Вместо того чтобы помещать результат во временную переменную, мы инкрементировали компоненты структуры p1, чтобы подчеркнуть тот факт, что параметры-структуры передаются по значениям, как и любые другие параметры.
+</p>
+
+<p>
+Если в функцию необходимо передать большую структуру, это лучше сделать передав указатель на неё, а не копию всех её данных. Указатели на структуры обладают всеми свойстваи указателей на обычные переменные.
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span> <span style="color: #ffffff;">origin</span> = {1, 2}, *<span style="color: #ffffff;">pp</span> = &amp;origin;
+printf(<span style="color: #ffa500;">"origin is (%d, %d)\n"</span>, (*pp).x, (*pp).y);
+</pre>
+</div>
+
+<pre class="example">
+origin is (1, 2)
+
+</pre>
+
+<p>
+Указатели на структуры используются так часто, что для удобства записи ссылок по ним введено дополнительное обозначение: <i>p-&gt;элемент-структуры</i>
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span> <span style="color: #ffffff;">origin</span> = {1, 2}, *<span style="color: #ffffff;">pp</span> = &amp;origin;
+printf(<span style="color: #ffa500;">"origin is (%d, %d)"</span>, pp-&gt;x, pp-&gt;y);
+</pre>
+</div>
+
+<pre class="example">
+origin is (1, 2)
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5d7d4ba" class="outline-2">
+<h2 id="org5d7d4ba"><span class="section-number-2">2</span> Массивы структур</h2>
+<div class="outline-text-2" id="text-2">
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #8090A2;">#include</span> <span style="color: #ffa500;">&lt;stdio.h&gt;</span>
+<span style="color: #8090A2;">#include</span> <span style="color: #ffa500;">&lt;ctype.h&gt;</span>
+<span style="color: #8090A2;">#include</span> <span style="color: #ffa500;">&lt;string.h&gt;</span>
+
+<span style="color: #8090A2;">#define</span> <span style="color: #ffffff;">MAXWORD</span> 100
+<span style="color: #8090A2;">#define</span> <span style="color: #ffffff;">BUFSIZE</span> 100
+
+<span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">key</span> {
+    <span style="color: #00ffff;">char</span> *<span style="color: #ffffff;">word</span>;
+    <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">count</span>;
+} <span style="color: #ffffff;">keytab</span>[] = {
+    <span style="color: #ffa500;">"auto"</span>, 0, <span style="color: #ffa500;">"break"</span>, 0, <span style="color: #ffa500;">"case"</span>, 0, <span style="color: #ffa500;">"char"</span>, 0, <span style="color: #ffa500;">"const"</span>, 0, <span style="color: #ffa500;">"continue"</span>, 0, <span style="color: #ffa500;">"def</span><span style="color: #DC8CC3; background-color: #3F3F3F;">ault"</span><span style="color: #DC8CC3; background-color: #3F3F3F;">, 0,</span>
+    <span style="color: #ffa500;">"do"</span>, 0, <span style="color: #ffa500;">"double"</span>, 0, <span style="color: #ffa500;">"else"</span>, 0, <span style="color: #ffa500;">"enum"</span>, 0, <span style="color: #ffa500;">"extern"</span>, 0, <span style="color: #ffa500;">"float"</span>, 0, <span style="color: #ffa500;">"for"</span>, <span style="color: #DC8CC3; background-color: #3F3F3F;">0,</span>
+    <span style="color: #ffa500;">"goto"</span>, 0, <span style="color: #ffa500;">"if"</span>, 0, <span style="color: #ffa500;">"int"</span>, 0, <span style="color: #ffa500;">"long"</span>, 0, <span style="color: #ffa500;">"register"</span>, 0, <span style="color: #ffa500;">"return"</span>, 0, <span style="color: #ffa500;">"short"</span><span style="color: #DC8CC3; background-color: #3F3F3F;">, 0,</span>
+    <span style="color: #ffa500;">"signed"</span>, 0, <span style="color: #ffa500;">"sizeof"</span>, 0, <span style="color: #ffa500;">"static"</span>, 0, <span style="color: #ffa500;">"struct"</span>, 0, <span style="color: #ffa500;">"switch"</span>, 0, <span style="color: #ffa500;">"typedef"</span>, <span style="color: #DC8CC3; background-color: #3F3F3F;">0,</span>
+    <span style="color: #ffa500;">"union"</span>, 0, <span style="color: #ffa500;">"unsigned"</span>, 0, <span style="color: #ffa500;">"void"</span>, 0, <span style="color: #ffa500;">"volatile"</span>, 0, <span style="color: #ffa500;">"while"</span>, 0
+};
+
+<span style="color: #8090A2;">#define</span> <span style="color: #ffffff;">NKEYS</span> (<span style="color: #00ff00; font-weight: bold;">sizeof</span> keytab / <span style="color: #00ff00; font-weight: bold;">sizeof</span> keytab[0])
+
+<span style="color: #00ffff;">char</span> <span style="color: #ffffff;">buf</span>[BUFSIZE];
+<span style="color: #00ffff;">int</span> <span style="color: #ffffff;">bufp</span> = 0;
+
+<span style="color: #00ffff;">int</span> <span style="color: #00ffff; font-weight: bold;">getword</span>(<span style="color: #00ffff;">char</span> *, <span style="color: #00ffff;">int</span>);
+<span style="color: #00ffff;">int</span> <span style="color: #00ffff; font-weight: bold;">binsearch</span>(<span style="color: #00ffff;">char</span> *, <span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">key</span> *, <span style="color: #00ffff;">int</span>);
+<span style="color: #00ffff;">int</span> <span style="color: #00ffff; font-weight: bold;">getch</span>(<span style="color: #00ffff;">void</span>);
+<span style="color: #00ffff;">void</span> <span style="color: #00ffff; font-weight: bold;">ungetch</span>(<span style="color: #00ffff;">int</span> <span style="color: #ffffff;">c</span>);
+
+<span style="color: #00ffff;">int</span> <span style="color: #00ffff; font-weight: bold;">main</span>(<span style="color: #00ffff;">void</span>) {
+    <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">n</span>;
+    <span style="color: #00ffff;">char</span> <span style="color: #ffffff;">word</span>[MAXWORD];
+    <span style="color: #00ff00; font-weight: bold;">while</span> (getword(word, MAXWORD) != EOF) {
+        <span style="color: #00ff00; font-weight: bold;">if</span> (isalpha(word[0]))
+            <span style="color: #00ff00; font-weight: bold;">if</span> ((n = binsearch(word, keytab, NKEYS)) &gt;= 0)
+                keytab[n].count++;
+    }
+    <span style="color: #00ff00; font-weight: bold;">for</span> (n = 0; n &lt; NKEYS; n++) {
+        <span style="color: #00ff00; font-weight: bold;">if</span> (keytab[n].count &gt; 0)
+            printf(<span style="color: #ffa500;">"%4d %s\n"</span>, keytab[n].count, keytab[n].word);
+    }
+    <span style="color: #00ff00; font-weight: bold;">return</span> 0;
+}
+
+<span style="color: #00ffff;">int</span> <span style="color: #00ffff; font-weight: bold;">binsearch</span>(<span style="color: #00ffff;">char</span> *<span style="color: #ffffff;">word</span>, <span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">key</span> *<span style="color: #ffffff;">tab</span>, <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">n</span>) {
+    <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">cond</span>;
+    <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">low</span>, <span style="color: #ffffff;">high</span>, <span style="color: #ffffff;">mid</span>;
+
+    low = 0;
+    high = n - 1;
+    <span style="color: #00ff00; font-weight: bold;">while</span> (low &lt;= high) {
+        mid = (low+high) / 2;
+        <span style="color: #00ff00; font-weight: bold;">if</span> ((cond = strcmp(word, tab[mid].word)) &lt; 0)
+            high = mid - 1;
+        <span style="color: #00ff00; font-weight: bold;">else</span> <span style="color: #00ff00; font-weight: bold;">if</span> (cond &gt; 0)
+            low = mid + 1;
+        <span style="color: #00ff00; font-weight: bold;">else</span>
+            <span style="color: #00ff00; font-weight: bold;">return</span> mid;
+    }
+    <span style="color: #00ff00; font-weight: bold;">return</span> -1;
+}
+
+<span style="color: #00ffff;">int</span> <span style="color: #00ffff; font-weight: bold;">getword</span>(<span style="color: #00ffff;">char</span> *<span style="color: #ffffff;">word</span>, <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">lim</span>) {
+    <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">c</span>;
+    <span style="color: #00ffff;">char</span> *<span style="color: #ffffff;">w</span> = word;
+    <span style="color: #00ff00; font-weight: bold;">while</span> (isspace(c = getch()))
+        ;
+    <span style="color: #00ff00; font-weight: bold;">if</span> (c != EOF)
+        *w++ = c;
+    <span style="color: #00ff00; font-weight: bold;">if</span> (<span style="color: #F0DFAF; font-weight: bold;">!</span>(isalpha(c) || c == <span style="color: #ffa500;">'_'</span>)) {
+        *w = <span style="color: #ffa500;">'\0'</span>;
+        <span style="color: #00ff00; font-weight: bold;">return</span> c;
+    }
+    <span style="color: #00ff00; font-weight: bold;">for</span> (;--lim&gt;0;w++) {
+        <span style="color: #00ff00; font-weight: bold;">if</span> (<span style="color: #F0DFAF; font-weight: bold;">!</span>isalnum(*w = getch())) {
+            ungetch(*w);
+            <span style="color: #00ff00; font-weight: bold;">break</span>;
+        }
+    }
+    *w = <span style="color: #ffa500;">'\0'</span>;
+    <span style="color: #00ff00; font-weight: bold;">return</span> word[0];
+}
+
+<span style="color: #00ffff;">int</span> <span style="color: #00ffff; font-weight: bold;">getch</span>(<span style="color: #00ffff;">void</span>) {
+    <span style="color: #00ff00; font-weight: bold;">return</span> (bufp &gt; 0) ? buf[--bufp] : getchar();
+}
+
+<span style="color: #00ffff;">void</span> <span style="color: #00ffff; font-weight: bold;">ungetch</span>(<span style="color: #00ffff;">int</span> <span style="color: #ffffff;">c</span>) {
+    <span style="color: #00ff00; font-weight: bold;">if</span> (bufp &gt;= BUFSIZE) printf(<span style="color: #ffa500;">"ungetch too many characters\n"</span>);
+    <span style="color: #00ff00; font-weight: bold;">else</span> buf[bufp++] = c;
+}
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org6844630" class="outline-2">
+<h2 id="org6844630"><span class="section-number-2">3</span> typedef</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Имя нового типа, объявляемое в <b>typedef</b>, стоит не сразу после ключевого слова, а на месте имени переменной. Синтаксически ключевое слово <b>typedef</b> можно считать аналогом идентификатора класса памяти: <b>extern</b>, <b>static</b> и т.п. Новые типы, определяемые с помощью <b>typedef</b>, начинаются с прописной буквы, чтобы можно было их легко различить.
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #00ff00; font-weight: bold;">typedef</span> <span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">tnode</span> *<span style="color: #00ffff;">Treeptr</span>;
+
+<span style="color: #00ff00; font-weight: bold;">typedef</span> <span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">tnode</span> {
+    <span style="color: #00ffff;">char</span> *<span style="color: #ffffff;">word</span>;
+    <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">count</span>;
+    <span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">tnode</span> *<span style="color: #ffffff;">left</span>;
+    <span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">tnode</span> *<span style="color: #ffffff;">right</span>;
+} <span style="color: #00ffff;">Trenode</span>;
+
+<span style="color: #00ffff;">Treeptr</span> <span style="color: #00ffff; font-weight: bold;">talloc</span>(<span style="color: #00ffff;">void</span>) {
+    <span style="color: #00ff00; font-weight: bold;">return</span> (<span style="color: #00ffff;">Treeptr</span>)malloc(<span style="color: #00ff00; font-weight: bold;">sizeof</span>(Treenode));
+}
+</pre>
+</div>
+<p>
+Фактически, оператор <b>typedef</b> очень напоминает директиву <b>#define</b> с тем исключением, что, поскольку он анализируется компилятором, он может допускать такие текстовые подстановки, которые препроцессору не по силам. Например:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #00ff00; font-weight: bold;">typedef</span> <span style="color: #00ffff;">int</span> (*<span style="color: #00ffff;">PFI</span>)(<span style="color: #00ffff;">char</span>*, <span style="color: #00ffff;">char</span>*);
+</pre>
+</div>
+<p>
+Здесь опеределяется тип <i>PFI</i> — "указатель на функцию от двух аргументов типа char*, возвращающую int". Этот тип можно использовать, например, таким образом:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #00ffff;">PFI</span> <span style="color: #ffffff;">strcmp</span>, <span style="color: #ffffff;">numcmp</span>;
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orge1a0b03" class="outline-2">
+<h2 id="orge1a0b03"><span class="section-number-2">4</span> Объединения</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Это переменная, которая может содержать объекты различных типов и размеров (но не одновременно); при этом удовлетворение требований к размеру и выравниванию возлагается на компилятор. С помощью объединений можно работать с данными различных типов в пределах одного участка памяти, не привнося в программу элементы низкоуровневого, машинно-зависимого программирования.
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #00ff00; font-weight: bold;">union</span> <span style="color: #00ffff;">u_tag</span> {
+    <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">ival</span>;
+    <span style="color: #00ffff;">float</span> <span style="color: #ffffff;">fval</span>;
+    <span style="color: #00ffff;">char</span> *<span style="color: #ffffff;">sval</span>;
+} <span style="color: #ffffff;">u</span>;
+</pre>
+</div>
+<p>
+Переменная <b>u</b> будет иметь достаточную длину, чтобы содержать данные самого длинного из трёх типов; конкретный размер зависит от системы и реализации. Переменной <b>u</b> можно присваивать данные любого типа, а затем использовать их в выражениях (строго по правилам работы с конкретным типом). Извлекать можно данные только того типа, который был помещён при последнем обращении к переменной. Следить и помнить, какие именно данные были помещены в объединение, — это забота программиста; если поместить значение одного типа, а извлечь его как значение другого, результат будет системно-зависимым и трудно предсказуемым.
+</p>
+
+<p>
+Обращение к элементам объединения выполняется так же, как к элементам структуры:
+</p>
+<blockquote>
+<p>
+имя-объединения.элемент
+указатель-на-объединение-&gt;элемент
+</p>
+</blockquote>
+<p>
+Пусть в переменной \(utype\) хранится информация о типе данных, находящихся в текущий момент в объединении:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #00ff00; font-weight: bold;">if</span> (utype == INT)
+    printf(<span style="color: #ffa500;">"%d\n"</span>, u.ival);
+<span style="color: #00ff00; font-weight: bold;">else</span> <span style="color: #00ff00; font-weight: bold;">if</span> (utype == FLOAT)
+    printf(<span style="color: #ffa500;">"%f\n"</span>, u.fval);
+<span style="color: #00ff00; font-weight: bold;">else</span> <span style="color: #00ff00; font-weight: bold;">if</span> (utype == STRING)
+    printf(<span style="color: #ffa500;">"%s\n"</span>, u.sval);
+<span style="color: #00ff00; font-weight: bold;">else</span>
+    printf(<span style="color: #ffa500;">"bad type %d in utype\n"</span>, utype);
+</pre>
+</div>
+
+<p>
+Объединения могут применяться в структурах и массивах, и наоборот. Способ обращения к члену объединения в структуре (или к члену структуры в объединении) полностью идентичен обращению к элементу вложенной структуры.
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #8090A2;">#define</span> <span style="color: #ffffff;">INT</span> 0
+<span style="color: #8090A2;">#define</span> <span style="color: #ffffff;">FLOAT</span> 1
+<span style="color: #8090A2;">#define</span> <span style="color: #ffffff;">STRING</span> 2
+
+<span style="color: #00ff00; font-weight: bold;">struct</span> {
+    <span style="color: #00ffff;">char</span> *<span style="color: #ffffff;">name</span>;
+    <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">flags</span>;
+    <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">utype</span>;
+    <span style="color: #00ff00; font-weight: bold;">union</span> {
+        <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">ival</span>;
+        <span style="color: #00ffff;">float</span> <span style="color: #ffffff;">fval</span>;
+        <span style="color: #00ffff;">char</span> *<span style="color: #ffffff;">sval</span>;
+    } <span style="color: #ffffff;">u</span>;
+} <span style="color: #ffffff;">symtab</span>[] = {
+    <span style="color: #ffa500;">"test"</span>, 4, STRING, <span style="color: #ffa500;">"data"</span>
+};
+
+printf(<span style="color: #ffa500;">"symtab[%s]: %s"</span>, symtab[0].name, symtab[0].u.sval);
+</pre>
+</div>
+
+<pre class="example">
+symtab[test]: data
+
+</pre>
+
+<p>
+Фактически, объединение является структурой, в которой все элементы имеют нулевое смещение от её начала, сама она имеет достаточную длину, чтобы в неё поместился самый длинный элемент, и при этом выравнивание происходит правильно для всех типов данных в объединении. Над объединениями разрешено выполнять те же операции, что и над структурами: присваивать или копировать как единое целое, брать адрес и обращаться к отдельным элементам.
+</p>
+<div class="org-src-container">
+<pre class="src src-C"><span style="color: #00ff00; font-weight: bold;">union</span> {
+    <span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span> <span style="color: #ffffff;">pt</span>;
+    <span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">rect</span> <span style="color: #ffffff;">r</span>;
+} <span style="color: #ffffff;">g</span>;
+
+<span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span> <span style="color: #ffffff;">pt1</span> = {1, 2};
+<span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">rect</span> <span style="color: #ffffff;">r1</span> = { {1, 2}, {10, 11} };
+g.pt = pt1;
+printf(<span style="color: #ffa500;">"g: %d, %d\n"</span>, g.pt.x, g.pt.y);
+
+g.r = r1;
+printf(<span style="color: #ffa500;">"g: (%d, %d), (%d, %d)"</span>, g.r.pt1.x, g.r.pt1.y, g.r.pt2.x, g.r.pt2.y);
+</pre>
+</div>
+
+<pre class="example">
+g: 1, 2
+g: (1, 2), (10, 11)
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgb5af3be" class="outline-2">
+<h2 id="orgb5af3be"><span class="section-number-2">5</span> Битовые поля</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+Внутри системно-зависимой единицы памяти, которую мы будем называть "<i>словом</i>", можно задать <i>битовое поле</i> (<i>bit-field</i>) — совокупность идущих подряд битов. Синтаксис определения и использования полей основан на структурах.
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #00ff00; font-weight: bold;">struct</span> {
+    <span style="color: #00ffff;">unsigned</span> <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">is_keyword</span> :1;
+    <span style="color: #00ffff;">unsigned</span> <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">is_extern</span>  :1;
+    <span style="color: #00ffff;">unsigned</span> <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">is_static</span>  :1;
+} <span style="color: #ffffff;">flags</span>;
+</pre>
+</div>
+<p>
+Данный код является заменой коду на константах:
+</p>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #8090A2;">#define</span> <span style="color: #ffffff;">KEYWORD</span>  01
+<span style="color: #8090A2;">#define</span> <span style="color: #ffffff;">EXTERNAL</span> 02
+<span style="color: #8090A2;">#define</span> <span style="color: #ffffff;">STATIC</span>   04
+
+<span style="color: #00ff00; font-weight: bold;">enum</span> { <span style="color: #ffffff;">KEYWORD</span> = 01, <span style="color: #ffffff;">EXTERNAL</span> = 02, <span style="color: #ffffff;">STATIC</span> = 04 };
+</pre>
+</div>
+<p>
+В переменной <b>flags</b> содержится три однобитных поля. Число после двоеточия задаёт ширину поля в битах. Поля объявлены как <b>unsigned int</b>, чтобы гарантированно быть велечинами без знака. Практически всё, что связано с битовыми полями, является системно-зависимым. Например, только в конкретной реализации определяется, могут ли поля перекрывать границы слов. Поля не обязаны иметь имена; безымянные поля (двоеточия с размером после них) часто используются для пропуска и резервирования отдельных битов. Для принудительного выравнивания по границе следующего слова можно использовать специальное значение длины поля, равное \(0\). Совокупность полей — не массив, и у них нет адресов, поэтому операция &amp; к ним неприменима.
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Pavel Vavilin</p>
+<p class="date">Created: 2017-10-25 Wed 17:11</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
