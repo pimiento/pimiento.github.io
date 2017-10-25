@@ -10,7 +10,7 @@ def get_pages():
                    reverse=True)
 
     for page in pages:
-        tree = etree.parse("cast.html", etree.HTMLParser())
+        tree = etree.parse(page, etree.HTMLParser())
         title = tree.xpath("/html/head/title")[0].text
         url = "https://pimiento.github.io/{}".format(page)
         yield("[{title}]({url} \"{title}\")".format(title=title, url=url))
