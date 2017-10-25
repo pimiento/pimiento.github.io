@@ -14,8 +14,10 @@
 * [структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")
 <div id="data-blank-field" style="height:500px"></div>
 ---
+
 ##### ugly implimentation of tags cloud #####
 ---
+
 
 
 

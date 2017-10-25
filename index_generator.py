@@ -52,9 +52,9 @@ def get_index_page():
 
     # add blank field
     lines.append("""<div id="data-blank-field" style="height:500px"></div>""")
-    lines.append("---")
+    lines.append("---\n")
     lines.append(maybe_h("header", 5).format("ugly implimentation of tags cloud"))
-    lines.append("---")
+    lines.append("---\n")
 
     keys_iterator = iter(sorted(keywords.keys()))
     for tags in zip_longest(*[keys_iterator]*3, fillvalue=''):
