@@ -21,36 +21,36 @@
 
 ---
 
-* * C: сигналы и их обработка
-
-* * Python: C-extensions
-
-* * Linux namespaces and LXC
-
-* * SQL или NoSQL
-
-* * C++: stack, heap
-
-* * C++: low-level top-level const
-
-* * C++: sizeof
-
-* * C++: asm include
-
-* * C++: aliasing types
-
-* * C++: update article about structures with C++ union, enum, bit-field
-
-* * C++: debugging overview
-
-* * C++: function pointers
-
-* * C++: header files
-
-* * C++: nested structures
-
-* * C++ access control
-
+* [* C: сигналы и их обработка
+](#, "TODO")
+* [* Python: C-extensions
+](#, "TODO")
+* [* Linux namespaces and LXC
+](#, "TODO")
+* [* SQL или NoSQL
+](#, "TODO")
+* [* C++: stack, heap
+](#, "TODO")
+* [* C++: low-level top-level const
+](#, "TODO")
+* [* C++: sizeof
+](#, "TODO")
+* [* C++: asm include
+](#, "TODO")
+* [* C++: aliasing types
+](#, "TODO")
+* [* C++: update article about structures with C++ union, enum, bit-field
+](#, "TODO")
+* [* C++: debugging overview
+](#, "TODO")
+* [* C++: function pointers
+](#, "TODO")
+* [* C++: header files
+](#, "TODO")
+* [* C++: nested structures
+](#, "TODO")
+* [* C++ access control
+](#, "TODO")
 
 ---
 
