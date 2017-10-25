@@ -12,6 +12,9 @@
 * [C++ named cast](https://pimiento.github.io/cast.html "C++ named cast")
 * [структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")
 <div id="data-blank-field" style="height:600px"></div>
+
+
+
 *C*|*Linux*|*bit-field*
  --- | --- | --- 
 [переменное число аргументов функции в C](https://pimiento.github.io/c_varargs.html "переменное число аргументов функции в C")|[модуль os в Python](https://pimiento.github.io/python_os.html "модуль os в Python")|[структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")
@@ -45,6 +48,3 @@
 *union*|*vararg*|**
  --- | --- | --- 
 [структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")|[переменное число аргументов функции в C](https://pimiento.github.io/c_varargs.html "переменное число аргументов функции в C")|
-
-
-
