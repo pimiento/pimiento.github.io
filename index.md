@@ -1,6 +1,7 @@
 <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
 
 * [C++ named cast](https://pimiento.github.io/cast.html "C++ named cast")
+* [hardlink и symlink в UNIX](https://pimiento.github.io/unix_hardlink_symlink.html "hardlink и symlink в UNIX")
 * [Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")
 * [модуль os в Python](https://pimiento.github.io/python_os.html "модуль os в Python")
 * [работа с графами в Python](https://pimiento.github.io/python_graphs.html "работа с графами в Python")
@@ -22,9 +23,10 @@
 
 C|Linux|bit-field
 | --- |:---:|---:|
-[Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")|[Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")|[структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")
-[переменное число аргументов функции в C](https://pimiento.github.io/c_varargs.html "переменное число аргументов функции в C")|[модуль os в Python](https://pimiento.github.io/python_os.html "модуль os в Python")|
-[структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")|[Процессы в Linux](https://pimiento.github.io/processes.html "Процессы в Linux")|
+[Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")|[hardlink и symlink в UNIX](https://pimiento.github.io/unix_hardlink_symlink.html "hardlink и symlink в UNIX")|[структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")
+[переменное число аргументов функции в C](https://pimiento.github.io/c_varargs.html "переменное число аргументов функции в C")|[Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")|
+[структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")|[модуль os в Python](https://pimiento.github.io/python_os.html "модуль os в Python")|
+|[Процессы в Linux](https://pimiento.github.io/processes.html "Процессы в Linux")|
 
 
 
