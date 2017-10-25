@@ -27,7 +27,7 @@ def link_template(title, url):
 
 
 def tag_template(tags):
-    title = ('|'.join("*{}*" for tag in tags)).format(*tags)
+    title = ('|'.join("{}" for tag in tags)).format(*tags)
     header_line = '|'.join([" --- "] * len(tags))
     return title + "\n" + header_line
 
@@ -50,10 +50,10 @@ def get_index_page():
     lines.append("""<div id="data-blank-field" style="height:600px"></div>""")
 
     keys_iterator = iter(sorted(keywords.keys()))
-    for tags in zip_longest(*[keys_iterator]*3, fillvalue=' '):
+    for tags in zip_longest(*[keys_iterator]*3, fillvalue=''):
         lines.append("\n"*2)
         lines.append(tag_template(tags))
-        for links in zip_longest(*[keywords[t] for t in tags], fillvalue=' '):
+        for links in zip_longest(*[keywords[t] for t in tags], fillvalue=''):
             lines.append(tag_link_template(links))
 
     return lines
