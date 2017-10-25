@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2017-10-25 Wed 22:11 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>модуль os в Python</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Pavel Vavilin" />
+<meta name="keywords" content="python Linux" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+
+<script type="text/javascript" src="org-info.js">
+/**
+ *
+ * @source: org-info.js
+ *
+ * @licstart  The following is the entire license notice for the
+ *  JavaScript code in org-info.js.
+ *
+ * Copyright (C) 2012-2017 Free Software Foundation, Inc.
+ *
+ *
+ * The JavaScript code in this tag is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU
+ * General Public License (GNU GPL) as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.  The code is distributed WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+ *
+ * As additional permission under GNU GPL version 3 section 7, you
+ * may distribute non-source (e.g., minimized or compacted) forms of
+ * that code without the copy of the GNU GPL normally required by
+ * section 4, provided you include this license notice and a URL
+ * through which recipients can access the Corresponding Source.
+ *
+ * @licend  The above is the entire license notice
+ * for the JavaScript code in org-info.js.
+ *
+ */
+</script>
+
+<script type="text/javascript">
+
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+
+<!--/*--><![CDATA[/*><!--*/
+org_html_manager.set("TOC_DEPTH", "3");
+org_html_manager.set("LINK_HOME", "https://pimiento.github.io/");
+org_html_manager.set("LINK_UP", "https://pimiento.github.io/");
+org_html_manager.set("LOCAL_TOC", "1");
+org_html_manager.set("VIEW_BUTTONS", "0");
+org_html_manager.set("MOUSE_HINT", "underline");
+org_html_manager.set("FIXED_TOC", "0");
+org_html_manager.set("TOC", "1");
+org_html_manager.set("VIEW", "1");
+org_html_manager.setup();  // activate after the parameters are set
+/*]]>*///-->
+</script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="https://pimiento.github.io/"> UP </a>
+ |
+ <a accesskey="H" href="https://pimiento.github.io/"> HOME </a>
+</div><div id="content">
+<h1 class="title">модуль os в Python</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org4e77812">1. Основные функции в модуле <b>os</b></a></li>
+<li><a href="#orgafc6b65">2. Аттрибуты файлов и директорий</a></li>
+<li><a href="#org32e06fc">3. Работа с процессами</a>
+<ul>
+<li><a href="#orgac62845">3.1. Запуск нового процесса</a></li>
+<li><a href="#org751b3ad">3.2. Python daemon</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org4e77812" class="outline-2">
+<h2 id="org4e77812"><span class="section-number-2">1</span> Основные функции в модуле <b>os</b></h2>
+<div class="outline-text-2" id="text-1">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">import</span> os
+
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"%s\n%s\n%s\n%s"</span> % (
+    os.name,
+    os.environ[<span style="color: #ffa500;">'SHELL'</span>],        <span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">os.environ will print too much text</span>
+    <span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">os.getlogin(), # bug in Python, better use pwd.getpwuid(os.getuid()).pw_na</span><span style="color: #DC8CC3; background-color: #3F3F3F; font-style: italic;">me</span>
+    os.getpid(),
+    os.uname(),
+))
+</pre>
+</div>
+
+<pre class="example">
+posix
+/bin/zsh
+4299
+posix.uname_result(sysname='Linux', nodename='e470', release='4.10.0-37-generic', version='#41~16.04.1-Ubuntu SMP Fri Oct 6 22:42:59 UTC 2017', machine='x86_64')
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgafc6b65" class="outline-2">
+<h2 id="orgafc6b65"><span class="section-number-2">2</span> Аттрибуты файлов и директорий</h2>
+<div class="outline-text-2" id="text-2">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">import</span> os
+
+<span style="color: #00ff00; font-weight: bold;">print</span>(os.access(<span style="color: #ffa500;">"/tmp"</span>, os.R_OK | os.W_OK))
+<span style="color: #00ff00; font-weight: bold;">print</span>(os.access(<span style="color: #ffa500;">"/"</span>, os.W_OK))
+<span style="color: #00ff00; font-weight: bold;">print</span>(os.access(<span style="color: #ffa500;">"/bin/bash"</span>, os.R_OK | os.X_OK))
+</pre>
+</div>
+
+<pre class="example">
+True
+False
+True
+
+</pre>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">import</span> os
+<span style="color: #00ff00; font-weight: bold;">import</span> grp
+<span style="color: #00ff00; font-weight: bold;">import</span> stat
+
+<span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">perm</span>(st):
+    <span style="color: #ffffff;">is_dir</span> = <span style="color: #ffa500;">'d'</span> <span style="color: #00ff00; font-weight: bold;">if</span> stat.S_ISDIR(st.st_mode) <span style="color: #00ff00; font-weight: bold;">else</span> <span style="color: #ffa500;">'-'</span>
+    <span style="color: #ffffff;">d</span> = {<span style="color: #ffa500;">'7'</span>: <span style="color: #ffa500;">'rwx'</span>, <span style="color: #ffa500;">'6'</span>: <span style="color: #ffa500;">'rw-'</span>, <span style="color: #ffa500;">'5'</span>: <span style="color: #ffa500;">'r-x'</span>, <span style="color: #ffa500;">'4'</span>: <span style="color: #ffa500;">'r--'</span>,
+         <span style="color: #ffa500;">'3'</span>: <span style="color: #ffa500;">'-wx'</span>, <span style="color: #ffa500;">'2'</span>: <span style="color: #ffa500;">'-w-'</span>, <span style="color: #ffa500;">'1'</span>: <span style="color: #ffa500;">'--x'</span>, <span style="color: #ffa500;">'0'</span>: <span style="color: #ffa500;">'---'</span>}
+    <span style="color: #ffffff;">p</span> = <span style="color: #b0c4de; font-weight: bold;">str</span>(<span style="color: #b0c4de; font-weight: bold;">oct</span>(st.st_mode)[-3:])
+    <span style="color: #00ff00; font-weight: bold;">return</span> is_dir + <span style="color: #ffa500;">''</span>.join(d.get(x, x) <span style="color: #00ff00; font-weight: bold;">for</span> x <span style="color: #00ff00; font-weight: bold;">in</span> p)
+
+<span style="color: #ffffff;">filepath</span> = <span style="color: #ffa500;">"/tmp/test.txt"</span>
+<span style="color: #00ff00; font-weight: bold;">with</span> <span style="color: #b0c4de; font-weight: bold;">open</span>(filepath, <span style="color: #ffa500;">"w"</span>) <span style="color: #00ff00; font-weight: bold;">as</span> f:
+    <span style="color: #ffffff;">s1</span> = os.stat(filepath)
+    os.chdir(<span style="color: #ffa500;">"/tmp"</span>)
+    <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">'test.txt'</span> <span style="color: #00ff00; font-weight: bold;">in</span> os.listdir())
+    os.chmod(filepath, 2486)
+    os.chown(filepath, s1.st_uid, os.getgroups()[0])
+    <span style="color: #ffffff;">s2</span> = os.stat(filepath)
+    <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"before: %s\tafter: %s"</span> % (perm(s1), perm(s2)))
+    <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"before: %s\tafter: %s"</span> % (
+        grp.getgrgid(s1.st_gid).gr_name, grp.getgrgid(s2.st_gid).gr_name
+    ))
+
+os.unlink(filepath)
+</pre>
+</div>
+
+<pre class="example">
+True
+before: -rw-rw-r--	after: -rw-rw-rw-
+before: pimiento	after: adm
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org32e06fc" class="outline-2">
+<h2 id="org32e06fc"><span class="section-number-2">3</span> Работа с процессами</h2>
+<div class="outline-text-2" id="text-3">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">import</span> os
+
+<span style="color: #00ff00; font-weight: bold;">if</span> os.name == <span style="color: #ffa500;">"nt"</span>:
+    <span style="color: #ffffff;">command</span> = <span style="color: #ffa500;">"dir"</span>
+<span style="color: #00ff00; font-weight: bold;">else</span>:
+    <span style="color: #ffffff;">command</span> = <span style="color: #ffa500;">"ls -l"</span>
+
+<span style="color: #00ff00; font-weight: bold;">print</span>(os.system(command))
+</pre>
+</div>
+
+<pre class="example">
+total 532
+-rw-rw-r-- 1 pimiento pimiento 28320 Oct 25 21:57 cast.html
+-rw-rw-r-- 1 pimiento pimiento 47680 Oct 25 21:00 c_structures.html
+-rw-r--r-- 1 pimiento pimiento 19451 Oct 25 21:00 c_structures.org
+-rw-rw-r-- 1 pimiento pimiento 17926 Oct 25 22:00 c_varargs.html
+-rw-r--r-- 1 pimiento pimiento  3343 Oct 25 22:00 c_varargs.org
+-rw-rw-r-- 1 pimiento pimiento 32268 Oct 25 22:00 decorators.html
+-rw-r--r-- 1 pimiento pimiento  8399 Oct 25 22:00 decorators.org
+-rw-rw-r-- 1 pimiento pimiento 16317 Oct 25 22:06 fish_rat_or_bird.html
+-rw-r--r-- 1 pimiento pimiento  2801 Oct 25 22:06 fish_rat_or_bird.org
+-rwxrwxr-x 1 pimiento pimiento  1822 Oct 25 22:05 index_generator.py
+-rw-rw-r-- 1 pimiento pimiento  2231 Oct 25 22:08 index.md
+-rw-r--r-- 1 pimiento pimiento 23742 Oct 25 22:07 linkers.org
+-rw-rw-r-- 1 pimiento pimiento 78052 Oct 11  2013 org-info.js
+-rw-r--r-- 1 pimiento pimiento  2549 Oct 25 22:08 pdftk_and_djvu.org
+-rw-rw-r-- 1 pimiento pimiento 21594 Oct 25 22:09 processes.html
+-rw-r--r-- 1 pimiento pimiento  8064 Oct 25 22:09 processes.org
+-rw-r--r-- 1 pimiento pimiento  3394 Oct 25 17:10 publish_to_blogger.org
+-rw-rw-r-- 1 pimiento pimiento 19211 Oct 25 22:10 python_collections.html
+-rw-r--r-- 1 pimiento pimiento  3282 Oct 25 22:10 python_collections.org
+-rw-rw-r-- 1 pimiento pimiento 43114 Oct 25 22:10 python_gc.html
+-rw-r--r-- 1 pimiento pimiento 14244 Oct 25 22:10 python_gc.org
+-rw-rw-r-- 1 pimiento pimiento 26972 Oct 25 22:10 python_gil.html
+-rw-r--r-- 1 pimiento pimiento  8462 Oct 25 22:10 python_gil.org
+-rw-rw-r-- 1 pimiento pimiento 29960 Oct 25 22:11 python_graphs.html
+-rw-r--r-- 1 pimiento pimiento  6016 Oct 25 22:11 python_graphs.org
+-rw-r--r-- 1 pimiento pimiento    29 Oct 25 17:10 python_logging.org
+-rw-r--r-- 1 pimiento pimiento  5485 Oct 25 22:11 python_os.org
+-rw-r--r-- 1 pimiento pimiento   404 Oct 25 17:10 r_base.org
+-rw-rw-r-- 1 pimiento pimiento  4487 Oct 25 17:08 solarized-dark.css
+-rw-r--r-- 1 pimiento pimiento  5319 Oct 25 17:10 unix_hardlink_symlink.org
+0
+</pre>
+</div>
+
+<div id="outline-container-orgac62845" class="outline-3">
+<h3 id="orgac62845"><span class="section-number-3">3.1</span> Запуск нового процесса</h3>
+<div class="outline-text-3" id="text-3-1">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">import</span> os
+<span style="color: #00ff00; font-weight: bold;">import</span> sys
+
+<span style="color: #ffffff;">program</span> = <span style="color: #ffa500;">"echo"</span>
+<span style="color: #ffffff;">arguments</span> = [<span style="color: #ffa500;">"Hello and goodbye!"</span>]
+os.execvp(program, (program,) + <span style="color: #b0c4de; font-weight: bold;">tuple</span>(arguments))
+</pre>
+</div>
+
+<pre class="example">
+Hello and goodbye!
+
+</pre>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">import</span> os
+
+
+<span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">run</span>(program, *args):
+    <span style="color: #ffffff;">pid</span> = os.fork()
+    <span style="color: #00ff00; font-weight: bold;">if</span> <span style="color: #00ff00; font-weight: bold;">not</span> pid:                 <span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">child process</span>
+        os.execvp(program, (program,) + args)
+    <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"I'm parent"</span>)
+    <span style="color: #00ff00; font-weight: bold;">return</span> os.wait()[0]
+
+run(<span style="color: #ffa500;">"echo"</span>, <span style="color: #ffa500;">"Hello from fork!"</span>)
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"goodbye"</span>)
+</pre>
+</div>
+
+<pre class="example">
+Hello from fork!
+I'm parent
+goodbye
+
+</pre>
+
+<p>
+<b>fork</b> вернёт нулевой <i>pid</i> для нового процесса (возврат значения <b>fork</b> будет первым, что произойдёт в этом процессе) и не-нулевое значение для оригинального процесса. В случае с <i>Windows</i> надо пользоваться функцией <b>spawn</b>, так <b>fork</b> в <i>Windows</i> не поддерживается.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org751b3ad" class="outline-3">
+<h3 id="org751b3ad"><span class="section-number-3">3.2</span> Python daemon</h3>
+<div class="outline-text-3" id="text-3-2">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">import</span> os
+<span style="color: #00ff00; font-weight: bold;">import</span> time
+
+<span style="color: #ffffff;">pid</span> = os.fork()
+<span style="color: #00ff00; font-weight: bold;">if</span> pid:
+    os._exit(0)                 <span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">kill original</span>
+
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"daemon started"</span>)
+time.sleep(1)
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"daemon terminated"</span>)
+</pre>
+</div>
+
+<pre class="example">
+daemon started
+daemon terminated
+
+</pre>
+
+<p>
+Это очень примитивный пример демона на Python, так как необходимо ещё позаботиться о перенаправлении <i>stdout</i> и <i>stderr</i> в dev-null и о закрытии <i>stdin</i>. Необходимо позаботиться о вызове os.setpgrp чтобы сигналы, посланные процессу не вызывали проблем для нашего демона. О демонах в UNIX я напишу когда-нибудь отдельно и подробно, на основе книги APUE.
+</p>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Pavel Vavilin</p>
+<p class="date">Created: 2017-10-25 Wed 22:11</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
