@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2017-10-25 Wed 22:10 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>GIL в Python</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Pavel Vavilin" />
+<meta name="keywords" content="python" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+
+<script type="text/javascript" src="org-info.js">
+/**
+ *
+ * @source: org-info.js
+ *
+ * @licstart  The following is the entire license notice for the
+ *  JavaScript code in org-info.js.
+ *
+ * Copyright (C) 2012-2017 Free Software Foundation, Inc.
+ *
+ *
+ * The JavaScript code in this tag is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU
+ * General Public License (GNU GPL) as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.  The code is distributed WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+ *
+ * As additional permission under GNU GPL version 3 section 7, you
+ * may distribute non-source (e.g., minimized or compacted) forms of
+ * that code without the copy of the GNU GPL normally required by
+ * section 4, provided you include this license notice and a URL
+ * through which recipients can access the Corresponding Source.
+ *
+ * @licend  The above is the entire license notice
+ * for the JavaScript code in org-info.js.
+ *
+ */
+</script>
+
+<script type="text/javascript">
+
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+
+<!--/*--><![CDATA[/*><!--*/
+org_html_manager.set("TOC_DEPTH", "3");
+org_html_manager.set("LINK_HOME", "https://pimiento.github.io/");
+org_html_manager.set("LINK_UP", "https://pimiento.github.io/");
+org_html_manager.set("LOCAL_TOC", "1");
+org_html_manager.set("VIEW_BUTTONS", "0");
+org_html_manager.set("MOUSE_HINT", "underline");
+org_html_manager.set("FIXED_TOC", "0");
+org_html_manager.set("TOC", "1");
+org_html_manager.set("VIEW", "1");
+org_html_manager.setup();  // activate after the parameters are set
+/*]]>*///-->
+</script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="https://pimiento.github.io/"> UP </a>
+ |
+ <a accesskey="H" href="https://pimiento.github.io/"> HOME </a>
+</div><div id="content">
+<h1 class="title">GIL в Python</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgb3d7edc">1. Потоки в Python</a></li>
+<li><a href="#org9c198c6">2. Структуры интерпретатора, обеспечивающие многопоточную работу</a></li>
+<li><a href="#org375af48">3. GIL</a>
+<ul>
+<li><a href="#org48acb60">3.1. Старый GIL: 2.x и 3.0/3.1</a></li>
+<li><a href="#org21433e4">3.2. Новый GIL</a></li>
+</ul>
+</li>
+<li><a href="#org641ea81">4. GIL и системный вызовы</a></li>
+</ul>
+</div>
+</div>
+
+
+<div id="outline-container-orgb3d7edc" class="outline-2">
+<h2 id="orgb3d7edc"><span class="section-number-2">1</span> Потоки в Python</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Python threads — это настоящие потоки (POSIX threads или Windows threads), полностью контролируемые ОС. Рассмотрим поточное выполнение в процессе интерпретатора Python (CPython, написанного на C):
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">import</span> time
+<span style="color: #00ff00; font-weight: bold;">import</span> threading
+
+<span style="color: #00ff00; font-weight: bold;">class</span> <span style="color: #00ffff;">CountdownThread</span>(threading.Thread):
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__init__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>, count):
+        threading.Thread.__init__(<span style="color: #00ff00; font-weight: bold;">self</span>)
+        <span style="color: #00ff00; font-weight: bold;">self</span>.count = count
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">run</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">while</span> <span style="color: #00ff00; font-weight: bold;">self</span>.count &gt; 0:
+            <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"Counting down"</span>, <span style="color: #00ff00; font-weight: bold;">self</span>.count)
+            <span style="color: #00ff00; font-weight: bold;">self</span>.count -= 1
+            time.sleep(2)
+        <span style="color: #00ff00; font-weight: bold;">return</span>
+</pre>
+</div>
+<p>
+Многопоточная программа на <i>C</i> не должна как-то отдельно регистрировать свои потоки — достаточно вызова API (pthread_create или CreateThread) для запуска потока. Интерпретатор Python для своей работы требует ряда структур.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org9c198c6" class="outline-2">
+<h2 id="org9c198c6"><span class="section-number-2">2</span> Структуры интерпретатора, обеспечивающие многопоточную работу</h2>
+<div class="outline-text-2" id="text-2">
+<dl class="org-dl">
+<dt>PyInterpreterState</dt><dd>содержит глобальное состояние интерпретатора: загруженные модули <i>modules</i>, указатель на первый (главный) поток <i>tstate_head</i> и разное другое:</dd>
+</dl>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">PyInterpreterState</span> {
+    <span style="color: #00ffff;">PyIterpreterState</span> *<span style="color: #ffffff;">next</span>;
+    <span style="color: #00ffff;">PyThreadState</span> *<span style="color: #ffffff;">tstate_head</span>;
+
+    <span style="color: #00ffff;">PyObject</span> *<span style="color: #ffffff;">modules</span>;
+    <span style="color: #00ffff;">PyObject</span> *<span style="color: #ffffff;">sysdict</span>;
+    <span style="color: #00ffff;">PyObject</span> *<span style="color: #ffffff;">builtins</span>;
+    <span style="color: #00ffff;">PyObject</span> *<span style="color: #ffffff;">modules_reloading</span>;
+
+    <span style="color: #00ffff;">PyObject</span> *<span style="color: #ffffff;">codec_search_path</span>;
+    <span style="color: #00ffff;">PyObject</span> *<span style="color: #ffffff;">codec_search_cache</span>;
+    <span style="color: #00ffff;">PyObject</span> *<span style="color: #ffffff;">codec_error_registry</span>;
+};
+</pre>
+</div>
+
+<dl class="org-dl">
+<dt>PyThreadState</dt><dd>позволяет узнать какой кадр стека (frame) исполняется и какой номер у потока с точки зрения операционной системы.</dd>
+</dl>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">PyThreadState</span> {
+    <span style="color: #00ffff;">PyThreadState</span> *<span style="color: #ffffff;">next</span>;
+    <span style="color: #00ffff;">PyInterpreterState</span> *<span style="color: #ffffff;">interp</span>;
+
+    <span style="color: #00ffff;">PyFrameObject</span> *<span style="color: #ffffff;">frame</span>;
+    <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">recursion_depth</span>;
+
+    <span style="color: #00ffff;">Py_tracefunc</span> <span style="color: #ffffff;">c_profilefunc</span>;
+    <span style="color: #00ffff;">Py_tracefunc</span> <span style="color: #ffffff;">c_tracefunc</span>;
+    <span style="color: #00ffff;">PyObject</span> *<span style="color: #ffffff;">c_profileobj</span>;
+    <span style="color: #00ffff;">PyObject</span> *<span style="color: #ffffff;">c_traceobj</span>;
+
+    <span style="color: #00ffff;">PyObject</span> *<span style="color: #ffffff;">exc_type</span>;
+    <span style="color: #00ffff;">PyObject</span> *<span style="color: #ffffff;">exc_value</span>;
+    <span style="color: #00ffff;">PyObject</span> *<span style="color: #ffffff;">exc_traceback</span>;
+
+    <span style="color: #00ffff;">PyObject</span> *<span style="color: #ffffff;">dict</span>;             <span style="color: #5F7F5F;">/* </span><span style="color: #ffa500; font-style: italic;">Stores per-thread state </span><span style="color: #5F7F5F;">*/</span>
+
+    <span style="color: #00ffff;">long</span> <span style="color: #ffffff;">thread_id</span>;
+};
+</pre>
+</div>
+
+<dl class="org-dl">
+<dt>PyFrameObject</dt><dd>это объект кадра стека. Имеет указатель на предыдущий кадр <i>f_back</i>, исполняемый код <i>f_code</i> и последнюю выполненную в этом коде инструкцию <i>f_lasti</i>, указатель на свой поток <i>f_tstate</i> и серию из глобального, локального и встроенного пространства имён (<i>f_globals</i>, <i>f_locals</i>, <i>f_builtins</i>).</dd>
+</dl>
+<div class="org-src-container">
+<pre class="src src-c"><span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">PyFrameObject</span> {
+    PyObject_VAR_HEAD
+    <span style="color: #00ffff;">PyFrameObject</span> *<span style="color: #ffffff;">f_back</span>;      <span style="color: #5F7F5F;">/* </span><span style="color: #ffa500; font-style: italic;">previous frame, or NULL </span><span style="color: #5F7F5F;">*/</span>
+    <span style="color: #00ffff;">PyCodeObject</span> *<span style="color: #ffffff;">f_code</span>;       <span style="color: #5F7F5F;">/* </span><span style="color: #ffa500; font-style: italic;">code segment </span><span style="color: #5F7F5F;">*/</span>
+    <span style="color: #00ffff;">PyObject</span> *<span style="color: #ffffff;">f_builtins</span>;       <span style="color: #5F7F5F;">/* </span><span style="color: #ffa500; font-style: italic;">builtin symbol table (PyDictObject) </span><span style="color: #5F7F5F;">*/</span>
+    <span style="color: #00ffff;">PyObject</span> *<span style="color: #ffffff;">f_globals</span>;        <span style="color: #5F7F5F;">/* </span><span style="color: #ffa500; font-style: italic;">global symbol table (PyDictObject) </span><span style="color: #5F7F5F;">*/</span>
+    <span style="color: #00ffff;">PyObject</span> *<span style="color: #ffffff;">f_locals</span>;         <span style="color: #5F7F5F;">/* </span><span style="color: #ffa500; font-style: italic;">local symbol table (any mapping) </span><span style="color: #5F7F5F;">*/</span>
+
+    <span style="color: #00ffff;">PyThreadState</span> *<span style="color: #ffffff;">f_state</span>;
+    <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">f_lasti</span>;                <span style="color: #5F7F5F;">/* </span><span style="color: #ffa500; font-style: italic;">Last instruction if called </span><span style="color: #5F7F5F;">*/</span>
+};
+</pre>
+</div>
+
+<p>
+Важно понимать, что все три необходимых для исполнения структуры взаимно связаны между собой и <i>PyThreadState_GET()</i> возвращает указатель на текущий работающий поток.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org375af48" class="outline-2">
+<h2 id="org375af48"><span class="section-number-2">3</span> GIL</h2>
+<div class="outline-text-2" id="text-3">
+</div>
+<div id="outline-container-org48acb60" class="outline-3">
+<h3 id="org48acb60"><span class="section-number-3">3.1</span> Старый GIL: 2.x и 3.0/3.1</h3>
+<div class="outline-text-3" id="text-3-1">
+<p>
+GIL переключается каждые 100 инструкций (или на IO операциях). Сам GIL устроен как нерекурсиваная блокировка. Только что освободивший GIL поток скорее всего обратно сразу же его не получит (если алгоритм переключения потоков в ОС "справедливо" распределяет время работы потоков), а отдаст управление другому потоку и сам встанет в ожидание. Проблемы GIL:
+</p>
+<ul class="org-ul">
+<li>GIL переключается даже в однопоточной программе. Формально, <i>interpreter_lock</i> создаётся не сразу при старте интерпретатора. Но импорт модуля <i>threading</i> или <i>sqlite3</i> создаст GIL даже без создания второго потока. На практике правильней считать, что GIL есть всегда.</li>
+<li>GIL переключается постоянно, независимо от того требует ли другой поток переключения или они все заблокированы ожиданием ввода-вывода или объектами синхронизации.</li>
+<li>Потоки соревнуются за захват GIL. Например, потоки, интенсивно использующие IO, получают более высокий приоритет чем чисто вычислительные. Это может негативно сказываться на производительности не-IO потоков.</li>
+<li>Переключение происходит по количеству выполненых инструкций интерпретатора Python. Время инструкций может сильно отличаться: простое сложение или создание списка на миллион элементов.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">import</span> sys
+
+<span style="color: #ffffff;">i</span> = sys.getcheckinterval()
+sys.setcheckinterval(i)
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"check interval is: %d"</span> % i)
+</pre>
+</div>
+
+<pre class="example">
+check interval is: 100
+
+</pre>
+
+<p>
+В силу слабой связности интервала переключения со временем исполнения эти функции практически бесполезны.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org21433e4" class="outline-3">
+<h3 id="org21433e4"><span class="section-number-3">3.2</span> Новый GIL</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+Использует усовершенствованную схему, базирующуюся на времени. Кроме того, добавлен специальный механизм для предотвращения повторного захвата GIL.
+</p>
+<ul class="org-ul">
+<li>Поток, владеющий GIL, не отдаст его пока его об этом не попросят.</li>
+<li>Если уж отдал по просьбе, то подождёт окончания переключения и не будет сразу же пытаться захватить GIL назад.</li>
+<li>Поток, у которого не получилось захватить GIL, сначала выждет 5мс и лишь потом пошлёт запрос на переключение, принуждая текущего владельца освободить ресурс. Таким образом, переключение происходит не чаще чем раз в 5мс, если только владелец не отдаст GIL добровольно перед выполнением системного вызова.</li>
+</ul>
+
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">import</span> sys
+
+<span style="color: #00ff00; font-weight: bold;">print</span>(sys.getswitchinterval())
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">sys.steswitchinterval(i)</span>
+</pre>
+</div>
+
+<pre class="example">
+0.005
+
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org641ea81" class="outline-2">
+<h2 id="org641ea81"><span class="section-number-2">4</span> GIL и системный вызовы</h2>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Pavel Vavilin</p>
+<p class="date">Created: 2017-10-25 Wed 22:10</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
