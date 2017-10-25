@@ -31,13 +31,19 @@ def link_template(title, url):
 
 
 def tag_template(tags):
-    title = ('|'.join(maybe_h(tag, 5) for tag in tags)).format(*tags)
-    header_line = '|'.join([" --- "] * len(tags))
+    title = ('|'.join('{}' for tag in tags)).format(*tags)
+    if len(tags) > 2:
+        first = "| --- |"
+        last = "|---:|"
+        middle = '|'.join([":---:"] * len(tags[1:-1]))
+        header_line = first + middle + last
+    else:
+        header_line = '|'.join(["---"] * len(tags))
     return title + "\n" + header_line
 
 
 def tag_link_template(links):
-    return ('|'.join(maybe_h(link) for link in links)).format(*links)
+    return ('|'.join('{}' for link in links)).format(*links)
 
 
 def get_index_page():
@@ -54,7 +60,7 @@ def get_index_page():
     lines.append("""<div id="data-blank-field" style="height:500px"></div>""")
     lines.append("---\n")
     lines.append(maybe_h("header", 5).format("ugly implimentation of tags cloud"))
-    lines.append("---\n")
+    lines.append("---")
 
     keys_iterator = iter(sorted(keywords.keys()))
     for tags in zip_longest(*[keys_iterator]*3, fillvalue=''):
