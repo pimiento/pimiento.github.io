@@ -77,7 +77,7 @@ def get_index_page():
     # add blank field
     lines.append(blank_field(10))
     lines.append("\n---\n")
-    lines.append(maybe_h("-", 5).format("ugly implimentation of tags cloud"))
+    lines.append(maybe_h("-", 3).format("ugly implimentation of tags cloud"))
     lines.append("\n---\n")
 
     keys_iterator = iter(sorted(keywords.keys()))
