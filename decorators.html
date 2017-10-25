@@ -1,0 +1,565 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2017-10-25 Wed 17:43 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Декораторы в Python</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Pavel Vavilin" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+
+<script type="text/javascript" src="org-info.js">
+/**
+ *
+ * @source: org-info.js
+ *
+ * @licstart  The following is the entire license notice for the
+ *  JavaScript code in org-info.js.
+ *
+ * Copyright (C) 2012-2017 Free Software Foundation, Inc.
+ *
+ *
+ * The JavaScript code in this tag is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU
+ * General Public License (GNU GPL) as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.  The code is distributed WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+ *
+ * As additional permission under GNU GPL version 3 section 7, you
+ * may distribute non-source (e.g., minimized or compacted) forms of
+ * that code without the copy of the GNU GPL normally required by
+ * section 4, provided you include this license notice and a URL
+ * through which recipients can access the Corresponding Source.
+ *
+ * @licend  The above is the entire license notice
+ * for the JavaScript code in org-info.js.
+ *
+ */
+</script>
+
+<script type="text/javascript">
+
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+
+<!--/*--><![CDATA[/*><!--*/
+org_html_manager.set("TOC_DEPTH", "3");
+org_html_manager.set("LINK_HOME", "https://pimiento.github.io/");
+org_html_manager.set("LINK_UP", "");
+org_html_manager.set("LOCAL_TOC", "1");
+org_html_manager.set("VIEW_BUTTONS", "0");
+org_html_manager.set("MOUSE_HINT", "underline");
+org_html_manager.set("FIXED_TOC", "0");
+org_html_manager.set("TOC", "1");
+org_html_manager.set("VIEW", "1");
+org_html_manager.setup();  // activate after the parameters are set
+/*]]>*///-->
+</script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href=""> UP </a>
+ |
+ <a accesskey="H" href="https://pimiento.github.io/"> HOME </a>
+</div><div id="content">
+<h1 class="title">Декораторы в Python</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org93e34bd">1. Декораторы в Python</a>
+<ul>
+<li><a href="#org9cac28a">1.1. Декораторы и Паттерн Декоратор</a></li>
+<li><a href="#org9428e08">1.2. Декораторы функций</a></li>
+<li><a href="#orgfd5ca38">1.3. Изменение имени функции, возвращённой из декоратора</a></li>
+<li><a href="#org8e17769">1.4. Декораторы с аргументами</a></li>
+<li><a href="#orgb8eed92">1.5. Модуль decorator</a>
+<ul>
+<li><a href="#orgaa25360">1.5.1. Определение декоратора</a></li>
+<li><a href="#org7f270be">1.5.2. Описание проблемы</a></li>
+<li><a href="#orge63cbef">1.5.3. Решение проблемы</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org93e34bd" class="outline-2">
+<h2 id="org93e34bd"><span class="section-number-2">1</span> Декораторы в Python</h2>
+<div class="outline-text-2" id="text-1">
+</div>
+<div id="outline-container-org9cac28a" class="outline-3">
+<h3 id="org9cac28a"><span class="section-number-3">1.1</span> Декораторы и Паттерн Декоратор</h3>
+<div class="outline-text-3" id="text-1-1">
+<p>
+Возможно использовать декораторы в Python чтобы реализовать паттерн декоратор, но это крайне редкое их использование. Декораторы в Python больше всего похожи на макросы.
+</p>
+</div>
+</div>
+<div id="outline-container-org9428e08" class="outline-3">
+<h3 id="org9428e08"><span class="section-number-3">1.2</span> Декораторы функций</h3>
+<div class="outline-text-3" id="text-1-2">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">class</span> <span style="color: #00ffff;">myDecorator</span>(<span style="color: #b0c4de; font-weight: bold;">object</span>):
+
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__init__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>, f):
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"inside my_decorator.__init__()"</span>)
+        f()
+
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__call__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>):
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"inside my_decorator.__call__()"</span>)
+
+
+<span style="color: #00ffff;">@myDecorator</span>
+<span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">aFunction</span>():
+    <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"inside aFunction"</span>)
+
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"Finished decorating aFunction()"</span>)
+
+aFunction()
+</pre>
+</div>
+
+<pre class="example">
+inside my_decorator.__init__()
+inside aFunction
+Finished decorating aFunction()
+inside my_decorator.__call__()
+
+</pre>
+</div>
+</div>
+<div id="outline-container-orgfd5ca38" class="outline-3">
+<h3 id="orgfd5ca38"><span class="section-number-3">1.3</span> Изменение имени функции, возвращённой из декоратора</h3>
+<div class="outline-text-3" id="text-1-3">
+<p>
+Если мы используем декоратор-функцию, то возвращённая им функция будет иметь совсем другое название, для решения это проблемы мы можем переопределить аттрибут <i>__name__</i>
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">entry_exit</span>(f):
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">wrapper</span>():
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"Entering"</span>, f.<span style="color: #b0c4de; font-weight: bold;">__name__</span>)
+        f()
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"Exited"</span>, f.<span style="color: #b0c4de; font-weight: bold;">__name__</span>)
+    wrapper.<span style="color: #b0c4de; font-weight: bold;">__name__</span> = f.<span style="color: #b0c4de; font-weight: bold;">__name__</span>
+    <span style="color: #00ff00; font-weight: bold;">return</span> wrapper
+
+<span style="color: #00ffff;">@entry_exit</span>
+<span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">original_name</span>():
+    <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"inside original name"</span>)
+
+original_name()
+</pre>
+</div>
+
+<pre class="example">
+Entering original_name
+inside original name
+Exited original_name
+
+</pre>
+</div>
+</div>
+<div id="outline-container-org8e17769" class="outline-3">
+<h3 id="org8e17769"><span class="section-number-3">1.4</span> Декораторы с аргументами</h3>
+<div class="outline-text-3" id="text-1-4">
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">class</span> <span style="color: #00ffff;">decorator_with_arguments</span>(<span style="color: #b0c4de; font-weight: bold;">object</span>):
+
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__init__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>, arg1, arg2, arg3):
+        <span style="color: #008AFF;">"""</span>
+<span style="color: #008AFF;">        If there are decorator arguments, the function</span>
+<span style="color: #008AFF;">        to be decorated is not passed to the constructor!</span>
+<span style="color: #008AFF;">        """</span>
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"Inside __init__()"</span>)
+        <span style="color: #00ff00; font-weight: bold;">self</span>.arg1 = arg1
+        <span style="color: #00ff00; font-weight: bold;">self</span>.arg2 = arg2
+        <span style="color: #00ff00; font-weight: bold;">self</span>.arg3 = arg3
+
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">__call__</span>(<span style="color: #00ff00; font-weight: bold;">self</span>, f):
+        <span style="color: #008AFF;">"""</span>
+<span style="color: #008AFF;">        If there are decorator arguments, __call__() is only called once,</span>
+<span style="color: #008AFF;">        as part of the decoration process! You can only give it a single argumen</span><span style="color: #DC8CC3; background-color: #3F3F3F;">t,</span>
+<span style="color: #008AFF;">        which is the function object.</span>
+<span style="color: #008AFF;">        """</span>
+        <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"Inside __call__()"</span>)
+        <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">wrapper</span>(*args):
+            <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"Inside wrapper()"</span>)
+            <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"Decorator arguments:"</span>, <span style="color: #00ff00; font-weight: bold;">self</span>.arg1, <span style="color: #00ff00; font-weight: bold;">self</span>.arg2, <span style="color: #00ff00; font-weight: bold;">self</span>.arg3)
+            f(*args)
+            <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"After f(*args)"</span>)
+        <span style="color: #00ff00; font-weight: bold;">return</span> wrapper
+
+<span style="color: #00ffff;">@decorator_with_arguments</span>(<span style="color: #ffa500;">"hello"</span>, <span style="color: #ffa500;">"world"</span>, 42)
+<span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">sayHello</span>(a1, a2, a3, a4):
+    <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"sayHello arguments: "</span>, a1, a2, a3, a4)
+
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"After decoration"</span>)
+
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"Preparing to call sayHello()"</span>)
+sayHello(<span style="color: #ffa500;">"say"</span>, <span style="color: #ffa500;">"hello"</span>, <span style="color: #ffa500;">"argument"</span>, <span style="color: #ffa500;">"list"</span>)
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"after first sayHello() call"</span>)
+sayHello(<span style="color: #ffa500;">"a"</span>, <span style="color: #ffa500;">"different"</span>, <span style="color: #ffa500;">"set of"</span>, <span style="color: #ffa500;">"arguments"</span>)
+<span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"after second sayHello() call"</span>)
+</pre>
+</div>
+
+<pre class="example">
+Inside __init__()
+Inside __call__()
+After decoration
+Preparing to call sayHello()
+Inside wrapper()
+Decorator arguments: hello world 42
+sayHello arguments:  say hello argument list
+After f(*args)
+after first sayHello() call
+Inside wrapper()
+Decorator arguments: hello world 42
+sayHello arguments:  a different set of arguments
+After f(*args)
+after second sayHello() call
+</pre>
+</div>
+</div>
+<div id="outline-container-orgb8eed92" class="outline-3">
+<h3 id="orgb8eed92"><span class="section-number-3">1.5</span> Модуль <a href="http://www.phyast.pitt.edu/~micheles/python/documentation.html">decorator</a></h3>
+<div class="outline-text-3" id="text-1-5">
+<p>
+Так как написание корректного декоратора требует значительного опыта и не так уж просто как кажется, то был создан модуль <b>decorator</b>.
+</p>
+</div>
+<div id="outline-container-orgaa25360" class="outline-4">
+<h4 id="orgaa25360"><span class="section-number-4">1.5.1</span> Определение декоратора</h4>
+<div class="outline-text-4" id="text-1-5-1">
+<p>
+Декораторы могут быть двух видов:
+</p>
+<ul class="org-ul">
+<li><i>signature-preserving</i> декораторы, т.е., вызываемые объекты, принимающие функцию на фход и возвращающие функцию на выход <b>с сохранением сигнатуры</b></li>
+<li><i>signature-changing</i> декораторы, т.е, декораторы, которые <b>изменяют сигнатуру</b> входной функции или декораторы, возвращающие <i>non-callable</i> объект
+К <i>signature-changing</i> декораторам относятся, например, декораторы <b>@staticmethod</b> и <b>@classmethod</b>, т.к. они принимают на вход функцию и возвращают объект дескриптора, который не является ни функцией, ни вызываемым объектом.</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org7f270be" class="outline-4">
+<h4 id="org7f270be"><span class="section-number-4">1.5.2</span> Описание проблемы</h4>
+<div class="outline-text-4" id="text-1-5-2">
+<p>
+Предположим, что мы хотим <i>трассировать</i> выполнение функции:
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">try</span>:
+    <span style="color: #00ff00; font-weight: bold;">from</span> functools <span style="color: #00ff00; font-weight: bold;">import</span> update_wrapper
+<span style="color: #00ff00; font-weight: bold;">except</span> <span style="color: #00ffff;">ImportError</span>:             <span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">using Python version &lt; 2.5</span>
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">decorator_trace</span>(f):
+        <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">newf</span>(*args, **kw):
+            <span style="color: #00ff00; font-weight: bold;">print</span> <span style="color: #ffa500;">"calling %s with args %s, %s"</span> % (f.<span style="color: #b0c4de; font-weight: bold;">__name__</span>, args, kw)
+            <span style="color: #00ff00; font-weight: bold;">return</span> f(*args, **kw)
+        newf.<span style="color: #b0c4de; font-weight: bold;">__name__</span> = f.<span style="color: #b0c4de; font-weight: bold;">__name__</span>
+        newf.__dict__.update(f.__dict__)
+        newf.<span style="color: #b0c4de; font-weight: bold;">__doc__</span> = f.<span style="color: #b0c4de; font-weight: bold;">__doc__</span>
+        <span style="color: #ffffff;">newf.__module__</span> = f.__module__
+        <span style="color: #00ff00; font-weight: bold;">return</span> newf
+<span style="color: #00ff00; font-weight: bold;">else</span>:                           <span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">using Python 2.5+</span>
+    <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">decorator_trace</span>(f):
+        <span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">newf</span>(*args, **kw):
+            <span style="color: #00ff00; font-weight: bold;">print</span> <span style="color: #ffa500;">"calling %s with args %s, %s"</span> % (f.<span style="color: #b0c4de; font-weight: bold;">__name__</span>, args, kw)
+            <span style="color: #00ff00; font-weight: bold;">return</span> f(*args, **kw)
+        <span style="color: #00ff00; font-weight: bold;">return</span> update_wrapper(newf, f)
+</pre>
+</div>
+</div>
+</div>
+<div id="outline-container-orge63cbef" class="outline-4">
+<h4 id="orge63cbef"><span class="section-number-4">1.5.3</span> Решение проблемы</h4>
+<div class="outline-text-4" id="text-1-5-3">
+<p>
+Решение проблемы с постояным отслеживанием чтобы все аттрибуты функции под декоратором остались прежними (имя, документация) заключается в использовании фабрики генераторов, которая спрячет всю сложность создания <i>signature-preserving</i> декораторов. Вот как мы можем реализовать функцию <i>decorator_trace</i>:
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">&#1042;&#1086;-&#1087;&#1077;&#1088;&#1074;&#1099;&#1093;, &#1080;&#1084;&#1087;&#1086;&#1088;&#1090;&#1080;&#1088;&#1091;&#1077;&#1084; &#1084;&#1086;&#1076;&#1091;&#1083;&#1100; decorator</span>
+<span style="color: #00ff00; font-weight: bold;">from</span> decorator <span style="color: #00ff00; font-weight: bold;">import</span> decorator
+
+
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">&#1047;&#1072;&#1090;&#1077;&#1084; &#1086;&#1073;&#1098;&#1103;&#1074;&#1083;&#1103;&#1077;&#1084; &#1074;&#1089;&#1087;&#1086;&#1084;&#1086;&#1075;&#1072;&#1090;&#1077;&#1083;&#1100;&#1085;&#1091;&#1102; &#1092;&#1091;&#1085;&#1082;&#1094;&#1080;&#1102; &#1089; &#1089;&#1080;&#1075;&#1085;&#1072;&#1090;&#1091;&#1088;&#1086;&#1081; (f, *args, **kwargs),</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">&#1082;&#1086;&#1090;&#1086;&#1088;&#1072;&#1103; &#1074;&#1099;&#1079;&#1099;&#1074;&#1072;&#1077;&#1090; &#1086;&#1088;&#1080;&#1075;&#1080;&#1085;&#1072;&#1083;&#1100;&#1085;&#1091;&#1102; &#1092;&#1091;&#1085;&#1082;&#1094;&#1080;&#1102; f &#1089; &#1072;&#1088;&#1075;&#1091;&#1084;&#1077;&#1085;&#1090;&#1072;&#1084;&#1080; args &#1080; kwargs</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">&#1080; &#1088;&#1077;&#1072;&#1083;&#1080;&#1079;&#1091;&#1077;&#1090; &#1074;&#1086;&#1079;&#1084;&#1086;&#1078;&#1085;&#1086;&#1089;&#1090;&#1100; &#1090;&#1088;&#1072;&#1089;&#1089;&#1080;&#1088;&#1086;&#1074;&#1082;&#1080;</span>
+<span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">trace</span>(f, *args, **kwargs):
+    <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #ffa500;">"calling %s with args %s, %s"</span> % (f.<span style="color: #b0c4de; font-weight: bold;">__name__</span>, args, kwargs))
+    <span style="color: #00ff00; font-weight: bold;">return</span> f(*args, **kwargs)
+
+
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">decorator &#1084;&#1086;&#1078;&#1077;&#1090; &#1082;&#1086;&#1085;&#1074;&#1077;&#1088;&#1090;&#1080;&#1088;&#1086;&#1074;&#1072;&#1090;&#1100; &#1074;&#1089;&#1087;&#1086;&#1084;&#1086;&#1075;&#1072;&#1090;&#1077;&#1083;&#1100;&#1085;&#1091;&#1102; &#1092;&#1091;&#1085;&#1082;&#1094;&#1080;&#1102; &#1074; signature-preserving </span><span style="color: #DC8CC3; background-color: #3F3F3F; font-style: italic;">&#1086;&#1073;&#1098;&#1077;&#1082;&#1090;-&#1076;&#1077;&#1082;&#1086;&#1088;&#1072;&#1090;&#1086;&#1088;</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">&#1090;.&#1077;., &#1101;&#1090;&#1086; &#1074;&#1099;&#1079;&#1099;&#1074;&#1072;&#1077;&#1084;&#1099;&#1081; &#1086;&#1073;&#1098;&#1077;&#1082;&#1090;, &#1087;&#1088;&#1080;&#1085;&#1080;&#1084;&#1072;&#1102;&#1097;&#1080;&#1081; &#1085;&#1072; &#1074;&#1093;&#1086;&#1076; &#1092;&#1091;&#1085;&#1082;&#1094;&#1080;&#1102; &#1080; &#1074;&#1086;&#1079;&#1074;&#1088;&#1072;&#1097;&#1072;&#1102;&#1097;&#1080;&#1081; &#1086;&#1073;&#1105;&#1088;&#1085;&#1091;</span><span style="color: #DC8CC3; background-color: #3F3F3F; font-style: italic;">&#1090;&#1091;&#1102;</span>
+<span style="color: #5F7F5F;"># </span><span style="color: #ffa500; font-style: italic;">&#1074; &#1076;&#1077;&#1082;&#1086;&#1088;&#1072;&#1090;&#1086;&#1088; &#1092;&#1091;&#1085;&#1082;&#1094;&#1080;&#1102; &#1089; &#1090;&#1072;&#1082;&#1086;&#1081; &#1078;&#1077; &#1090;&#1086;&#1095;&#1085;&#1086; &#1089;&#1080;&#1075;&#1085;&#1072;&#1090;&#1091;&#1088;&#1086;&#1081;, &#1082;&#1072;&#1082; &#1080; &#1091; &#1086;&#1088;&#1080;&#1075;&#1080;&#1085;&#1072;&#1083;&#1100;&#1085;&#1086;&#1081; &#1092;&#1091;&#1085;&#1082;&#1094;&#1080;&#1080;.</span>
+<span style="color: #00ffff;">@decorator</span>(trace)
+<span style="color: #00ff00; font-weight: bold;">def</span> <span style="color: #00ffff; font-weight: bold;">f1</span>(x):
+    <span style="color: #00ff00; font-weight: bold;">pass</span>
+
+f1(0)
+</pre>
+</div>
+
+<pre class="example">
+calling f1 with args (0,), {}
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Pavel Vavilin</p>
+<p class="date">Created: 2017-10-25 Wed 17:43</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
