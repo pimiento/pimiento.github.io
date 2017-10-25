@@ -22,18 +22,22 @@ def get_pages():
         yield(title, url, keywords)
 
 
+def maybe_h(h, n=6):
+    return '{} 'if h == "" else '#'*n + " {} " + '#'*n
+
+
 def link_template(title, url):
     return "[{title}]({url} \"{title}\")".format(title=title, url=url)
 
 
 def tag_template(tags):
-    title = ('|'.join("{}" for tag in tags)).format(*tags)
+    title = ('|'.join(maybe_h(tag, 5) for tag in tags)).format(*tags)
     header_line = '|'.join([" --- "] * len(tags))
     return title + "\n" + header_line
 
 
 def tag_link_template(links):
-    return ('|'.join("{}" for link in links)).format(*links)
+    return ('|'.join(maybe_h(link) for link in links)).format(*links)
 
 
 def get_index_page():
@@ -47,7 +51,10 @@ def get_index_page():
             keywords[tag].append(link_entry)
 
     # add blank field
-    lines.append("""<div id="data-blank-field" style="height:300px"></div>""")
+    lines.append("""<div id="data-blank-field" style="height:500px"></div>""")
+    lines.append("---")
+    lines.append(maybe_h("ugly implimentation of tags cloud", 5))
+    lines.append("---")
 
     keys_iterator = iter(sorted(keywords.keys()))
     for tags in zip_longest(*[keys_iterator]*3, fillvalue=''):
