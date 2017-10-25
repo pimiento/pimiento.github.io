@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2017-10-26 Thu 00:41 -->
+<!-- 2017-10-26 Thu 00:44 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>fish, rat, bird</title>
@@ -300,6 +300,28 @@ for the JavaScript code in this tag.
  }
 /*]]>*///-->
 </script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "left",
+        displayIndent: "5em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "Neo-Euler"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "Neo-Euler"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "left",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
 </head>
 <body>
 <div id="org-div-home-and-up">
@@ -312,14 +334,14 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgc7aab45">1. Задача:</a></li>
-<li><a href="#org8d99f99">2. Решение:</a></li>
+<li><a href="#org0e02d55">1. Задача:</a></li>
+<li><a href="#orgf3b8d02">2. Решение:</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgc7aab45" class="outline-2">
-<h2 id="orgc7aab45"><span class="section-number-2">1</span> Задача:</h2>
+<div id="outline-container-org0e02d55" class="outline-2">
+<h2 id="org0e02d55"><span class="section-number-2">1</span> Задача:</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 Вычислить число перестановок всех букв английского алфавита, которые не содержат в себе подстрок fish,  rat или bird.
@@ -327,11 +349,11 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org8d99f99" class="outline-2">
-<h2 id="org8d99f99"><span class="section-number-2">2</span> Решение:</h2>
+<div id="outline-container-orgf3b8d02" class="outline-2">
+<h2 id="orgf3b8d02"><span class="section-number-2">2</span> Решение:</h2>
 <div class="outline-text-2" id="text-2">
 <ol class="org-ol">
-<li><img src="ltximg/fish_rat_or_bird_0fe728c461c04e7e6c37db60134d977d3b324fa3.png" alt="fish_rat_or_bird_0fe728c461c04e7e6c37db60134d977d3b324fa3.png" /> — число перестановок, содержащих <b>fish</b>. <img src="ltximg/fish_rat_or_bird_8c4d64dacfa71e81ef9019d1c423f1a8212fbe5b.png" alt="fish_rat_or_bird_8c4d64dacfa71e81ef9019d1c423f1a8212fbe5b.png" /> — число перестановок, содержащих <b>rat</b>. <img src="ltximg/fish_rat_or_bird_43eb4455b3b8b4302f635d4f3eaefec4d9c1c98d.png" alt="fish_rat_or_bird_43eb4455b3b8b4302f635d4f3eaefec4d9c1c98d.png" /> — число перестановок, содержащих <b>bird</b>.</li>
+<li>\(A\) — число перестановок, содержащих <b>fish</b>. \(B\) — число перестановок, содержащих <b>rat</b>. \(C\) — число перестановок, содержащих <b>bird</b>.</li>
 <li>Всего число перестановок букв английского алфавита <b>26!</b>.</li>
 <li>Из этого числа надо вычесть число вхождений слова <b>fish</b>. Слово <b>fish</b> состоит из 4 букв, значит остаётся ещё 22 буквы алфавита. Итого, <b>23!</b>.</li>
 <li>Вычтем число вхождений слова <b>rat</b>: <b>24!</b>.</li>
@@ -396,7 +418,7 @@ for the JavaScript code in this tag.
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Pavel Vavilin</p>
-<p class="date">Created: 2017-10-26 Thu 00:41</p>
+<p class="date">Created: 2017-10-26 Thu 00:44</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
