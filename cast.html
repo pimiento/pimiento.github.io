@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2017-10-25 Wed 17:02 -->
+<!-- 2017-10-25 Wed 17:49 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>C++ named cast</title>
@@ -242,8 +242,8 @@ for the JavaScript code in this tag.
 
 <!--/*--><![CDATA[/*><!--*/
 org_html_manager.set("TOC_DEPTH", "3");
-org_html_manager.set("LINK_HOME", "");
-org_html_manager.set("LINK_UP", "");
+org_html_manager.set("LINK_HOME", "https://pimiento.github.io/");
+org_html_manager.set("LINK_UP", "https://pimiento.github.io/");
 org_html_manager.set("LOCAL_TOC", "1");
 org_html_manager.set("VIEW_BUTTONS", "0");
 org_html_manager.set("MOUSE_HINT", "underline");
@@ -301,25 +301,29 @@ for the JavaScript code in this tag.
 </script>
 </head>
 <body>
-<div id="content">
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="https://pimiento.github.io/"> UP </a>
+ |
+ <a accesskey="H" href="https://pimiento.github.io/"> HOME </a>
+</div><div id="content">
 <h1 class="title">C++ named cast</h1>
 <div id="table-of-contents">
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org289bd3a">1. named casts</a>
+<li><a href="#org131b89d">1. named casts</a>
 <ul>
-<li><a href="#orgac90841">1.1. static_cast</a></li>
-<li><a href="#org3d96e2a">1.2. const_cast</a></li>
-<li><a href="#org3317ee0">1.3. reinterpret_cast</a></li>
+<li><a href="#org1069aa3">1.1. static_cast</a></li>
+<li><a href="#org20a8b3e">1.2. const_cast</a></li>
+<li><a href="#org1b61957">1.3. reinterpret_cast</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org289bd3a" class="outline-2">
-<h2 id="org289bd3a"><span class="section-number-2">1</span> named casts</h2>
+<div id="outline-container-org131b89d" class="outline-2">
+<h2 id="org131b89d"><span class="section-number-2">1</span> named casts</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 Programmers should seriously consider banning C-style casts from their own programs. Where explicit type conversion is necessary, static_cast , reinterpret_cast , const_cast , or a combination of these can do what a C-style cast can. The named casts should be preferred because they are more explicit and more visible.
@@ -327,14 +331,14 @@ If you feel tempted to use an explicit type conversion, take the time to conside
 </p>
 </div>
 
-<div id="outline-container-orgac90841" class="outline-3">
-<h3 id="orgac90841"><span class="section-number-3">1.1</span> static_cast</h3>
+<div id="outline-container-org1069aa3" class="outline-3">
+<h3 id="org1069aa3"><span class="section-number-3">1.1</span> static_cast</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 A static_cast is used for all conversions that are well-defined. These include “safe” conversions that the compiler would allow you to do without a cast and less-safe conversions that are nonetheless well-defined. The types of conversions covered by static_cast include typical castless conversions, narrowing (information-losing) conversions, forcing a conversion from a void*, implicit type conversions, and static navigation of class hierarchies
 </p>
 <div class="org-src-container">
-<pre class="src src-cpp" id="org8e8af33"><span style="color: #00ffff;">void</span> <span style="color: #00ffff; font-weight: bold;">func</span>(<span style="color: #00ffff;">int</span>) {}
+<pre class="src src-cpp" id="org5402011"><span style="color: #00ffff;">void</span> <span style="color: #00ffff; font-weight: bold;">func</span>(<span style="color: #00ffff;">int</span>) {}
 
 <span style="color: #00ffff;">int</span> <span style="color: #00ffff; font-weight: bold;">main</span>() {
     <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">i</span> = 0x7fff; <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Max pos value = 32767</span>
@@ -388,7 +392,7 @@ A static_cast is used for all conversions that are well-defined. These include �
 Assigning from a void* is not allowed without a cast in C++ (unlike C). This is dangerous and requires that programmers know what they’re doing. The static_cast, at least, is easier to locate than the old standard cast when you’re hunting for bugs.
 </p>
 <div class="org-src-container">
-<pre class="src src-cpp" id="orga3822b0"><span style="color: #00ffff;">void</span>* <span style="color: #ffffff;">vp</span> = &amp;i;
+<pre class="src src-cpp" id="orgd18f0ac"><span style="color: #00ffff;">void</span>* <span style="color: #ffffff;">vp</span> = &amp;i;
 <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Old way produces a dangerous conversion:</span>
 <span style="color: #00ffff;">float</span>* <span style="color: #ffffff;">fp</span> = (<span style="color: #00ffff;">float</span>*)vp;
 <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">The new way is equally dangerous:</span>
@@ -399,8 +403,8 @@ fp = <span style="color: #00ff00; font-weight: bold;">static_cast</span>&lt;<spa
 </div>
 </div>
 
-<div id="outline-container-org3d96e2a" class="outline-3">
-<h3 id="org3d96e2a"><span class="section-number-3">1.2</span> const_cast</h3>
+<div id="outline-container-org20a8b3e" class="outline-3">
+<h3 id="org20a8b3e"><span class="section-number-3">1.2</span> const_cast</h3>
 <div class="outline-text-3" id="text-1-2">
 <p>
 If you want to convert from a const to a nonconst or from a volatile to a nonvolatile, you use const_cast. This is the only conversion allowed with const_cast; if any other conversion is involved it must be done using a separate expression or you’ll get a compile-time error.
@@ -408,7 +412,7 @@ If you take the address of a const object, you produce a pointer to a const, and
 A const_cast changes only a low-level const in its operand.
 </p>
 <div class="org-src-container">
-<pre class="src src-cpp" id="orgeed0791"><span style="color: #00ffff;">int</span> <span style="color: #00ffff; font-weight: bold;">main</span>() {
+<pre class="src src-cpp" id="org9896874"><span style="color: #00ffff;">int</span> <span style="color: #00ffff; font-weight: bold;">main</span>() {
     <span style="color: #00ff00; font-weight: bold;">const</span> <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">i</span> = 0;
     <span style="color: #00ffff;">int</span>* <span style="color: #ffffff;">j</span> = (<span style="color: #00ffff;">int</span>*)&amp;i;          <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Deprecated old-style form</span>
     j = <span style="color: #00ff00; font-weight: bold;">const_cast</span>&lt;<span style="color: #00ffff;">int</span>*&gt;(&amp;i);   <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Prefered</span>
@@ -422,15 +426,15 @@ A const_cast changes only a low-level const in its operand.
 </div>
 </div>
 
-<div id="outline-container-org3317ee0" class="outline-3">
-<h3 id="org3317ee0"><span class="section-number-3">1.3</span> reinterpret_cast</h3>
+<div id="outline-container-org1b61957" class="outline-3">
+<h3 id="org1b61957"><span class="section-number-3">1.3</span> reinterpret_cast</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 This is the least safe of the casting mechanisms, and the one most likely to produce bugs. A reinterpret_cast pretends that an object is just a bit pattern that can be treated (for some dark purpose) as if it were an entirely different type of object. You’ll virtually always need to reinterpret_cast back to the original type (or otherwise treat the variable as its original type) before doing anything else with it.
 </p>
 
 <div class="org-src-container">
-<pre class="src src-cpp" id="org0728ced"><span style="color: #8090A2;">#include</span> <span style="color: #ffa500;">&lt;iostream&gt;</span>
+<pre class="src src-cpp" id="org42ce09f"><span style="color: #8090A2;">#include</span> <span style="color: #ffa500;">&lt;iostream&gt;</span>
 <span style="color: #00ff00; font-weight: bold;">using</span> <span style="color: #7fffd4;">std</span>::<span style="color: #00ffff;">cout</span>;
 <span style="color: #00ff00; font-weight: bold;">using</span> <span style="color: #7fffd4;">std</span>::<span style="color: #00ffff;">endl</span>;
 <span style="color: #00ff00; font-weight: bold;">const</span> <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">sz</span> = 3;
@@ -473,7 +477,7 @@ The idea of reinterpret_cast is that when you use it, what you get is so foreign
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Pavel Vavilin</p>
-<p class="date">Created: 2017-10-25 Wed 17:02</p>
+<p class="date">Created: 2017-10-25 Wed 17:49</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
