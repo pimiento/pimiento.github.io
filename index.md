@@ -13,7 +13,7 @@
 * [Декораторы в Python](https://pimiento.github.io/decorators.html "Декораторы в Python")
 * [переменное число аргументов функции в C](https://pimiento.github.io/c_varargs.html "переменное число аргументов функции в C")
 * [структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")
-<div class="blank-field" style="height:100px"></div>
+<div class="blank-field" style="height:10px"></div>
 
 ---
 
@@ -54,7 +54,7 @@
 
 ---
 
-<div class="blank-field" style="height:400px"></div>
+<div class="blank-field" style="height:10px"></div>
 
 ---
 

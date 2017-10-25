@@ -66,7 +66,7 @@ def get_index_page():
         for tag in tags:
             keywords[tag].append(link_entry)
 
-    lines.append(blank_field(100))
+    lines.append(blank_field(10))
     lines.append("\n---\n")
     lines.append(maybe_h("-", 3).format("TODO LIST"))
     lines.append("\n---\n")
@@ -75,7 +75,7 @@ def get_index_page():
 
 
     # add blank field
-    lines.append(blank_field(400))
+    lines.append(blank_field(10))
     lines.append("\n---\n")
     lines.append(maybe_h("-", 5).format("ugly implimentation of tags cloud"))
     lines.append("\n---\n")
