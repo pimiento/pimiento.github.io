@@ -22,8 +22,18 @@ def get_pages():
         yield(title, url, keywords)
 
 
+def get_todo():
+    with open("todo.md", "r") as todo:
+        return ("* {}".format(line) for line in todo.readlines()
+                if line[0] == "*")
+
+
 def maybe_h(h, n=6):
     return '{} 'if h == "" else '#'*n + " {} " + '#'*n
+
+
+def blank_field(height):
+    return '<div class="blank-field" style="height:{}px"></div>'.format(height)
 
 
 def link_template(title, url):
@@ -56,11 +66,19 @@ def get_index_page():
         for tag in tags:
             keywords[tag].append(link_entry)
 
+    lines.append(blank_field(100))
+    lines.append("\n---\n")
+    lines.append(maybe_h("-", 3).format("TODO LIST"))
+    lines.append("\n---\n")
+    lines.extend(get_todo())
+    lines.append("\n---\n")
+
+
     # add blank field
-    lines.append("""<div id="data-blank-field" style="height:500px"></div>""")
-    lines.append("---\n")
-    lines.append(maybe_h("header", 5).format("ugly implimentation of tags cloud"))
-    lines.append("---")
+    lines.append(blank_field(400))
+    lines.append("\n---\n")
+    lines.append(maybe_h("-", 5).format("ugly implimentation of tags cloud"))
+    lines.append("\n---\n")
 
     keys_iterator = iter(sorted(keywords.keys()))
     for tags in zip_longest(*[keys_iterator]*3, fillvalue=''):

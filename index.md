@@ -1,7 +1,7 @@
 <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
 
-* [C++ named cast](https://pimiento.github.io/cast.html "C++ named cast")
 * [hardlink и symlink в UNIX](https://pimiento.github.io/unix_hardlink_symlink.html "hardlink и symlink в UNIX")
+* [C++ named cast](https://pimiento.github.io/cast.html "C++ named cast")
 * [Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")
 * [модуль os в Python](https://pimiento.github.io/python_os.html "модуль os в Python")
 * [работа с графами в Python](https://pimiento.github.io/python_graphs.html "работа с графами в Python")
@@ -13,11 +13,55 @@
 * [Декораторы в Python](https://pimiento.github.io/decorators.html "Декораторы в Python")
 * [переменное число аргументов функции в C](https://pimiento.github.io/c_varargs.html "переменное число аргументов функции в C")
 * [структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")
-<div id="data-blank-field" style="height:500px"></div>
+<div class="blank-field" style="height:100px"></div>
+
+---
+
+### TODO LIST ###
+
+---
+
+* * C: сигналы и их обработка
+
+* * Python: C-extensions
+
+* * Linux namespaces and LXC
+
+* * SQL или NoSQL
+
+* * C++: stack, heap
+
+* * C++: low-level top-level const
+
+* * C++: sizeof
+
+* * C++: asm include
+
+* * C++: aliasing types
+
+* * C++: update article about structures with C++ union, enum, bit-field
+
+* * C++: debugging overview
+
+* * C++: function pointers
+
+* * C++: header files
+
+* * C++: nested structures
+
+* * C++ access control
+
+
+---
+
+<div class="blank-field" style="height:400px"></div>
+
 ---
 
 ##### ugly implimentation of tags cloud #####
+
 ---
+
 
 
 
