@@ -26,7 +26,7 @@ def get_index_page():
     keywords = defaultdict(list)
     lines = []
     link_template = lambda t, u: "[{t}]({u} \"{t}\")".format(t=t, u=u)
-    tag_template = lambda n1, n2: "{n1}|{n2}\n--- |---".format(n1=n1, n2=n2)
+    tag_template = lambda n1, n2: "*{n1}*|*{n2}*\n--- |---".format(n1=n1, n2=n2)
     tag_link_template = lambda l1, l2: "{l1}|{l2}".format(l1=l1, l2=l2)
 
     for title, url, tags in get_pages():
@@ -35,7 +35,7 @@ def get_index_page():
         for tag in tags:
             keywords[tag].append(link_entry)
 
-    lines.extend([""]*8)          # 8 blank lines
+    lines.append("\n"*40)
 
     keys_iterator = iter(sorted(keywords.keys()))
     for tags in zip_longest(keys_iterator, keys_iterator, fillvalue=''):
@@ -43,6 +43,7 @@ def get_index_page():
         (t1, t2) = tags
         for links in zip_longest(keywords[t1], keywords[t2], fillvalue=''):
             lines.append(tag_link_template(*links))
+        lines.append("\n"*2)
 
     return lines
 
