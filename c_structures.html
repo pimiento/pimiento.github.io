@@ -3,12 +3,13 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2017-10-25 Wed 17:50 -->
+<!-- 2017-10-25 Wed 21:00 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>структуры в C</title>
 <meta name="generator" content="Org mode" />
 <meta name="author" content="Pavel Vavilin" />
+<meta name="keywords" content="C struct union typedef bit-field" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
   .title  { text-align: center;
@@ -333,21 +334,21 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org99f6498">1. Структура</a>
+<li><a href="#org8856098">1. Структура</a>
 <ul>
-<li><a href="#org4e121db">1.1. Структуры и функции</a></li>
+<li><a href="#org2782def">1.1. Структуры и функции</a></li>
 </ul>
 </li>
-<li><a href="#org91a0552">2. Массивы структур</a></li>
-<li><a href="#org0af30e7">3. typedef</a></li>
-<li><a href="#org20189a2">4. Объединения</a></li>
-<li><a href="#orgd27c214">5. Битовые поля</a></li>
+<li><a href="#org03c3731">2. Массивы структур</a></li>
+<li><a href="#orgf5c2a1e">3. typedef</a></li>
+<li><a href="#org7ad298f">4. Объединения</a></li>
+<li><a href="#org736f3c9">5. Битовые поля</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org99f6498" class="outline-2">
-<h2 id="org99f6498"><span class="section-number-2">1</span> Структура</h2>
+<div id="outline-container-org8856098" class="outline-2">
+<h2 id="org8856098"><span class="section-number-2">1</span> Структура</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 Это совокупность нескольких переменных, часто различных типов, сгруппированных под единым именем для удобства обращения. Главное изменение, внесённое стандартом ANSI в работу со структурами, — это определение присваивания структур. Теперь структуры можно копировать, присваивать, передавать в функции и возвращать из функций.
@@ -357,7 +358,7 @@ for the JavaScript code in this tag.
 Ключевое слово <b>struct</b> начинает объявление структуры, состоящее из списка объявлений элементов в фигурных скобках. После слова <b>struct</b> может стоять необязательный идентификатор, именуемый <i>меткой структуры</i>. Метка обозначает конкретный структурный тип; впоследствии её можно использовать для краткости, опуская всё, что находится в скобках при объявлении структур того же типа.
 </p>
 <div class="org-src-container">
-<pre class="src src-c" id="org6a3de2e"><span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span> {
+<pre class="src src-c" id="org51e1512"><span style="color: #00ff00; font-weight: bold;">struct</span> <span style="color: #00ffff;">point</span> {
     <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">x</span>;
     <span style="color: #00ffff;">int</span> <span style="color: #ffffff;">y</span>;
 };
@@ -427,8 +428,8 @@ rectangle with diagonal points: (0, 0), (10, 10)
 </pre>
 </div>
 
-<div id="outline-container-org4e121db" class="outline-3">
-<h3 id="org4e121db"><span class="section-number-3">1.1</span> Структуры и функции</h3>
+<div id="outline-container-org2782def" class="outline-3">
+<h3 id="org2782def"><span class="section-number-3">1.1</span> Структуры и функции</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 Расширенными операциями над структурами являются копирование или присваивание структуры как целого, взятие её адреса операцией <b>&amp;</b>, а так же обращение к её элементам. Копирование и присваивание включают также в себя передачу аргументов в функции и возвращение значений из функций. <b>Структуры нельзя сравнивать между собой.</b> Структуру можно инициализировать списком констант-инициализаторов для всех её полей.
@@ -499,8 +500,8 @@ origin is (1, 2)
 </div>
 </div>
 
-<div id="outline-container-org91a0552" class="outline-2">
-<h2 id="org91a0552"><span class="section-number-2">2</span> Массивы структур</h2>
+<div id="outline-container-org03c3731" class="outline-2">
+<h2 id="org03c3731"><span class="section-number-2">2</span> Массивы структур</h2>
 <div class="outline-text-2" id="text-2">
 <div class="org-src-container">
 <pre class="src src-C"><span style="color: #8090A2;">#include</span> <span style="color: #ffa500;">&lt;stdio.h&gt;</span>
@@ -598,8 +599,8 @@ origin is (1, 2)
 </div>
 </div>
 
-<div id="outline-container-org0af30e7" class="outline-2">
-<h2 id="org0af30e7"><span class="section-number-2">3</span> typedef</h2>
+<div id="outline-container-orgf5c2a1e" class="outline-2">
+<h2 id="orgf5c2a1e"><span class="section-number-2">3</span> typedef</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 Имя нового типа, объявляемое в <b>typedef</b>, стоит не сразу после ключевого слова, а на месте имени переменной. Синтаксически ключевое слово <b>typedef</b> можно считать аналогом идентификатора класса памяти: <b>extern</b>, <b>static</b> и т.п. Новые типы, определяемые с помощью <b>typedef</b>, начинаются с прописной буквы, чтобы можно было их легко различить.
@@ -636,8 +637,8 @@ origin is (1, 2)
 </div>
 </div>
 
-<div id="outline-container-org20189a2" class="outline-2">
-<h2 id="org20189a2"><span class="section-number-2">4</span> Объединения</h2>
+<div id="outline-container-org7ad298f" class="outline-2">
+<h2 id="org7ad298f"><span class="section-number-2">4</span> Объединения</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 Это переменная, которая может содержать объекты различных типов и размеров (но не одновременно); при этом удовлетворение требований к размеру и выравниванию возлагается на компилятор. С помощью объединений можно работать с данными различных типов в пределах одного участка памяти, не привнося в программу элементы низкоуровневого, машинно-зависимого программирования.
@@ -735,8 +736,8 @@ g: (1, 2), (10, 11)
 </div>
 </div>
 
-<div id="outline-container-orgd27c214" class="outline-2">
-<h2 id="orgd27c214"><span class="section-number-2">5</span> Битовые поля</h2>
+<div id="outline-container-org736f3c9" class="outline-2">
+<h2 id="org736f3c9"><span class="section-number-2">5</span> Битовые поля</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 Внутри системно-зависимой единицы памяти, которую мы будем называть "<i>словом</i>", можно задать <i>битовое поле</i> (<i>bit-field</i>) — совокупность идущих подряд битов. Синтаксис определения и использования полей основан на структурах.
@@ -768,7 +769,7 @@ g: (1, 2), (10, 11)
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Pavel Vavilin</p>
-<p class="date">Created: 2017-10-25 Wed 17:50</p>
+<p class="date">Created: 2017-10-25 Wed 21:00</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

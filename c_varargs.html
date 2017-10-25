@@ -3,12 +3,13 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2017-10-25 Wed 17:49 -->
+<!-- 2017-10-25 Wed 22:00 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>переменное число аргументов функции в C</title>
 <meta name="generator" content="Org mode" />
 <meta name="author" content="Pavel Vavilin" />
+<meta name="keywords" content="C vararg" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
   .title  { text-align: center;
@@ -311,13 +312,13 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org8ac7c53">1. Списки аргументов переменной длины</a></li>
+<li><a href="#orgc87993e">1. Списки аргументов переменной длины</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org8ac7c53" class="outline-2">
-<h2 id="org8ac7c53"><span class="section-number-2">1</span> Списки аргументов переменной длины</h2>
+<div id="outline-container-orgc87993e" class="outline-2">
+<h2 id="orgc87993e"><span class="section-number-2">1</span> Списки аргументов переменной длины</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 В стандартном заголовочном файле <span class="underline">&lt;stdarg.h&gt;</span> имеется набор макроопределений, дающих способ перебора списка аргументов. Реализация этого заголовочного файла системно-зависима, однако интерфейс всегда единообразный. Для объявления переменной, ссылающейся по очереди на каждый аргумент, имеется тип <b>va_list</b>. Макрос <b>va_start</b> инициализирует переменную типа <b>va_list</b> так, чтобы переменная указывала на первый безымянный аргумент. Функция должна иметь как минимум один аргумент с именем; последний именнованный аргумент используется макросом <b>va_start</b> для инициализации своей работы. Каждый вызов <b>va_arg</b> возвращает один аргумент и передвигает указатель типа <b>va_list</b> на следующий. Чтобы определить, какого типа аргумент нужно возвращать и на сколько передвигать указатель, <b>va_arg</b> использует заданное ему имя типа. Макрос <b>va_end</b> выполняет необходимые завершающие операции. Его необходимо вызвать до выхода из функции.
@@ -373,7 +374,7 @@ can print some text with numbers: 42 3.141500
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Pavel Vavilin</p>
-<p class="date">Created: 2017-10-25 Wed 17:49</p>
+<p class="date">Created: 2017-10-25 Wed 22:00</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
