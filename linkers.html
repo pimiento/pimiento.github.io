@@ -1,0 +1,597 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2017-10-25 Wed 23:10 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Линковка в Linux</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Pavel Vavilin" />
+<meta name="keywords" content="C Linux linking" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+
+<script type="text/javascript" src="org-info.js">
+/**
+ *
+ * @source: org-info.js
+ *
+ * @licstart  The following is the entire license notice for the
+ *  JavaScript code in org-info.js.
+ *
+ * Copyright (C) 2012-2017 Free Software Foundation, Inc.
+ *
+ *
+ * The JavaScript code in this tag is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU
+ * General Public License (GNU GPL) as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.  The code is distributed WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+ *
+ * As additional permission under GNU GPL version 3 section 7, you
+ * may distribute non-source (e.g., minimized or compacted) forms of
+ * that code without the copy of the GNU GPL normally required by
+ * section 4, provided you include this license notice and a URL
+ * through which recipients can access the Corresponding Source.
+ *
+ * @licend  The above is the entire license notice
+ * for the JavaScript code in org-info.js.
+ *
+ */
+</script>
+
+<script type="text/javascript">
+
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+
+<!--/*--><![CDATA[/*><!--*/
+org_html_manager.set("TOC_DEPTH", "3");
+org_html_manager.set("LINK_HOME", "https://pimiento.github.io/");
+org_html_manager.set("LINK_UP", "https://pimiento.github.io/");
+org_html_manager.set("LOCAL_TOC", "1");
+org_html_manager.set("VIEW_BUTTONS", "0");
+org_html_manager.set("MOUSE_HINT", "underline");
+org_html_manager.set("FIXED_TOC", "0");
+org_html_manager.set("TOC", "1");
+org_html_manager.set("VIEW", "1");
+org_html_manager.setup();  // activate after the parameters are set
+/*]]>*///-->
+</script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="https://pimiento.github.io/"> UP </a>
+ |
+ <a accesskey="H" href="https://pimiento.github.io/"> HOME </a>
+</div><div id="content">
+<h1 class="title">Линковка в Linux</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org6ca4bf7">1. Ссылки</a></li>
+<li><a href="#org9a6006d">2. Линковка</a></li>
+<li><a href="#org76f9b09">3. Основы</a></li>
+<li><a href="#org32b0043">4. Линковщики и Загрузчики</a></li>
+<li><a href="#org58e865f">5. Объектные файлы</a></li>
+<li><a href="#org0b69cbb">6. ELF</a>
+<ul>
+<li><a href="#org06e9730">6.1. Заголовки Elf</a></li>
+</ul>
+</li>
+<li><a href="#org20207dc">7. Символы и адресация символов</a></li>
+<li><a href="#org4e7b3ab">8. Линковка статических библиотек</a></li>
+<li><a href="#org0f82430">9. Релокация</a></li>
+<li><a href="#orgff88a13">10. Динамическая линковка: разделяемые библиотеки</a></li>
+<li><a href="#org29e2090">11. Загрузка разделяемой библиотеки из приложения</a></li>
+<li><a href="#org93c66c1">12. Утилиты для работы с объектными файлами</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org6ca4bf7" class="outline-2">
+<h2 id="org6ca4bf7"><span class="section-number-2">1</span> Ссылки</h2>
+<div class="outline-text-2" id="text-1">
+<ul class="org-ul">
+<li><a href="https://www.linuxjournal.com/article/6463">linuxjournal</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org9a6006d" class="outline-2">
+<h2 id="org9a6006d"><span class="section-number-2">2</span> Линковка</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Линковка это процесс компоновки различных кусков кода и данных вместе, в результате чего получается один исполняемый файл. Линковка может быть выполнена <i>во время компиляции</i>, <i>во время загрузки</i> (загрузчиком) и также <i>во время исполнения</i> (исполняемой программой). Раньше (конец 40-х) линковка выполнялась вручную, сейчас мы имеем программы <b>линковщики</b> (linkers), которые дают возможность динамической линковки разделяемых библиотек (shared libraries).
+</p>
+</div>
+</div>
+
+<div id="outline-container-org76f9b09" class="outline-2">
+<h2 id="org76f9b09"><span class="section-number-2">3</span> Основы</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Пусть у нас есть два файла с кодом <b>a.c</b> и <b>b.c</b>. Чтобы скомпилировать эти два файла при помощи GCC, мы вызываем следующий код
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">gcc a.c b.c
+</pre>
+</div>
+<p>
+Это вызывает следующую последовательность:
+</p>
+<ol class="org-ol">
+<li><p>
+Запустить препроцессор на файле <b>a.c</b> и сохранить результат в промежуточный файл <b>a.i</b>
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">cpp other-command-line options a.c /tmp/a.i
+</pre>
+</div></li>
+<li><p>
+Запустить компилятор на <b>a.i</b> и сгенерировать ассемблерный код в <b>a.s</b>
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">cc1 other-command-line options /tmp/a.i -o /tmp/a.s
+</pre>
+</div></li>
+<li><p>
+Запустить ассемблер на <b>a.s</b> и сгенерировать объектный файл <b>a.o</b>
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">as other-command-line options /tmp/a.s -o /tmp/a.o
+</pre>
+</div></li>
+<li>Повторить шаги 1-4 для файла <b>b.c</b>, получить объектный файл <b>b.o</b></li>
+<li><p>
+Работа линковщика состоит в том, чтобы получить на вход сгенерированные объектные файлы <b>a.o</b> и <b>b.o</b> и сгенерировать из них финальный исполняемый файл <b>a.out</b>
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">ld other-command-line-options /tmp/a.o /tmp/b.o -o a.out
+</pre>
+</div></li>
+</ol>
+<p>
+После этого мы можем запустить наш бинарный файл <b>./a.out</b>. Оболочка командной строки вызовет <i>функцию загрузчика</i>, которая скопирует код и данные из исполняемого файла <b>a.out</b> в память, затем передаст управление в начало программы. Функция загрузчик называется <b>execve</b>, она загружает код и данные исполняемых объектных файлов в память, затем запускает их выполнение, <i>прыгая</i> на первую инструкцию.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org32b0043" class="outline-2">
+<h2 id="org32b0043"><span class="section-number-2">4</span> Линковщики и Загрузчики</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Линковщики (linkers) и загрузчики (loaders) выполняют концептуально разные, но в целом похожие задачи:
+</p>
+<ul class="org-ul">
+<li>Загрузка программ. Копирование образа программы с жёсткого диска в RAM. В некоторых случаях загрузка программы (loading) также может включать выделение дисковой памяти или отображение виртульного адресного пространства на дисковое пространство.</li>
+<li>Релокация (relocation). Компиляторы и ассемблеры генерируют объектный код для каждого входного модуля программы с началом адресации в нуле. Релокация — это процесс изменения адреса загрузки различных частей программы во время объединения всех секций одного типа в одну секцию. Секции кода и данных таким образом будут указывать на корректные адреса в рантайме.</li>
+<li>Symbol Resolution. Программы имеют внутри себя множество подпрограмм; указание одной подпрограммы на другую подпрограмму происходит через символьные таблицы. Работа линковщика — подменять указания на символ подпрограммы на указание адреса расположения подпрограммы, изменяя объектный код.</li>
+</ul>
+<p>
+В итоге, получается что <b>загрузчик</b> выполняет загрузку программ; <b>линковщик</b> выполняет <i>symbol resolution</i>; <b>оба</b> выполняют релокацию.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org58e865f" class="outline-2">
+<h2 id="org58e865f"><span class="section-number-2">5</span> Объектные файлы</h2>
+<div class="outline-text-2" id="text-5">
+<ul class="org-ul">
+<li>Перемещаемый объектный файл (relocatable object file) — содержит бинарный код и данные в форме, которая может быть скомпонована с другими перемещаемыми объектными файлами во время компиляции. В итоге получаем исполняемый объектный файл, скомпонованный из перемещаемых объектный файлов.</li>
+<li>Исполняемый объектный файл (executable object file) — содержат бинарный код и данные в форме, которая может быть напрямую загружена в память и выполнена.</li>
+<li>Разделяемый объектный файл (shared object file) — специальный тип перемещаемого объектного файла, который может быть загружен в память и слинкован динамически либо во время загрузки в память, либо во время выполнения.</li>
+</ul>
+<p>
+Компиляторы и ассемблеры генерируют <i>перемещаемые объектные файлы</i> (а так же <i>разделяемые объектные файлы</i>). Линковщики компонуют эти объектные файлы вместе и генерируют <i>исполняемые объектные файлы</i>.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org0b69cbb" class="outline-2">
+<h2 id="org0b69cbb"><span class="section-number-2">6</span> ELF</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+Объектные файлы разнятся в разных ОС. Первые UNIX системы использовали формат <b>a.out</b>. Ранние System V использовали формат <b>COFF</b> (common object file format). Windows NT использует разновидность формата <b>COFF</b>, называемую <b>PE</b> (portable executable); IBM использует собственный формат <b>IBM 360</b>. Современные UNIX системы, такие как Linux и Solaris используют формат <b>UNIX ELF</b> (executable and linking format).
+</p>
+</div>
+
+<div id="outline-container-org06e9730" class="outline-3">
+<h3 id="org06e9730"><span class="section-number-3">6.1</span> Заголовки Elf</h3>
+<div class="outline-text-3" id="text-6-1">
+<dl class="org-dl">
+<dt>.text</dt><dd>the machine code of the compiled program.</dd>
+<dt>.rodata</dt><dd>read-only data, such as the format strings in printf statements.</dd>
+<dt>.data</dt><dd>initialized global variables</dd>
+<dt>.bss</dt><dd>uninitialized global variables. BSS (начало блока данных — block storage start), эта секция обычно пустует в объектных файлах; этакая заглушка.</dd>
+<dt>.symtab</dt><dd>таблица символов, содержащая информацию о функциях и глобальных переменных, определённых и адресованных в коде программы. Эта таблица не содержит записей о локальных переменных, эта информация содержится на стеке.</dd>
+<dt>.rel.text</dt><dd>список мест в секции <b>.text</b>, которые необходимо модифицировать, когда линковщик будет компоновать этот объект с другими объектными файлами.</dd>
+<dt>.rel.data</dt><dd>информация о релокации глобальных переменных, которые объявлены, но не определены в текущем модуле программы.</dd>
+<dt>.debug</dt><dd>таблица отладочных символов с записями о локальных и глобальных переменных. Эта секция будет присутствовать только если компилятору был передан флаг компиляции с таблицей отладочных символов (-g для gcc).</dd>
+<dt>.line</dt><dd>отображение номеров строк в исходном C-файле и машинными кодами инструкций. Эта информация необходима для отладки программ.</dd>
+<dt>.strtab</dt><dd>таблица строк для <i>таблицы символов</i> <b>.symtab</b> и <i>секции</i> <b>.debug</b></dd>
+</dl>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org20207dc" class="outline-2">
+<h2 id="org20207dc"><span class="section-number-2">7</span> Символы и адресация символов</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+Каждый <i>перемещаемый объектный файл</i> содержит таблицу символов связанные символы. В контексте линковщика представлены следующие виды символов:
+</p>
+<ul class="org-ul">
+<li><i>Глобальные символы объявленые на уровне модуля</i> — могут быть адресованы из других модулей.Все не-статические и глобальные переменные попадают в эту категорию.</li>
+<li><i>Глобальные символы адресованные в коде, но объевленные где-то вне</i>. Все функции и переменные с модификатором <b>extern</b> попадают в эту категорию.</li>
+<li><i>Локальные символы объявленные и адресованные исключительно во входном модуле</i>. Все статические функции и статические переменные попадают в эту категорию.</li>
+</ul>
+<p>
+Линковщик <i>разрещает</i> адресацию символов путём соотношения каждой ссылки на символ только к одному определению символу из таблицы символов.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4e7b3ab" class="outline-2">
+<h2 id="org4e7b3ab"><span class="section-number-2">8</span> Линковка статических библиотек</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+Статические библиотеки это коллекция конкатенированных объектных файлов схожего типа. Эти библиотеки хранятся на диске в архиве. Архив также содержит мета-информацию для ускорения поиска в нём. Каждый архив с <i>ELF</i> начинается с магической последовательности <i>!&lt;arch&gt;\n</i>.
+Статические библиотеки передаются на вход линковщику, который копирует только объектные модули, упоминаемые в программе. В процессе <i>разрешения адресации символов</i> при работе со статическими библиотеками линковщик сканирует перемещаемые объектные файлы и архивы справа-налево в порядке указания аргументов вызова. В процессе сканирования линковщик создаёт набор O-файлов (перемащаемых объектных файлов, которые будут включены в исполняемый файл); набор U-файлов (неразрешённых пока символов); набор D-файлов (символы, объявленные в предыдущих модулях). Изначально все три набора пустые.
+</p>
+<ul class="org-ul">
+<li>На каждый следующий входной аргумент линковщик определяет передаётся ли объектный файл или архив. Если это перемещаемый объектный файл, то линковщик добавляет его в набор O, обновляет наборы U и D и переходит к следующему входному аргументу</li>
+<li>Если входной аргумент архив, линковщик сканирует список членов модулей, входящих в архив, чтобы отыскать любые неразрешённые символы, находящиеся в наборе U. Если такие символы находятся, то они добавляются в список O и обновляется список U. Список D дополняется символами, найденными в архиве.</li>
+<li>Когда все входные аргументы пройдены, но если набор U не пуст, то линковщик сообщает об ошибке линковки и завершает свою работу. Иначе, если набор U пуст, линковщик компонует и релоцирует объектные файлы из набора O и генерирует финальный исполняемый файл.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org0f82430" class="outline-2">
+<h2 id="org0f82430"><span class="section-number-2">9</span> Релокация</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+После того как линковщик разрешил адресацию всех символов, каждый адресация символа ссылается ровно на одно определение символа. В этот момент линковщик запускает процесс релокации, состоящий из двух шагов:
+</p>
+<ol class="org-ol">
+<li><i>Релокация секций и определения символов</i>. Линковщик объединяет все секции одного типа в новую секцию. К примеру, линковщик объединяет все секции <b>.data</b> всех входных перемещаемых объектов в новую секцию <b>.data</b> результирующего исполняемого файла. Похожий процесс происходит для секции <b>.code</b>. Затем линковщик указывает текущий адрес памяти для этой сгенерированной секции. Так для каждой секции и символа. После завершения этого шага каждая инструкция и глобальная переменная в прогармме будет иметь уникальный адрес в момент загрузки.</li>
+<li>Релокация адресации символов внутри секций. На этом шаге линковщик изменяет адресации на символы в коде и секциях данных так, чтобы они указывали на корректный уникальный адрес в момент загрузки.</li>
+</ol>
+<p>
+Ассемблер при релокации создаёт секции <b>.relo.text</b> и <b>.relo.data</b>, в которых содержится информация как разрешить адресацию (адрес для обращения к символу). ELF содержит в секциях релокации следующие данные:
+</p>
+<ul class="org-ul">
+<li>Смещение (offset). Для перемещаемых файлов значение смещения это смещение в байтах от начала секции до получившегося после релокации адреса.</li>
+<li>Символ (symbol). Индекс символа в символьной таблице.</li>
+<li>Тип (type). Тип релокации.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgff88a13" class="outline-2">
+<h2 id="orgff88a13"><span class="section-number-2">10</span> Динамическая линковка: разделяемые библиотеки</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+Статические библиотеки, описанные выше, имеют существенный недостаток. Например, возьмём стандартные функции <i>printf</i> и <i>scanf</i>. Они используются почти что в каждой программе. Пусть на системе запущено 50-100 процессов, каждый процесс содержит свою копию исполняемого кода <i>printf</i> и <i>scanf</i> — это существенный объём затраченной памяти. Разделяемые библиотеки в свою очередь направлены на исправление этого недостатка статических библиотек. Разделяемые библиотеки это объектные модули, которые могут быть загружены в память в момент исполнения программы и после <i>слинкованы</i> с программой. <i>Разделяемые библиотеки</i> (<b>shared libraries</b>) называют так же <i>разделяемые объекты</i> (<b>shared objects</b>). На большинстве систем UNIX они именуются с суффиксом <b>.so</b>; на системах HP-UX — с суфиксом <b>.sl</b>; на системах Microsoft они называются DLL.
+Чтобы собрать разделяемый объектный файл, компилятор надо вызывать со специальным флагом
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">gcc -shared -fPIC -o libfoo.so a.o b.o
+</pre>
+</div>
+<p>
+Эта команда сообщает компилятору, что надо сгенерировать разделяемую библиотеку <i>libfoo.so</i>, собранную из объектный файлов <i>a.o</i> и <i>b.o</i>. Флаг <b>-fPIC</b> сообщает компилятору, что надо сгенерировать адресо-независимый код (position independent code — PIC).
+Теперь представим что объектный модуль <i>bar.o</i> зависит от <i>a.o</i> и <i>b.o</i>. В этом случае мы компилируем его так:
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">gcc bar.o ./libfoo.so
+</pre>
+</div>
+<p>
+Эта команда создаёт исполняемый файл <i>a.out</i>, который будет линковаться с <i>libfoo.so</i> в момент загрузки. Здесь <i>a.out</i> не содержит в себе объектный модулей <i>a.o</i> и <i>b.o</i>, которые были бы включены в него, если бы мы использовали статическую линковку. Исполняемый файл просто содержит некоторую информацию о релокации и таблицу символов, которые позволяют адресоваться к коду и данным в libfoo.so и эта адресация будет разрешена в процессе исполнения (runtime). Таким образом, <i>a.out</i> это не совсем исполняемый файл, который имеет зависимость от <i>libfoo.so</i>. Исполняемый файл содержит секцию <b>.interp</b>, где содержится имя динамического линковщика (который сам является разделяемым объектом в системах Linux — ld-linux.so). Таким образом, когда исполняемый файл загружается в память, загрузчик передаёт управление динамическому линковщику. Динамический линковщик содержит некоторый код, который отображает пространство адресов динамических библиотек на пространство адресов испольняемой программы.
+</p>
+<ol class="org-ol">
+<li>Происходит релокация кода и данных из <i>libfoo.so</i> в область памяти</li>
+<li>Происходит релокация адресации в <i>a.out</i> на символы объявленные в <i>libfoo.so</i>.</li>
+</ol>
+<p>
+В конце работы динамический линковщик передаёт контроль исполняемой программе. С этого момента местоположение разделяемого объекта зафиксировано в памяти.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org29e2090" class="outline-2">
+<h2 id="org29e2090"><span class="section-number-2">11</span> Загрузка разделяемой библиотеки из приложения</h2>
+<div class="outline-text-2" id="text-11">
+<p>
+Разделяемая библиотека может быть загружена из приложения в любой момент выполнения. Приложение может обратиться к динамическому линковщику с просьбой загрузить и прилинковать динамическую библиотеку. Linux, Solaris и другие системы поддерживают различниые функции, которые могут быть использованы для динамической загрузки разделяемых объектов. В Linux это системные вызовы <i>dlopen</i>, <i>dlsym</i>, <i>dlclose</i>, используемые для загрузки разделяемого объекта, поиска символа в разделяемом объекте и для закрытия разделяемого объекта.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org93c66c1" class="outline-2">
+<h2 id="org93c66c1"><span class="section-number-2">12</span> Утилиты для работы с объектными файлами</h2>
+<div class="outline-text-2" id="text-12">
+<dl class="org-dl">
+<dt>ar</dt><dd>создаёт статические библиотеки.</dd>
+<dt>objdump</dt><dd>может быть использована для показа всей информации о бинарном объектном файле.</dd>
+<dt>strings</dt><dd>показывает все строковые данные в бинарном файле, содержащие печатные символы.</dd>
+<dt>nm</dt><dd>перечислить символы, определённые в символьной таблице объектного файла.</dd>
+<dt>ldd</dt><dd>перечислить динамические библиотеки, от которых зависит объектный файл.</dd>
+<dt>strip</dt><dd>удалить информацию из таблицы символов.</dd>
+</dl>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Pavel Vavilin</p>
+<p class="date">Created: 2017-10-25 Wed 23:10</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
