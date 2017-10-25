@@ -53,7 +53,7 @@ def get_index_page():
     # add blank field
     lines.append("""<div id="data-blank-field" style="height:500px"></div>""")
     lines.append("---")
-    lines.append(maybe_h("ugly implimentation of tags cloud", 5))
+    lines.append(maybe_h("header", 5).format("ugly implimentation of tags cloud"))
     lines.append("---")
 
     keys_iterator = iter(sorted(keywords.keys()))
