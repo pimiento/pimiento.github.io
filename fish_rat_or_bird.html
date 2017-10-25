@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2017-10-26 Thu 00:44 -->
+<!-- 2017-10-26 Thu 09:07 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>fish, rat, bird</title>
@@ -302,8 +302,8 @@ for the JavaScript code in this tag.
 </script>
 <script type="text/x-mathjax-config">
     MathJax.Hub.Config({
-        displayAlign: "left",
-        displayIndent: "5em",
+        displayAlign: "center",
+        displayIndent: "0em",
 
         "HTML-CSS": { scale: 100,
                         linebreaks: { automatic: "false" },
@@ -334,14 +334,14 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org0e02d55">1. Задача:</a></li>
-<li><a href="#orgf3b8d02">2. Решение:</a></li>
+<li><a href="#org5529c41">1. Задача:</a></li>
+<li><a href="#org8c5c347">2. Решение:</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org0e02d55" class="outline-2">
-<h2 id="org0e02d55"><span class="section-number-2">1</span> Задача:</h2>
+<div id="outline-container-org5529c41" class="outline-2">
+<h2 id="org5529c41"><span class="section-number-2">1</span> Задача:</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 Вычислить число перестановок всех букв английского алфавита, которые не содержат в себе подстрок fish,  rat или bird.
@@ -349,8 +349,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-orgf3b8d02" class="outline-2">
-<h2 id="orgf3b8d02"><span class="section-number-2">2</span> Решение:</h2>
+<div id="outline-container-org8c5c347" class="outline-2">
+<h2 id="org8c5c347"><span class="section-number-2">2</span> Решение:</h2>
 <div class="outline-text-2" id="text-2">
 <ol class="org-ol">
 <li>\(A\) — число перестановок, содержащих <b>fish</b>. \(B\) — число перестановок, содержащих <b>rat</b>. \(C\) — число перестановок, содержащих <b>bird</b>.</li>
@@ -358,67 +358,66 @@ for the JavaScript code in this tag.
 <li>Из этого числа надо вычесть число вхождений слова <b>fish</b>. Слово <b>fish</b> состоит из 4 букв, значит остаётся ещё 22 буквы алфавита. Итого, <b>23!</b>.</li>
 <li>Вычтем число вхождений слова <b>rat</b>: <b>24!</b>.</li>
 <li>Вычтем число вхождений слова <b>bird</b>: <b>23!</b>.</li>
-<li><p>
-Формула включений-исключений для нашего примера имеет вид
-</p>
+<li>Формула включений-исключений для нашего примера имеет вид</li>
+</ol>
+
 <div class="LaTeX">
-<p>
-\|A &cup; B &cup; C\| = \|A\| + \|B\| + \|C\| - \|A &cap; B\| - \|A &cap; C\| - \|B &cap; C\| - \|A &cap; B &cap; C\|.
-</p>
+\begin{equation*}
+  |A \cup{} B \cup C| = |A| + |B| + |C| - |A \cap{} B| - |B \cap{} C| - |A \cap B \cap C|.
+\end{equation*}
 
 </div>
 <p>
 Но так как <b>fish</b> и <b>bird</b> содержат общий символ <b>i</b>, то
 </p>
 <div class="LaTeX">
-<p>
-\|A &cap; C\| = &empty;,
-</p>
+\begin{equation*}
+        |A \cap C| = \emptyset{},
+\end{equation*}
 
 </div>
 <p>
 а так как <b>bird</b> и <b>rat</b> содержат общий символ <b>r</b>, то
 </p>
 <div class="LaTeX">
-<p>
-\|B &cap; C\| = &empty;,
-</p>
+\begin{equation*}
+|B \cap C| = \emptyset{},
+\end{equation*}
 
 </div>
 <p>
 и значит
 </p>
 <div class="LaTeX">
-<p>
-\|A &cap; B &cap; C\| = &empty;.
-</p>
+\begin{equation*}
+|A \cap B \cap C| = \emptyset{}.
+\end{equation*}
 
 </div>
 <p>
 Тогда остаётся только
 </p>
 <div class="LaTeX">
-<p>
-\|A &cup; B &cup; C\| = \|A\| + \|B\| + \|C\| - \|A &cap; B\|
-</p>
+\begin{equation*}
+|A \cup B \cup C| = |A| + |B| + |C| - |A \cap B|
+\end{equation*}
 
 </div>
 <p>
 Это число строк в которых содержится или слово <b>fish</b> , или слово <b>rat</b>, или слово <b>bird</b>, или они вместе (вместе могут быть только <b>fish</b> и <b>rat</b>). Так как нам надо вычислить количество перестановок, где эти строки не встречаются, то вычтем всё из общего числа перестановок и получим
 </p>
 <div class="LaTeX">
-<p>
-26! - \|A\| + \|B\| + \|C\| - \|A &cap; B\| = 26! - 23! - 24! - 23! + 21!.
-</p>
+\begin{equation*}
+26! - |A| + |B| + |C| - |A \cap B| = 26! - 23! - 24! - 23! + 21!.
+\end{equation*}
 
-</div></li>
-</ol>
+</div>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Pavel Vavilin</p>
-<p class="date">Created: 2017-10-26 Thu 00:44</p>
+<p class="date">Created: 2017-10-26 Thu 09:07</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
