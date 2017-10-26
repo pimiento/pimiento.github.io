@@ -1,0 +1,195 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: Go
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: Go: Control Flow
+
+* If statement
+  Like for, the if statement can start with a short statement to execute before the condition. Variables declared by the statement are only in scope until the end of the if. Variables declared inside an if short statement are also available inside any of the else blocks.
+  #+BEGIN_SRC go :results none :exports code
+    if answer != 42 {
+            return "Wrong answer"
+    }
+    // IF with a short statement
+    if err := foo(); err != nil {
+            panic(err)
+    }
+    // IF and ELSE statement
+    if v := math.Pow(2); v < 3 {
+            return false
+    } else {
+            return true
+    }
+  #+END_SRC
+
+* For loop
+  #+BEGIN_SRC go :results none :exports code
+    sum := 0
+    for i := 0; i < 10; i++ {
+            sum += i
+    }
+  #+END_SRC
+  For loop without pre/post statement
+  #+BEGIN_SRC go :results none :exports code
+    sum := 1
+    for ; sum < 1000; {
+            sum += sum
+    }
+  #+END_SRC
+  For loop as while loop
+  #+BEGIN_SRC go :results none :exports code
+    sum := 1
+    for sum < 1000 {
+            sum += sum
+    }
+  #+END_SRC
+  Infinite loop
+  #+BEGIN_SRC go :results none :exports code
+    for {
+            // do something in a loop forever
+    }
+  #+END_SRC
+
+* Switch case statement
+  - You can only compare values of the same type.
+  - You can set an optional default statement to be executed if all the others fail.
+  - You can use an expression in the case statement, for instance you can calculate a value to use in the case:
+    #+BEGIN_SRC go :results output :exports both
+      package main
+
+      import "fmt"
+
+      func main() {
+              num := 3
+              v := num % 2
+              switch v {
+              case 0:
+                      fmt.Println("even")
+              case 3 - 2:
+                      fmt.Println("odd")
+              }
+      }
+    #+END_SRC
+
+    #+RESULTS:
+    : odd
+  - You can have multiple values in a case statement:
+    #+BEGIN_SRC go :results output :exports both
+      package main
+
+      import "fmt"
+
+      func main() {
+              score := 7
+              switch score {
+              case 0, 1, 3:
+                      fmt.Println("Terrible")
+              case 4, 5:
+                      fmt.Println("Mediocre")
+              case 6, 7:
+                      fmt.Println("Not bad")
+              case 8, 9:
+                      fmt.Println("Almost perfect")
+              case 10:
+                      fmt.Println("hmm did you cheat?")
+              default:
+                      fmt.Println(score, " off the chart")
+              }
+      }
+    #+END_SRC
+
+    #+RESULTS:
+    : Not bad
+  - You can execute all the following statements after a match using the fallthrough statement:
+    #+BEGIN_SRC go :results output :exports both
+      package main
+
+      import "fmt"
+
+      func main() {
+              n := 4
+              switch n {
+              case 0:
+                      fmt.Println("is zero")
+                      fallthrough
+              case 1:
+                      fmt.Println("is <= 1")
+                      fallthrough
+              case 2:
+                      fmt.Println("is <= 2")
+                      fallthrough
+              case 3:
+                      fmt.Println("is <= 3")
+                      fallthrough
+              case 4:
+                      fmt.Println("is <= 4")
+                      fallthrough
+              case 5:
+                      fmt.Println("is <= 5")
+                      fallthrough
+              case 6:
+                      fmt.Println("is <= 6")
+                      fallthrough
+              case 7:
+                      fmt.Println("is <= 7")
+                      fallthrough
+              case 8:
+                      fmt.Println("is <= 8")
+                      fallthrough
+              default:
+                      fmt.Println("Try again!")
+              }
+      }
+    #+END_SRC
+
+    #+RESULTS:
+    : is <= 4
+    : is <= 5
+    : is <= 6
+    : is <= 7
+    : is <= 8
+    : Try again!
+  - You can use a break statement inside your matched statement to exit the switch processing:
+    #+BEGIN_SRC go :results output :exports both
+      package main
+
+      import (
+              "fmt"
+              "time"
+      )
+
+      func main() {
+              n := 1
+              switch n {
+              case 0:
+                      fmt.Println("is zero")
+                      fallthrough
+              case 1:
+                      fmt.Println("<= 1")
+                      fallthrough
+              case 2:
+                      fmt.Println("<= 2")
+                      fallthrough
+              case 3:
+                      fmt.Println("<= 3")
+                      if time.Now().Unix()%2 == 0 {
+                              fmt.Println("un pasito pa lante maria")
+                              break
+                      }
+                      fallthrough
+              case 4:
+                      fmt.Println("<= 4")
+                      fallthrough
+              case 5:
+                      fmt.Println("<= 5")
+              }
+      }
+    #+END_SRC
+
+    #+RESULTS:
+    : <= 1
+    : <= 2
+    : <= 3
+    : un pasito pa lante maria
