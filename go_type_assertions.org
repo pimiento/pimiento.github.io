@@ -1,0 +1,59 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: Go
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: Go: Type Assertions
+
+* Type switch
+  A switch can also be used to discover the dynamic type of an interface variable.  Such a type switch uses the syntax of a type assertion with the keyword type inside the parentheses. If the switch declares a variable in the expression, the variable will have the corresponding type in each clause. It's also idiomatic to reuse the name in such cases, in effect declaring a new variable with the same name but a different type in each case.
+  #+BEGIN_SRC go :results none :exports code
+    var t interface{}
+    t = functionOfSomeType()
+
+    switch t := t.(type) {
+    default:
+            fmt.Printf("unexpected type %T\n", t) // %T prints whatever type t has
+    case bool:
+            fmt.Printf("boolean %t\n", t) // t has type bool
+    case int:
+            fmt.Printf("integer %t\n", t) // t has type int
+    case *bool:
+            fmt.Printf("pointer to boolean %t\n", t) // t has type *bool
+    case *int:
+            fmt.Printf("pointer to integer %t\n", t) // t has type *intt
+    }
+  #+END_SRC
+  Type switches are a form of interface conversion: they take and interface and, for each case in the switch, in a sense convert it to the type of that case. The first case finds a concrete value; the second converts the interface into another interface. It's perfectly fine to mix types this way.
+  #+BEGIN_SRC go :results none :exports code
+    type Stringer interface {
+            String() string
+    }
+
+    var value interface{} // Value provided by caller.
+    switch str := value.(type) {
+    case string:
+            return str
+    case Stringer:
+            return str.String()
+    }
+  #+END_SRC
+
+
+* Interface conversions and type assertions
+  What if there's only one type we care about? If we know the value holds a string and we just want to extract it? A one-case type switch would do, but so would a type assertion. A type assertion takes an interface value and extracts from it a value of the specified explicit type. The syntax borrows from the clause opening a type switch, but with an explicit type rather than the type keyword and the result is a new value with the static type typeName. That type must either be the concrete type held by the interface, or a second interface type that the value can be converted to.
+  #+BEGIN_SRC go :results none :exports code
+    value.(typeName)
+    // To extract the string we know is in the value, we could write:
+    str := value.(string)
+  #+END_SRC
+  But if it turns out that the value does not contain a string, the program will crash with a run-time error. To guard against that, use the "comma, ok" idiom to test, safely, whether the value is a string. If the type assertion fails, str will still exist and be of type string, but it will have the zero value, an empty string.
+  #+BEGIN_SRC go :results none :exports code
+    str, ok := value.(string)
+    if ok {
+            fmt.Printf("string value is: %q\n", str)
+    } else {
+            fmt.Printf("value is not a string\n")
+    }
+  #+END_SRC

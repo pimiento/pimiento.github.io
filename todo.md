@@ -13,6 +13,5 @@
 * C++: header files
 * C++: nested structures
 * C++ access control
-* Go: Type assertion
 * Go: Concurrency
 * Go: GOPATH and projects
