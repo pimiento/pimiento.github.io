@@ -1,0 +1,129 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: Go
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: Go: Methods
+
+* Methods
+  A method is a function that has a defined receiver, in OOP terms, a method is a function on an instance of an object. The method receiver appears in its own argument list between the func keyword and the method name. The method on the User type could be defined anywhere in the package. In fact, you can define a method on any type you define in your package, not just structs. You cannot define a method on a type from another package, or on a basic type.
+
+#+NAME: user_struct
+#+BEGIN_SRC go :results none :exports none
+  package main
+
+  import (
+          "fmt"
+  )
+
+  type User struct {
+          FirstName, LastName string
+  }
+
+#+END_SRC
+
+  #+BEGIN_SRC go :results output :exports both :noweb yes
+    <<user_struct>>
+
+    func (u User) Greeting() string {
+            return fmt.Sprintf("Dear %s %s", u.FirstName, u.LastName)
+    }
+
+    func main() {
+            u := User{"Matt", "Aimonetti"}
+            fmt.Println(u.Greeting())
+    }
+  #+END_SRC
+
+  #+RESULTS:
+  : Dear Matt Aimonetti
+
+* Type aliasing
+  To define methods on a type you don’t “own”, you need to define an alias for the type you want to extend:
+  #+BEGIN_SRC go :results output :exports both
+    package main
+
+    import (
+            "fmt"
+            "strings"
+            "math"
+    )
+
+    type MyStr string
+
+    func (s MyStr) Uppercase() string {
+            return strings.ToUpper(string(s))
+    }
+
+    type MyFloat float64
+
+    func (f MyFloat) Abs() float64 {
+            if f < 0 {
+                    return float64(-f)
+            }
+            return float64(f)
+    }
+
+    func main() {
+            fmt.Println(MyStr("test").Uppercase())
+
+            f := MyFloat(-math.Sqrt2)
+            fmt.Println(f.Abs())
+    }
+  #+END_SRC
+
+  #+RESULTS:
+  : TEST
+  : 1.4142135623730951
+
+* Methods receivers
+  There are two reasons to use a pointer receiver.
+  1. First, to avoid copying the value on each method call. Every time you call *Greeting()*, you are copying the User struct. Instead when using a pointer, only the pointer is copied
+    #+BEGIN_SRC go :results output :exports both :noweb yes
+      <<user_struct>>
+
+      func (u *User) Greeting() string {
+              return fmt.Sprintf("Dear %s %s", u.FirstName, u.LastName)
+      }
+
+      func main() {
+              u := &User{"Pavel", "Vavilin"}
+              fmt.Println(u.Greeting())
+      }
+    #+END_SRC
+
+    #+RESULTS:
+    : Dear Pavel Vavilin
+
+  2. The other reason is so that the method can modify the value that its receiver points to.
+     #+BEGIN_SRC go :results output :exports both
+       package main
+
+       import (
+               "fmt"
+               "math"
+       )
+
+       type Vertex struct {
+               X, Y float64
+       }
+
+       func (v *Vertex) Scale(f float64) {
+               v.X = v.X * f
+               v.Y = v.Y * f
+       }
+
+       func (v *Vertex) Abs() float64 {
+               return math.Sqrt(v.X*v.X + v.Y*v.Y)
+       }
+
+       func main() {
+               v := &Vertex{3, 4}
+               v.Scale(5)
+               fmt.Println(v, v.Abs())
+       }
+     #+END_SRC
+
+     #+RESULTS:
+     : &{15 20} 25
