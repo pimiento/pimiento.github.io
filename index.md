@@ -1,5 +1,6 @@
 <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
 
+* [fish, rat, bird](https://pimiento.github.io/fish_rat_or_bird.html "fish, rat, bird")
 * [hardlink и symlink в UNIX](https://pimiento.github.io/unix_hardlink_symlink.html "hardlink и symlink в UNIX")
 * [C++ named cast](https://pimiento.github.io/cast.html "C++ named cast")
 * [Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")
@@ -9,7 +10,6 @@
 * [GC в Python](https://pimiento.github.io/python_gc.html "GC в Python")
 * [Модуль collections в Python](https://pimiento.github.io/python_collections.html "Модуль collections в Python")
 * [Процессы в Linux](https://pimiento.github.io/processes.html "Процессы в Linux")
-* [fish, rat, bird](https://pimiento.github.io/fish_rat_or_bird.html "fish, rat, bird")
 * [Декораторы в Python](https://pimiento.github.io/decorators.html "Декораторы в Python")
 * [переменное число аргументов функции в C](https://pimiento.github.io/c_varargs.html "переменное число аргументов функции в C")
 * [структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")
@@ -21,36 +21,28 @@
 
 ---
 
-* [* C: сигналы и их обработка
-](#, "TODO")
-* [* Python: C-extensions
-](#, "TODO")
-* [* Linux namespaces and LXC
-](#, "TODO")
-* [* SQL или NoSQL
-](#, "TODO")
-* [* C++: stack, heap
-](#, "TODO")
-* [* C++: low-level top-level const
-](#, "TODO")
-* [* C++: sizeof
-](#, "TODO")
-* [* C++: asm include
-](#, "TODO")
-* [* C++: aliasing types
-](#, "TODO")
-* [* C++: update article about structures with C++ union, enum, bit-field
-](#, "TODO")
-* [* C++: debugging overview
-](#, "TODO")
-* [* C++: function pointers
-](#, "TODO")
-* [* C++: header files
-](#, "TODO")
-* [* C++: nested structures
-](#, "TODO")
-* [* C++ access control
-](#, "TODO")
+* [C: сигналы и их обработка](#, "TODO")
+* [Python: C-extensions](#, "TODO")
+* [Linux namespaces and LXC](#, "TODO")
+* [SQL или NoSQL](#, "TODO")
+* [C++: stack, heap](#, "TODO")
+* [C++: low-level top-level const](#, "TODO")
+* [C++: sizeof](#, "TODO")
+* [C++: asm include](#, "TODO")
+* [C++: aliasing types](#, "TODO")
+* [C++: update article about structures with C++ union, enum, bit-field](#, "TODO")
+* [C++: debugging overview](#, "TODO")
+* [C++: function pointers](#, "TODO")
+* [C++: header files](#, "TODO")
+* [C++: nested structures](#, "TODO")
+* [C++ access control](#, "TODO")
+* [Go: The Basics](#, "TODO")
+* [Go: Types](#, "TODO")
+* [Go: Collection Types](#, "TODO")
+* [Go: Control Flow](#, "TODO")
+* [Go: Methods](#, "TODO")
+* [Go: Interfaces](#, "TODO")
+* [GO: Concurrency](#, "TODO")
 
 ---
 
@@ -82,8 +74,8 @@ c++|cast|combynatorics
 
 gc|linking|math
 | --- |:---:|---:|
-[GC в Python](https://pimiento.github.io/python_gc.html "GC в Python")|[Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")|[работа с графами в Python](https://pimiento.github.io/python_graphs.html "работа с графами в Python")
-||[fish, rat, bird](https://pimiento.github.io/fish_rat_or_bird.html "fish, rat, bird")
+[GC в Python](https://pimiento.github.io/python_gc.html "GC в Python")|[Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")|[fish, rat, bird](https://pimiento.github.io/fish_rat_or_bird.html "fish, rat, bird")
+||[работа с графами в Python](https://pimiento.github.io/python_graphs.html "работа с графами в Python")
 
 
 

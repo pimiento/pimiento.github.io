@@ -24,7 +24,8 @@ def get_pages():
 
 def get_todo():
     with open("todo.md", "r") as todo:
-        return ("* [{0}](#, \"TODO\")".format(line) for line in todo.readlines()
+        return ("* [{0}](#, \"TODO\")".format(line.lstrip("*").strip())
+                for line in todo.readlines()
                 if line[0] == "*")
 
 
