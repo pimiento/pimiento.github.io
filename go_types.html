@@ -1,0 +1,651 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2017-10-26 Thu 16:53 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Go: Types</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Pavel Vavilin" />
+<meta name="keywords" content="Go" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+
+<script type="text/javascript" src="org-info.js">
+/**
+ *
+ * @source: org-info.js
+ *
+ * @licstart  The following is the entire license notice for the
+ *  JavaScript code in org-info.js.
+ *
+ * Copyright (C) 2012-2017 Free Software Foundation, Inc.
+ *
+ *
+ * The JavaScript code in this tag is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU
+ * General Public License (GNU GPL) as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.  The code is distributed WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+ *
+ * As additional permission under GNU GPL version 3 section 7, you
+ * may distribute non-source (e.g., minimized or compacted) forms of
+ * that code without the copy of the GNU GPL normally required by
+ * section 4, provided you include this license notice and a URL
+ * through which recipients can access the Corresponding Source.
+ *
+ * @licend  The above is the entire license notice
+ * for the JavaScript code in org-info.js.
+ *
+ */
+</script>
+
+<script type="text/javascript">
+
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+
+<!--/*--><![CDATA[/*><!--*/
+org_html_manager.set("TOC_DEPTH", "3");
+org_html_manager.set("LINK_HOME", "https://pimiento.github.io/");
+org_html_manager.set("LINK_UP", "https://pimiento.github.io/");
+org_html_manager.set("LOCAL_TOC", "1");
+org_html_manager.set("VIEW_BUTTONS", "0");
+org_html_manager.set("MOUSE_HINT", "underline");
+org_html_manager.set("FIXED_TOC", "0");
+org_html_manager.set("TOC", "1");
+org_html_manager.set("VIEW", "1");
+org_html_manager.setup();  // activate after the parameters are set
+/*]]>*///-->
+</script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="https://pimiento.github.io/"> UP </a>
+ |
+ <a accesskey="H" href="https://pimiento.github.io/"> HOME </a>
+</div><div id="content">
+<h1 class="title">Go: Types</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgf6cf9b9">1. Basic Types</a></li>
+<li><a href="#org15d30dd">2. Type conversion</a></li>
+<li><a href="#orga00a4a5">3. Structs</a></li>
+<li><a href="#org34dd9ba">4. Initializing</a></li>
+<li><a href="#orgaf836e8">5. Composition vs Inheritance</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgf6cf9b9" class="outline-2">
+<h2 id="orgf6cf9b9"><span class="section-number-2">1</span> Basic Types</h2>
+<div class="outline-text-2" id="text-1">
+<pre class="example">
+bool
+string
+
+Numeric types:
+
+uint        either 32 or 64 bits
+int         same size as uint
+uintptr     an unsigned integer large enough to store the uninterpreted bits of
+            a pointer value
+uint8       the set of all unsigned  8-bit integers (0 to 255)
+uint16      the set of all unsigned 16-bit integers (0 to 65535)
+uint32      the set of all unsigned 32-bit integers (0 to 4294967295)
+uint64      the set of all unsigned 64-bit integers (0 to 18446744073709551615)
+
+int8        the set of all signed  8-bit integers (-128 to 127)
+int16       the set of all signed 16-bit integers (-32768 to 32767)
+int32       the set of all signed 32-bit integers (-2147483648 to 2147483647)
+int64       the set of all signed 64-bit integers
+            (-9223372036854775808 to 9223372036854775807)
+
+float32     the set of all IEEE-754 32-bit floating-point numbers
+float64     the set of all IEEE-754 64-bit floating-point numbers
+
+complex64   the set of all complex numbers with float32 real and imaginary parts
+complex128  the set of all complex numbers with float64 real and imaginary parts
+
+byte        alias for uint8
+rune        alias for int32 (represents a Unicode code point)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org15d30dd" class="outline-2">
+<h2 id="org15d30dd"><span class="section-number-2">2</span> Type conversion</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+The expression <b>T(v)</b> converts the value <b>v</b> to the type <b>T</b>. Go assignment between items of different type requires an explicit conversion which means that <span class="underline">you manually need to convert types if you are passing a variable to a function expecting another type</span>.
+</p>
+<div class="org-src-container">
+<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">var</span> i int32 = 42
+<span style="color: #00ff00; font-weight: bold;">var</span> f32 float32 = <span style="color: #00ffff; font-weight: bold;">float32</span>(i)
+f64 := <span style="color: #00ffff; font-weight: bold;">float64</span>(f32)
+<span style="color: #00ff00; font-weight: bold;">var</span> u unit = <span style="color: #00ffff; font-weight: bold;">unit</span>(f)
+</pre>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orga00a4a5" class="outline-2">
+<h2 id="orga00a4a5"><span class="section-number-2">3</span> Structs</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+A struct is a collection of fields/properties. You can define new types as structs or interfaces. You can think of a struct to be a light class that supports composition but not inheritance. You don’t need to define getters and setters on struct fields, they can be accessed automatically. However, note that only exported fields (capitalized) can be accessed from outside of a package.
+</p>
+<div class="org-src-container">
+<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">package</span> main
+
+<span style="color: #00ff00; font-weight: bold;">import</span> (
+        <span style="color: #ffa500;">"fmt"</span>
+        <span style="color: #ffa500;">"time"</span>
+)
+
+<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">Bootcamp</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Latitude of the event</span>
+        Lat float64
+        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Longitude of the event</span>
+        Lon float64
+        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Date of the event</span>
+        Date time.Time
+}
+
+<span style="color: #00ff00; font-weight: bold;">func</span> <span style="color: #00ffff; font-weight: bold;">main</span>() {
+        fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(<span style="color: #00ffff;">Bootcamp</span>{
+                <span style="color: #7fffd4;">Lat</span>:  34.012836,
+                <span style="color: #7fffd4;">Lon</span>:  -118.495338,
+                <span style="color: #7fffd4;">Date</span>: time.<span style="color: #00ffff; font-weight: bold;">Now</span>(),
+        })
+}
+</pre>
+</div>
+
+<pre class="example">
+{34.012836 -118.495338 2017-10-26 16:53:42.209192312 +1000 +10}
+
+</pre>
+<p>
+A struct literal sets a newly allocated struct value by listing the values of its fields. You can list just a subset of fields by using the "Name:" syntax (the order of named fields is irrelevant when using this syntax). The special prefix &amp; constructs a pointer to a newly allocated struct.
+</p>
+<div class="org-src-container">
+<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">package</span> main
+
+<span style="color: #00ff00; font-weight: bold;">import</span> (
+        <span style="color: #ffa500;">"fmt"</span>
+        <span style="color: #ffa500;">"time"</span>
+)
+
+<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">Point</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+        X, Y int
+}
+
+<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">Bootcamp</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Latitude of the event</span>
+        Lat float64
+        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Longitude of the event</span>
+        Lon float64
+        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Date of the event</span>
+        Date time.Time
+}
+
+<span style="color: #00ff00; font-weight: bold;">var</span> (
+        p = <span style="color: #00ffff;">Point</span>{1, 2}  <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">has type Point</span>
+        q = &amp;<span style="color: #00ffff;">Point</span>{1, 2} <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">has type *Point</span>
+        r = <span style="color: #00ffff;">Point</span>{X: 1}  <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Y:0 is implicit</span>
+        s = <span style="color: #00ffff;">Point</span>{}      <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">X:0 and Y:0</span>
+)
+
+<span style="color: #00ff00; font-weight: bold;">func</span> <span style="color: #00ffff; font-weight: bold;">main</span>() {
+        fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(p, q, r, s)
+
+        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">accessing fields using the dot notation</span>
+        event := <span style="color: #00ffff;">Bootcamp</span>{
+                <span style="color: #7fffd4;">Lat</span>: 34.012836,
+                <span style="color: #7fffd4;">Lon</span>: -118.495338,
+        }
+        event.Date = time.<span style="color: #00ffff; font-weight: bold;">Now</span>()
+        fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"Event on %s, location (%f, %f)"</span>,
+                event.Date, event.Lat, event.Lon)
+}
+</pre>
+</div>
+
+<pre class="example">
+{1 2} &amp;{1 2} {1 0} {0 0}
+Event on 2017-10-26 16:53:42.576135144 +1000 +10, location (34.012836, -118.495338)
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org34dd9ba" class="outline-2">
+<h2 id="org34dd9ba"><span class="section-number-2">4</span> Initializing</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Go supports the <b>new</b> expression to <b>allocate a zeroed value</b> of the requested type and to <b>return a pointer</b> to it.
+</p>
+<div class="org-src-container">
+<pre class="src src-go">x := <span style="color: #b0c4de; font-weight: bold;">new</span>(<span style="color: #00ffff;">int</span>)
+</pre>
+</div>
+<p>
+Following expressions using new and an empty struct literal are equivalent and result in the same kind of allocation/initialization.
+</p>
+<div class="org-src-container">
+<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">package</span> main
+
+<span style="color: #00ff00; font-weight: bold;">import</span> (
+        <span style="color: #ffa500;">"fmt"</span>
+)
+
+<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">Bootcamp</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+        Lat float64
+        Lon float64
+}
+
+<span style="color: #00ff00; font-weight: bold;">func</span> <span style="color: #00ffff; font-weight: bold;">main</span>() {
+        x := <span style="color: #b0c4de; font-weight: bold;">new</span>(<span style="color: #00ffff;">Bootcamp</span>)
+        y := &amp;<span style="color: #00ffff;">Bootcamp</span>{}
+        fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(*x == *y)
+}
+</pre>
+</div>
+
+<pre class="example">
+true
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgaf836e8" class="outline-2">
+<h2 id="orgaf836e8"><span class="section-number-2">5</span> Composition vs Inheritance</h2>
+<div class="outline-text-2" id="text-5">
+<div class="org-src-container">
+<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">package</span> main
+
+<span style="color: #00ff00; font-weight: bold;">import</span> <span style="color: #ffa500;">"fmt"</span>
+
+<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">User</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+        Id       int
+        Name     string
+        Location string
+}
+
+<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">Player</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+        Id       int
+        Name     string
+        Location string
+        GameId<span style="background-color: #BC8383;">  </span> int
+}
+
+<span style="color: #00ff00; font-weight: bold;">func</span> <span style="color: #00ffff; font-weight: bold;">main</span>() {
+        p := <span style="color: #00ffff;">Player</span>{}
+        p.Id = 42
+        p.Name = <span style="color: #ffa500;">"Matt"</span>
+        p.Location = <span style="color: #ffa500;">"LA"</span>
+        p.GameId = 90404
+        fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"%+v"</span>, p)
+}
+</pre>
+</div>
+
+<pre class="example">
+{Id:42 Name:Matt Location:LA GameId:90404}
+
+</pre>
+
+<p>
+Player struct has the same fields as the User struct but it also has a GameId field. It can be simplified by composing our struct.
+</p>
+<div class="org-src-container">
+<pre class="src src-go" id="orgb592aec"><span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">User</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+        Id             int
+        Name, Location string
+}
+
+<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">Player</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+        User
+        GameId int
+}
+</pre>
+</div>
+<p>
+We can initialize a new variable of type Player two different ways.
+</p>
+<div class="org-src-container">
+<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">package</span> main
+
+<span style="color: #00ff00; font-weight: bold;">import</span> <span style="color: #ffa500;">"fmt"</span>
+
+<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">User</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+        Id             int
+        Name, Location string
+}
+
+<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">Player</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+        User
+        GameId int
+}
+
+<span style="color: #00ff00; font-weight: bold;">func</span> <span style="color: #00ffff; font-weight: bold;">main</span>() {
+        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">1. Using the dot notation to set the fields</span>
+        p1 := <span style="color: #00ffff;">Player</span>{}
+        p1.Id = 42
+        p1.Name = <span style="color: #ffa500;">"Matt"</span>
+        p1.Location = <span style="color: #ffa500;">"LA"</span>
+        p1.GameId = 90404
+        fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"%+v"</span>, p1)
+        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">2. Use struct literal</span>
+        p2 := <span style="color: #00ffff;">Player</span>{
+                <span style="color: #00ffff;">User</span>{Id: 42, Name: <span style="color: #ffa500;">"Matt"</span>, Location: <span style="color: #ffa500;">"LA"</span>},
+                90404,
+        }
+        fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(
+                <span style="color: #ffa500;">"Id: %d, Name: %s, Location: %s, Game id: %d\n"</span>,
+                p2.Id, p2.Name, p2.Location, p2.GameId)
+        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Directly set a field defined on the Player struct</span>
+        p2.Id = 11
+        fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"%+v"</span>, p2)
+}
+</pre>
+</div>
+
+<pre class="example">
+{User:{Id:42 Name:Matt Location:LA} GameId:90404}Id: 42, Name: Matt, Location: LA, Game id: 90404
+{User:{Id:11 Name:Matt Location:LA} GameId:90404}
+
+</pre>
+<p>
+Because our struct is composed of another struct, the methods on the User struct is also available to the Player.
+</p>
+<div class="org-src-container">
+<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">package</span> main
+
+<span style="color: #00ff00; font-weight: bold;">import</span> <span style="color: #ffa500;">"fmt"</span>
+
+<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">User</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+        Id             int
+        Name, Location string
+}
+
+<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">Player</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+        User
+        GameId int
+}
+
+<span style="color: #00ff00; font-weight: bold;">func</span> (u *<span style="color: #00ffff;">User</span>) <span style="color: #00ffff; font-weight: bold;">Greetings</span>() <span style="color: #00ffff;">string</span> {
+        <span style="color: #00ff00; font-weight: bold;">return</span> fmt.<span style="color: #00ffff; font-weight: bold;">Sprintf</span>(<span style="color: #ffa500;">"Hi %s from %s"</span>,
+                u.Name, u.Location)
+}
+
+<span style="color: #00ff00; font-weight: bold;">func</span> <span style="color: #00ffff; font-weight: bold;">main</span>() {
+        p := <span style="color: #00ffff;">Player</span>{}
+        p.Id = 42
+        p.Name = <span style="color: #ffa500;">"Matt"</span>
+        p.Location = <span style="color: #ffa500;">"LA"</span>
+        fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(p.<span style="color: #00ffff; font-weight: bold;">Greetings</span>())
+}
+</pre>
+</div>
+
+<pre class="example">
+Hi Matt from LA
+
+</pre>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Pavel Vavilin</p>
+<p class="date">Created: 2017-10-26 Thu 16:53</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

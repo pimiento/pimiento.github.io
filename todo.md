@@ -13,10 +13,10 @@
 * C++: header files
 * C++: nested structures
 * C++ access control
-* Go: Types
 * Go: Collection Types
 * Go: Control Flow
 * Go: Methods
 * Go: Interfaces
+* Go: Type assertion
 * Go: Concurrency
 * Go: GOPATH and projects
