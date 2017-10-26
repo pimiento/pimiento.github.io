@@ -1,0 +1,587 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: Go
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: Go: Collection types
+
+* Arrays
+  The type *[n]T* is an array of *n* values of type *T*. An array's length is part of its type, so array cannot be resized.
+  #+BEGIN_SRC go :results output :exports both
+    package main
+
+    import "fmt"
+
+    func main() {
+            var a1[10]int;
+            fmt.Printf("1. %q\n", a1)
+            //
+            var a2 [2]string
+            a2[0] = "Hello"
+            a2[1] = "World"
+            fmt.Println("2.", a2[0], a2[1])
+            fmt.Println("3.", a2)
+            // set the array entries as you declare the array
+            a3  := [2]string{"hello", "world!"}
+            fmt.Printf("4. %q\n", a3)
+            // use an ellipsis to use an implicit length when you pass the values
+            a4 := [...]string{"hello", "world!"}
+            fmt.Printf("5. %q\n", a4)
+    }
+  #+END_SRC
+
+  #+RESULTS:
+  : 1. ['\x00' '\x00' '\x00' '\x00' '\x00' '\x00' '\x00' '\x00' '\x00' '\x00']
+  : 2. Hello World
+  : 3. [Hello World]
+  : 4. ["hello" "world!"]
+  : 5. ["hello" "world!"]
+
+** Printing arrays
+   #+BEGIN_SRC go :results output :exports both
+     package main
+
+     import "fmt"
+
+     func main() {
+             a := [2]string{"hello", "world!"}
+             fmt.Println(a)
+             // [hello world!]
+             fmt.Printf("%s\n", a)
+             // [hello world!]
+             fmt.Printf("%q\n", a)*
+             // ["hello" "world!"]
+     }
+   #+END_SRC
+
+   #+RESULTS:
+   : [hello world!]
+   : [hello world!]
+   : ["hello" "world!"]
+
+** Multi-dimensional arrays
+   #+BEGIN_SRC go :results output :exports both
+     package main
+
+     import "fmt"
+
+     func main() {
+             var a [2][3]string
+             for i := 0; i < 2; i++ {
+                     for j := 0; j < 3; j++ {
+                             a[i][j] = fmt.Sprintf("row %d - column %d", i+1, j+1)
+                     }
+             }
+             fmt.Printf("%q", a)
+     }
+
+   #+END_SRC
+
+   #+RESULTS:
+   : [["row 1 - column 1" "row 1 - column 2" "row 1 - column 3"] ["row 2 - column 1" "row 2 - column 2" "row 2 - column 3"]]
+
+* Slices
+  Slices hold references to an underlying array, and if you assign one slice to another, *both refer to the same array*. If a function takes a slice argument, changes it makes to the elements of the slice will be visible to the caller, analogous to passing *a pointer to the underlying array*. A slice points to an array of values and also includes a length. Slices can be resized since they are just a wrapper on top of another data structure.
+  *[]T* is a slice with elements of type *T*
+  #+BEGIN_SRC go :results output :exports both
+    package main
+
+    import "fmt"
+
+    func main() {
+            p := []int{2, 3, 5, 7, 11, 13}
+            fmt.Println(p)
+    }
+  #+END_SRC
+
+  #+RESULTS:
+  : [2 3 5 7 11 13]
+
+** Slicing a slice
+   Slices can be re-sliced, creating a new slice value that *points to the same array*. Thus, *s[lo:hi]* evaluates to a slice of the elements from lo through hi-1, inclusive. *s[lo:lo]* evaluates empty slice. *s[lo:lo+1]* has one element.
+   #+BEGIN_SRC go :results output :exports both
+     package main
+
+     import "fmt"
+
+     func main() {
+             mySlice := []int{2, 3, 5, 7, 11, 13}
+             fmt.Println(mySlice)
+
+             fmt.Println(mySlice[1:4])
+
+             // missing low index implies 0
+             fmt.Println(mySlice[:3])
+
+             // missing high index implies len(s)
+             fmt.Println(mySlice[4:])
+     }
+   #+END_SRC
+
+   #+RESULTS:
+   : [2 3 5 7 11 13]
+   : [3 5 7]
+   : [2 3 5]
+   : [11 13]
+
+** Making slices
+   Besides creating slices by passing the values right away (slice literal), you can also use make. It works by allocating a zeroed array and returning a slice that refers to that array.
+   #+BEGIN_SRC go :results output :exports both
+     package main
+
+     import "fmt"
+
+     func main() {
+             cities := make([]string, 3)
+             cities[0] = "Santa Monica"
+             cities[1] = "Venice"
+             cities[2] = "Los Angeles"
+             fmt.Printf("%q", cities)
+     }
+   #+END_SRC
+
+   #+RESULTS:
+   : ["Santa Monica" "Venice" "Los Angeles"]
+   When you make multi-dimensional slice, it will make slice with N empty slices
+   #+BEGIN_SRC go :results output :exports both
+     package main
+
+     import "fmt"
+
+     func main() {
+             a := make([]int, 5)
+             printSlice("a", a)
+
+             b := make([]int, 0, 5)
+             printSlice("b", b)
+
+             c := b[:2]
+             printSlice("c", c)
+
+             d := c[2:5]
+             printSlice("d", d)
+
+             e := make([][]int, 12)
+             fmt.Println("multi-dimensional slice e: ", e)
+             printSlice("e[0]", e[0])
+     }
+
+     func printSlice(s string, x []int) {
+             fmt.Printf("%s len=%d cap=%d %v\n",
+                     s, len(x), cap(x), x)
+     }
+   #+END_SRC
+
+   #+RESULTS:
+   : a len=5 cap=5 [0 0 0 0 0]
+   : b len=0 cap=5 []
+   : c len=2 cap=5 [0 0]
+   : d len=3 cap=3 [0 0 0]
+   : multi-dimensional slice e:  [[] [] [] [] [] [] [] [] [] [] [] []]
+   : e[0] len=0 cap=0 []
+
+** Appending to a slice
+   You would get a runtime error if you were to do that
+   #+BEGIN_SRC go :results none :exports code
+     cities := []string{}
+     cities[0] = "Santa Monica"
+   #+END_SRC
+   There is a way to do that though, and that is by using the append function:
+   #+BEGIN_SRC go :results output :exports both
+     package main
+
+     import "fmt"
+
+     func main() {
+             cities := []string{}
+             cities = append(cities, "San Diego")
+             fmt.Println(cities)
+             // You can append more than one entry to a slice
+             cities = []string{}
+             cities = append(cities, "San Diego", "Mountain View")
+             fmt.Printf("%q", cities)
+             // You can also append a slice to another using an ellipsis
+             otherCities := []string{"Santa Monica", "Venice"}
+             cities = append(cities, otherCities...)
+             fmt.Printf("%q", cities)
+     }
+   #+END_SRC
+
+   #+RESULTS:
+   : [San Diego]
+   : ["San Diego" "Mountain View"]["San Diego" "Mountain View" "Santa Monica" "Venice"]
+#+BEGIN_CENTER
+ELLIPSIS IS A BUILT-IN FEATURE OF THE LANGUAGE THAT MEANS THAT THE ELEMENT IS A COLLECTION.
+#+END_CENTER
+
+** Length
+   #+BEGIN_SRC go :results output :exports both
+     package main
+
+     import "fmt"
+
+     func main() {
+             cities := []string{
+                     "Santa Monica",
+                     "San Diego",
+                     "San Francisco",
+             }
+             fmt.Println(len(cities))
+             countries := make([]string, 42)
+             fmt.Println(len(countries))
+     }
+   #+END_SRC
+
+   #+RESULTS:
+   : 3
+   : 42
+
+** Nil slices
+   The zero value of a slice is *nil*. A *nil* slice has a length and capacity of *0*.
+   #+BEGIN_SRC go :results output :exports both
+     package main
+
+     import "fmt"
+
+     func main() {
+             var z []int
+             fmt.Println(z, len(z), cap(z))
+
+             if z == nil {
+                     fmt.Println("nil!")
+             }
+     }
+   #+END_SRC
+
+   #+RESULTS:
+   : [] 0 0
+   : nil!
+
+** Copy
+   #+BEGIN_SRC go :results none :exports code
+     b = make([]T, len(a))
+     copy(b, a)
+     // or
+     b = append([]T(nil), a...)
+   #+END_SRC
+
+** Cut
+   #+BEGIN_SRC go :results none :exports code
+     a = append(a[:i], a[j:]...)
+   #+END_SRC
+
+** Delete
+   #+BEGIN_SRC go :results none :exports code
+     a = append(a[:i], a[i+1:]...)
+     // or
+     a = a[:i+copy(a[i:], a[i+1:])]
+   #+END_SRC
+
+** Delete without preserving order
+   #+BEGIN_SRC go :results none :exports code
+     a[i] = a[len(a)-1]
+     a = a[:len(a)-1]
+   #+END_SRC
+
+  #+BEGIN_SRC go :results output :exports both
+    package main
+
+    import "fmt"
+
+    func main() {
+            cities := []string{
+                    "A",
+                    "B",
+                    "C",
+                    "D",
+                    "E",
+            }
+            fmt.Println(cities)
+            cities[2] = cities[len(cities)-1]
+            fmt.Println(cities)
+            cities = cities[:len(cities)-1]
+            fmt.Println(cities)
+    }
+  #+END_SRC
+
+  #+RESULTS:
+  : [A B C D E]
+  : [A B E D E]
+  : [A B E D]
+  *NOTE* If the type of the element is a pointer or a struct with pointer fields, which need to be garbage collected, the above implementations of Cut and Delete have a potential memory leak problem: some elements with values are still referenced by slice a and thus can not be collected. The following code can fix this problem.
+
+** Cut
+  #+BEGIN_SRC go :results none :exports code
+    copy(a[i:], a[j:])
+    for k, n := len(a)-j+i, len(a); k < n; k++ {
+            a[k] = nil // or the zero value of T
+    }
+    a = a[:len(a)-j+i]
+  #+END_SRC
+
+** Delete
+   #+BEGIN_SRC go :results none :exports code
+     copy(a[i:], a[i+1:])
+     a[len(a)-1] = nil // or the zero value of T
+     a = a[:len(a)-1]
+   #+END_SRC
+   #+BEGIN_SRC go :results output :exports both
+     package main
+
+     import "fmt"
+
+     func main() {
+             cities := []string{
+                     "A",
+                     "B",
+                     "C",
+                     "D",
+                     "E",
+             }
+             i := 2
+             fmt.Println("BEFORE: ", cities)
+             copy(cities[i:], cities[i+1:])
+             fmt.Println("AFTER COPY: ", cities)
+             cities[len(cities)-1] = "" // or the zero value of T
+             fmt.Println("AFTER ERASE: ", cities)
+             cities = cities[:len(cities)-1]
+             fmt.Println("AFTER RESIZE: ", cities)
+     }
+   #+END_SRC
+
+   #+RESULTS:
+   : BEFORE:  [A B C D E]
+   : AFTER COPY:  [A B D E E]
+   : AFTER ERASE:  [A B D E ]
+   : AFTER RESIZE:  [A B D E]
+
+** Delete without preserving order
+   #+BEGIN_SRC go :results none :exports code
+     a[i] = a[len(a)-1]
+     a[len(a)-1] = nil
+     a = a[:len(a)-1]
+   #+END_SRC
+
+** Expand
+   #+BEGIN_SRC go :results output :exports code
+     package main
+
+     import "fmt"
+
+     func main() {
+             cities := []string{
+                     "A",
+                     "B",
+                     "C",
+                     "D",
+                     "E",
+             }
+             i := 2
+             j := 4
+             cities = append(cities[:i], append(make([]string, j), cities[i:]...)...)
+             fmt.Println(cities)
+     }
+   #+END_SRC
+
+   #+RESULTS:
+   : [A B     C D E]
+
+** Extend
+   #+BEGIN_SRC go :results none :exports code
+     a = append(a, make([]T, j)...)
+   #+END_SRC
+
+** Pop
+   #+BEGIN_SRC go :results none :exports code
+     x, a = a[0], a[1:]
+   #+END_SRC
+
+** Pop Back
+   #+BEGIN_SRC go :results none :exports code
+     x, a = a[len(a)-1], a[:len(a)-1]
+   #+END_SRC
+
+** Push
+   #+BEGIN_SRC go :results none :exports code
+     a = append(a, x)
+   #+END_SRC
+
+** Push Front
+   #+BEGIN_SRC go :results none :exports code
+     a = append([]T{x}, a...)
+   #+END_SRC
+
+** Shift
+   #+BEGIN_SRC go :results none :exports code
+     x, a := a[0], a[1:]
+   #+END_SRC
+
+** Reversing
+   #+BEGIN_SRC go :results none :exports code
+     for i := len(a)/2-1; i >= 0; i-- {
+             opp := len(a)-1-i
+             a[i], a[opp] = a[opp], a[i]
+     }
+   #+END_SRC
+
+* Range
+  The *range* form of the loop iterates over a *slice* or a *map*.
+  #+BEGIN_SRC go :results output :exports both
+    package main
+
+    import "fmt"
+
+    var pow = []int{1, 2, 4, 8, 16, 32, 64, 128}
+
+    func main() {
+            for i, v := range pow {
+                    fmt.Printf("2**%d = %d\n", i, v)
+            }
+    }
+  #+END_SRC
+
+  #+RESULTS:
+  : 2**0 = 1
+  : 2**1 = 2
+  : 2**2 = 4
+  : 2**3 = 8
+  : 2**4 = 16
+  : 2**5 = 32
+  : 2**6 = 64
+  : 2**7 = 128
+  You can skip /index/ or /value/ by assigning to _. If you only want the index, drop the ", value" entirely.
+  #+BEGIN_SRC go :results output :exports both
+    package main
+
+    import "fmt"
+
+    func main() {
+            pow := make([]int, 10)
+            for i := range pow {
+                    pow[i] = 1 << uint(i)
+            }
+            for _, value := range pow {
+                    fmt.Printf("%d\n", value)
+            }
+    }
+  #+END_SRC
+
+  #+RESULTS:
+  #+begin_example
+  1
+  2
+  4
+  8
+  16
+  32
+  64
+  128
+  256
+  512
+  #+end_example
+
+** Break & continue
+   #+BEGIN_SRC go :results output :exports both
+     package main
+
+     import "fmt"
+
+     func main() {
+             pow := make([]int, 10)
+             for i := range pow {
+                     pow[i] = 1 << uint(i)
+                     if pow[i] >= 16 {
+                             break
+                     }
+             }
+             fmt.Println(pow)
+
+             pow = make([]int, 10)
+             for i := range pow {
+                     if i%2 == 0 {
+                             continue
+                     }
+                     pow[i] = 1 << uint(i)
+             }
+             fmt.Println(pow)
+     }
+   #+END_SRC
+
+   #+RESULTS:
+   : [1 2 4 8 16 0 0 0 0 0]
+   : [0 2 0 8 0 32 0 128 0 512]
+
+* Maps
+  Maps are somewhat similar to what other languages call “dictionaries” or “hashes”. A map maps keys to values.
+  #+BEGIN_SRC go :results output :exports both
+    package main
+
+    import "fmt"
+
+    func main() {
+            celebs := map[string]int{
+                    "Nicolas Cage":       50,
+                    "Selena Gomez":       21,
+                    "Jude Law":           41,
+                    "Scarlett Johansson": 29,
+            }
+
+            fmt.Printf("%#v", celebs)
+    }
+  #+END_SRC
+
+  #+RESULTS:
+  : map[string]int{"Selena Gomez":21, "Jude Law":41, "Scarlett Johansson":29, "Nicolas Cage":50}
+  When not using map literals like above, maps must be created with make (not new) before use. The nil map is empty and cannot be assigned to.
+  #+BEGIN_SRC go :results output :exports both
+    package main
+
+    import "fmt"
+
+    type Vertex struct {
+            Lat, Long float64
+    }
+
+    // nil map
+    var m1 map[string]Vertex
+
+    // map literal
+    var m2 = map[string]Vertex{
+            "Bell Labs": {40.68433, -74.39967},
+            // same as "Bell Labs": Vertex{40.68433, -74.39967}
+            "Google": {37.42202, -122.08408},
+    }
+
+
+    func main() {
+            m1 = make(map[string]Vertex)
+            m1["Bell Labs"] = Vertex{40.68433, -74.39967}
+            fmt.Println(m1["Bell Labs"])
+            // print map literal
+            fmt.Println(m2)
+    }
+  #+END_SRC
+
+  #+RESULTS:
+  : {40.68433 -74.39967}
+  : map[Bell Labs:{40.68433 -74.39967} Google:{37.42202 -122.08408}]
+
+** Insert an element
+   #+BEGIN_SRC go :results none :exports code
+     m[key] = value
+   #+END_SRC
+
+** Delete an element
+   #+BEGIN_SRC go :results none :exports code
+     delete(m, key)
+   #+END_SRC
+
+** Retrieve an element
+   If key is in m, ok is true. If not, ok is false and elem is the zero value for the map’s element type. Similarly, when reading from a map if the key is not present the result is the zero value for the map’s element type.
+   #+BEGIN_SRC go :results none :exports code
+     value, ok = m[key]
+     // ok is true if key in m, value is zero otherwise
+     value = m[key]
+     // value is zero unless key in m
+   #+END_SRC

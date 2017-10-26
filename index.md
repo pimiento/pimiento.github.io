@@ -1,5 +1,6 @@
 <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
 
+* [Go: Collection types](https://pimiento.github.io/go_collection_types.html "Go: Collection types")
 * [Go: Types](https://pimiento.github.io/go_types.html "Go: Types")
 * [Go: The Basics](https://pimiento.github.io/go_basics.html "Go: The Basics")
 * [fish, rat, bird](https://pimiento.github.io/fish_rat_or_bird.html "fish, rat, bird")
@@ -38,7 +39,6 @@
 * [C++: header files](#, "TODO")
 * [C++: nested structures](#, "TODO")
 * [C++ access control](#, "TODO")
-* [Go: Collection Types](#, "TODO")
 * [Go: Control Flow](#, "TODO")
 * [Go: Methods](#, "TODO")
 * [Go: Interfaces](#, "TODO")
@@ -61,9 +61,9 @@
 
 C|Go|Linux
 | --- |:---:|---:|
-[Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")|[Go: Types](https://pimiento.github.io/go_types.html "Go: Types")|[hardlink и symlink в UNIX](https://pimiento.github.io/unix_hardlink_symlink.html "hardlink и symlink в UNIX")
-[переменное число аргументов функции в C](https://pimiento.github.io/c_varargs.html "переменное число аргументов функции в C")|[Go: The Basics](https://pimiento.github.io/go_basics.html "Go: The Basics")|[Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")
-[структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")||[модуль os в Python](https://pimiento.github.io/python_os.html "модуль os в Python")
+[Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")|[Go: Collection types](https://pimiento.github.io/go_collection_types.html "Go: Collection types")|[hardlink и symlink в UNIX](https://pimiento.github.io/unix_hardlink_symlink.html "hardlink и symlink в UNIX")
+[переменное число аргументов функции в C](https://pimiento.github.io/c_varargs.html "переменное число аргументов функции в C")|[Go: Types](https://pimiento.github.io/go_types.html "Go: Types")|[Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")
+[структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")|[Go: The Basics](https://pimiento.github.io/go_basics.html "Go: The Basics")|[модуль os в Python](https://pimiento.github.io/python_os.html "модуль os в Python")
 ||[Процессы в Linux](https://pimiento.github.io/processes.html "Процессы в Linux")
 
 
