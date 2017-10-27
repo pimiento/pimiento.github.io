@@ -14,4 +14,8 @@
 * C++: nested structures
 * C++ access control
 * Go: Concurrency
-* Go: GOPATH and projects
+* Go: Get Setup
+* Tornado: Web framework
+* Tornado: HTTP servers and clients
+* Tornado: Asynchronous networking
+* Tornado: coroutines and concurrency
