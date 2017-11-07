@@ -6,6 +6,11 @@
 #+HTML_LINK_UP: https://pimiento.github.io/
 #+TITLE: Go: The Basics
 
+* Comments
+  Go supports two kinds of comments:
+  - line comments begin with *//* and end at the newline; these are treated simply as newline.
+  - general comments begin with */\ast{}* and end with *\ast{}/* and may span multiple lines.
+
 * Variables
   The *var* statement declares a list of variables with the type declared last or one variable per line. Var declaration can include initializers, one per variable.
 #+BEGIN_SRC go :results none :exports code
@@ -58,6 +63,38 @@
 
 #+RESULTS:
 : Hello, World (42) of World
+
+** Identifiers names
+   A /Go/ identifier is a nonempty sequence of letters and digits where the first character must be a letter.
+   A letter is the underscore, *_*, or any character that is in the Unicode categories:
+   - *Lu* — letter uppercase
+   - *Ll* — letter lowercase
+   - *Lt* — letter titlecase
+   - *Lm* — letter modifier
+   - *Lo* — letter other
+   A /Go/ identifier can contain any Unicode letters from this list.
+   #+BEGIN_SRC go :results output :exports code :imports "fmt"
+     // italic theta is valid identifier for Go
+     𝟅 := 2.45
+     // Pi is valid identifier as well
+     𝝥 := 3.14
+     fmt.Printf("𝟅 = %.02f, 𝝥 = %.02f", 𝟅, 𝝥)
+   #+END_SRC
+
+   #+RESULTS:
+   : 𝟅 = 2.45, 𝝥 = 3.14
+   Identifiers are *case-sensitive*!
+   #+BEGIN_SRC go :results output :exports code :imports "fmt"
+     abc := "abc"
+     Abc := "Abc"
+     ABC := "ABC"
+     aBc := "aBc"
+     // there are four different variables
+     fmt.Printf("abc = %s, Abc = %s, ABC = %s, aBc = %s", abc, Abc, ABC, aBc)
+   #+END_SRC
+
+   #+RESULTS:
+   : abc = abc, Abc = Abc, ABC = ABC, aBc = aBc
 
 * Constants
   Constants are declared with the *const* keyword.

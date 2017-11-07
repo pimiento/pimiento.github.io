@@ -10,13 +10,13 @@
 
 
   #+BEGIN_EXAMPLE
-bool
+bool        true or false
 string
 
 Numeric types:
 
 uint        either 32 or 64 bits
-int         same size as uint
+int         same size as uint. for integer literals Go infers type int
 uintptr     an unsigned integer large enough to store the uninterpreted bits of
             a pointer value
 uint8       the set of all unsigned  8-bit integers (0 to 255)
@@ -31,14 +31,79 @@ int64       the set of all signed 64-bit integers
             (-9223372036854775808 to 9223372036854775807)
 
 float32     the set of all IEEE-754 32-bit floating-point numbers
-float64     the set of all IEEE-754 64-bit floating-point numbers
+float64     the set of all IEEE-754 64-bit floating-point numbers.
+            for floating-point literals Go infers float64
 
 complex64   the set of all complex numbers with float32 real and imaginary parts
 complex128  the set of all complex numbers with float64 real and imaginary parts
+            for complex literals Go infers complex128
 
 byte        alias for uint8
 rune        alias for int32 (represents a Unicode code point)
   #+END_EXAMPLE
+
+* Enumerations
+  We can group together several constant declarations using the *const* keyword just once.
+  #+BEGIN_SRC go :results output :export both :imports "fmt"
+    const (
+            Cyan = 0// 0
+            Magenta // 0
+            Yellow  // 0
+    )
+
+    fmt.Println(Cyan, Magenta, Yellow)
+
+    type ByteSize float64
+
+    const (
+            _           = iota // ignore first value by assigning to blank identifier
+            KB ByteSize = 1 << (10 * iota)
+            MB
+            GB
+            TB
+            PB
+            EB
+            ZB
+            YB
+    )
+
+    fmt.Println(KB, TB, YB)
+  #+END_SRC
+
+  #+RESULTS:
+  : 0 0 0
+  : 1024 1.099511627776e+12 1.2089258196146292e+24
+
+** iota
+   Within a constant declaration, the predeclared identifier *iota* represents successive untyped integer constants. It is reset to 0 whenever the reserved word *const* appears in the source and increments after each ConstSpec.
+   #+BEGIN_SRC go :results output :export both :imports "fmt"
+     const ( // iota is reset to 0
+             c0 = iota // c0 == 0
+             c1 = iota // c1 == 1
+             c2 = iota // c2 == 2
+     )
+
+     const ( // iota is reset to 0
+             a = 1 << iota // a == 1
+             b = 1 << iota // b == 2
+             c = 3 // c == 3 (iota is not used but still incremented)
+             d = 1 << iota // d == 8
+     )
+
+     const ( // iota is reset to 0
+             u = iota * 42 // u == 0 (untyped integer constant)
+             v float64 = iota * 42 // v == 42.0 (float64 constant)
+             w = iota * 42 // w == 84 (untyped integer constant)
+     )
+
+     const x = iota // x == 0 (iota has been reset)
+     const y = iota // y == 0 (iota has been reset)
+
+     fmt.Printf("c2 = %d, d = %d, u = %d, v = %.01f, w = %.01f, x = %d y = %d", c2, d, u, v, w, x, y)
+   #+END_SRC
+
+   #+RESULTS:
+   : c2 = 2, d = 8, u = 0, v = 42.0, w = %!f(int=84), x = 0 y = 0
 
 * Type conversion
   The expression *T(v)* converts the value *v* to the type *T*. Go assignment between items of different type requires an explicit conversion which means that _you manually need to convert types if you are passing a variable to a function expecting another type_.

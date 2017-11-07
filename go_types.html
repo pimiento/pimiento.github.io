@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2017-10-26 Thu 16:53 -->
+<!-- 2017-11-08 Wed 01:55 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Go: Types</title>
@@ -312,26 +312,31 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgf6cf9b9">1. Basic Types</a></li>
-<li><a href="#org15d30dd">2. Type conversion</a></li>
-<li><a href="#orga00a4a5">3. Structs</a></li>
-<li><a href="#org34dd9ba">4. Initializing</a></li>
-<li><a href="#orgaf836e8">5. Composition vs Inheritance</a></li>
+<li><a href="#orgb4a7fdb">1. Basic Types</a></li>
+<li><a href="#orgb3bb470">2. Enumerations</a>
+<ul>
+<li><a href="#org4493b57">2.1. iota</a></li>
+</ul>
+</li>
+<li><a href="#orgfbf1368">3. Type conversion</a></li>
+<li><a href="#org63f3115">4. Structs</a></li>
+<li><a href="#org3eb59ce">5. Initializing</a></li>
+<li><a href="#org30f022f">6. Composition vs Inheritance</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgf6cf9b9" class="outline-2">
-<h2 id="orgf6cf9b9"><span class="section-number-2">1</span> Basic Types</h2>
+<div id="outline-container-orgb4a7fdb" class="outline-2">
+<h2 id="orgb4a7fdb"><span class="section-number-2">1</span> Basic Types</h2>
 <div class="outline-text-2" id="text-1">
 <pre class="example">
-bool
+bool        true or false
 string
 
 Numeric types:
 
 uint        either 32 or 64 bits
-int         same size as uint
+int         same size as uint. for integer literals Go infers type int
 uintptr     an unsigned integer large enough to store the uninterpreted bits of
             a pointer value
 uint8       the set of all unsigned  8-bit integers (0 to 255)
@@ -346,10 +351,12 @@ int64       the set of all signed 64-bit integers
             (-9223372036854775808 to 9223372036854775807)
 
 float32     the set of all IEEE-754 32-bit floating-point numbers
-float64     the set of all IEEE-754 64-bit floating-point numbers
+float64     the set of all IEEE-754 64-bit floating-point numbers.
+            for floating-point literals Go infers float64
 
 complex64   the set of all complex numbers with float32 real and imaginary parts
 complex128  the set of all complex numbers with float64 real and imaginary parts
+            for complex literals Go infers complex128
 
 byte        alias for uint8
 rune        alias for int32 (represents a Unicode code point)
@@ -357,9 +364,79 @@ rune        alias for int32 (represents a Unicode code point)
 </div>
 </div>
 
-<div id="outline-container-org15d30dd" class="outline-2">
-<h2 id="org15d30dd"><span class="section-number-2">2</span> Type conversion</h2>
+<div id="outline-container-orgb3bb470" class="outline-2">
+<h2 id="orgb3bb470"><span class="section-number-2">2</span> Enumerations</h2>
 <div class="outline-text-2" id="text-2">
+<p>
+We can group together several constant declarations using the <b>const</b> keyword just once.
+</p>
+<div class="org-src-container">
+<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">const</span> (
+        Cyan = 0<span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">0</span>
+        Magenta <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">0</span>
+        Yellow  <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">0</span>
+)
+
+fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(Cyan, Magenta, Yellow)
+
+<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">ByteSize</span> <span style="color: #00ffff;">float64</span>
+
+<span style="color: #00ff00; font-weight: bold;">const</span> (
+        _           = <span style="color: #7fffd4;">iota</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">ignore first value by assigning to blank identifie</span><span style="color: #DC8CC3; background-color: #3F3F3F; font-style: italic;">r</span>
+        KB ByteSize = 1 &lt;&lt; (10 * <span style="color: #7fffd4;">iota</span>)
+        MB
+        GB
+        TB
+        PB
+        EB
+        ZB
+        YB
+)
+
+fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(KB, TB, YB)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org4493b57" class="outline-3">
+<h3 id="org4493b57"><span class="section-number-3">2.1</span> iota</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+Within a constant declaration, the predeclared identifier <b>iota</b> represents successive untyped integer constants. It is reset to 0 whenever the reserved word <b>const</b> appears in the source and increments after each ConstSpec.
+</p>
+<div class="org-src-container">
+<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">const</span> ( <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">iota is reset to 0</span>
+        c0 = <span style="color: #7fffd4;">iota</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">c0 == 0</span>
+        c1 = <span style="color: #7fffd4;">iota</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">c1 == 1</span>
+        c2 = <span style="color: #7fffd4;">iota</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">c2 == 2</span>
+)
+
+<span style="color: #00ff00; font-weight: bold;">const</span> ( <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">iota is reset to 0</span>
+        a = 1 &lt;&lt; <span style="color: #7fffd4;">iota</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">a == 1</span>
+        b = 1 &lt;&lt; <span style="color: #7fffd4;">iota</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">b == 2</span>
+        c = 3 <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">c == 3 (iota is not used but still incremented)</span>
+        d = 1 &lt;&lt; <span style="color: #7fffd4;">iota</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">d == 8</span>
+)
+
+<span style="color: #00ff00; font-weight: bold;">const</span> ( <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">iota is reset to 0</span>
+        u = <span style="color: #7fffd4;">iota</span> * 42 <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">u == 0 (untyped integer constant)</span>
+        v float64 = <span style="color: #7fffd4;">iota</span> * 42 <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">v == 42.0 (float64 constant)</span>
+        w = <span style="color: #7fffd4;">iota</span> * 42 <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">w == 84 (untyped integer constant)</span>
+)
+
+<span style="color: #00ff00; font-weight: bold;">const</span> x = <span style="color: #7fffd4;">iota</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">x == 0 (iota has been reset)</span>
+<span style="color: #00ff00; font-weight: bold;">const</span> y = <span style="color: #7fffd4;">iota</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">y == 0 (iota has been reset)</span>
+
+fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"c2 = %d, d = %d, u = %d, v = %.01f, w = %.01f, x = %d y = %d"</span>, c2, d<span style="color: #DC8CC3; background-color: #3F3F3F;">, u, v, w, x, y)</span>
+</pre>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgfbf1368" class="outline-2">
+<h2 id="orgfbf1368"><span class="section-number-2">3</span> Type conversion</h2>
+<div class="outline-text-2" id="text-3">
 <p>
 The expression <b>T(v)</b> converts the value <b>v</b> to the type <b>T</b>. Go assignment between items of different type requires an explicit conversion which means that <span class="underline">you manually need to convert types if you are passing a variable to a function expecting another type</span>.
 </p>
@@ -373,9 +450,9 @@ f64 := <span style="color: #00ffff; font-weight: bold;">float64</span>(f32)
 </div>
 </div>
 
-<div id="outline-container-orga00a4a5" class="outline-2">
-<h2 id="orga00a4a5"><span class="section-number-2">3</span> Structs</h2>
-<div class="outline-text-2" id="text-3">
+<div id="outline-container-org63f3115" class="outline-2">
+<h2 id="org63f3115"><span class="section-number-2">4</span> Structs</h2>
+<div class="outline-text-2" id="text-4">
 <p>
 A struct is a collection of fields/properties. You can define new types as structs or interfaces. You can think of a struct to be a light class that supports composition but not inheritance. You don’t need to define getters and setters on struct fields, they can be accessed automatically. However, note that only exported fields (capitalized) can be accessed from outside of a package.
 </p>
@@ -407,7 +484,7 @@ A struct is a collection of fields/properties. You can define new types as struc
 </div>
 
 <pre class="example">
-{34.012836 -118.495338 2017-10-26 16:53:42.209192312 +1000 +10}
+{34.012836 -118.495338 2017-11-08 01:55:11.288886534 +1000 +10}
 
 </pre>
 <p>
@@ -458,15 +535,15 @@ A struct literal sets a newly allocated struct value by listing the values of it
 
 <pre class="example">
 {1 2} &amp;{1 2} {1 0} {0 0}
-Event on 2017-10-26 16:53:42.576135144 +1000 +10, location (34.012836, -118.495338)
+Event on 2017-11-08 01:55:11.586590478 +1000 +10, location (34.012836, -118.495338)
 
 </pre>
 </div>
 </div>
 
-<div id="outline-container-org34dd9ba" class="outline-2">
-<h2 id="org34dd9ba"><span class="section-number-2">4</span> Initializing</h2>
-<div class="outline-text-2" id="text-4">
+<div id="outline-container-org3eb59ce" class="outline-2">
+<h2 id="org3eb59ce"><span class="section-number-2">5</span> Initializing</h2>
+<div class="outline-text-2" id="text-5">
 <p>
 Go supports the <b>new</b> expression to <b>allocate a zeroed value</b> of the requested type and to <b>return a pointer</b> to it.
 </p>
@@ -504,9 +581,9 @@ true
 </div>
 </div>
 
-<div id="outline-container-orgaf836e8" class="outline-2">
-<h2 id="orgaf836e8"><span class="section-number-2">5</span> Composition vs Inheritance</h2>
-<div class="outline-text-2" id="text-5">
+<div id="outline-container-org30f022f" class="outline-2">
+<h2 id="org30f022f"><span class="section-number-2">6</span> Composition vs Inheritance</h2>
+<div class="outline-text-2" id="text-6">
 <div class="org-src-container">
 <pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">package</span> main
 
@@ -545,7 +622,7 @@ true
 Player struct has the same fields as the User struct but it also has a GameId field. It can be simplified by composing our struct.
 </p>
 <div class="org-src-container">
-<pre class="src src-go" id="orgb592aec"><span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">User</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+<pre class="src src-go" id="orgdae06e9"><span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">User</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
         Id             int
         Name, Location string
 }
@@ -644,7 +721,7 @@ Hi Matt from LA
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Pavel Vavilin</p>
-<p class="date">Created: 2017-10-26 Thu 16:53</p>
+<p class="date">Created: 2017-11-08 Wed 01:55</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

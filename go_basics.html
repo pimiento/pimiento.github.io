@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2017-10-26 Thu 16:00 -->
+<!-- 2017-11-08 Wed 01:55 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Go: The Basics</title>
@@ -312,21 +312,39 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org98e0413">1. Variables</a></li>
-<li><a href="#org4de50f3">2. Constants</a></li>
-<li><a href="#orgdc44c6d">3. Printing Constants and Variables</a></li>
-<li><a href="#org6eabd01">4. Packages and imports</a></li>
-<li><a href="#org2a43f1a">5. Exported names</a></li>
-<li><a href="#org3aa7d8e">6. Functions, signature, return values, named results</a></li>
-<li><a href="#org2e50501">7. Pointers</a></li>
-<li><a href="#org8177f6b">8. Mutability</a></li>
+<li><a href="#orgd461cf0">1. Comments</a></li>
+<li><a href="#orge2db64d">2. Variables</a>
+<ul>
+<li><a href="#org07f887c">2.1. Identifiers names</a></li>
+</ul>
+</li>
+<li><a href="#orgd98d729">3. Constants</a></li>
+<li><a href="#org9cf26e7">4. Printing Constants and Variables</a></li>
+<li><a href="#orgf650e07">5. Packages and imports</a></li>
+<li><a href="#org61e92d4">6. Exported names</a></li>
+<li><a href="#org495cbea">7. Functions, signature, return values, named results</a></li>
+<li><a href="#org9e959e6">8. Pointers</a></li>
+<li><a href="#org1190535">9. Mutability</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org98e0413" class="outline-2">
-<h2 id="org98e0413"><span class="section-number-2">1</span> Variables</h2>
+<div id="outline-container-orgd461cf0" class="outline-2">
+<h2 id="orgd461cf0"><span class="section-number-2">1</span> Comments</h2>
 <div class="outline-text-2" id="text-1">
+<p>
+Go supports two kinds of comments:
+</p>
+<ul class="org-ul">
+<li>line comments begin with <b>//</b> and end at the newline; these are treated simply as newline.</li>
+<li>general comments begin with <b>/&lowast;</b> and end with <b>&lowast;/</b> and may span multiple lines.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orge2db64d" class="outline-2">
+<h2 id="orge2db64d"><span class="section-number-2">2</span> Variables</h2>
+<div class="outline-text-2" id="text-2">
 <p>
 The <b>var</b> statement declares a list of variables with the type declared last or one variable per line. Var declaration can include initializers, one per variable.
 </p>
@@ -396,11 +414,51 @@ Hello, World (42) of World
 
 </pre>
 </div>
+
+<div id="outline-container-org07f887c" class="outline-3">
+<h3 id="org07f887c"><span class="section-number-3">2.1</span> Identifiers names</h3>
+<div class="outline-text-3" id="text-2-1">
+<p>
+A <i>Go</i> identifier is a nonempty sequence of letters and digits where the first character must be a letter.
+A letter is the underscore, <b>_</b>, or any character that is in the Unicode categories:
+</p>
+<ul class="org-ul">
+<li><b>Lu</b> — letter uppercase</li>
+<li><b>Ll</b> — letter lowercase</li>
+<li><b>Lt</b> — letter titlecase</li>
+<li><b>Lm</b> — letter modifier</li>
+<li><b>Lo</b> — letter other</li>
+</ul>
+<p>
+A <i>Go</i> identifier can contain any Unicode letters from this list.
+</p>
+<div class="org-src-container">
+<pre class="src src-go"><span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">italic theta is valid identifier for Go</span>
+&#120773; := 2.45
+<span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Pi is valid identifier as well</span>
+&#120677; := 3.14
+fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"&#120773; = %.02f, &#120677; = %.02f"</span>, &#120773;, &#120677;)
+</pre>
+</div>
+<p>
+Identifiers are <b>case-sensitive</b>!
+</p>
+<div class="org-src-container">
+<pre class="src src-go">abc := <span style="color: #ffa500;">"abc"</span>
+Abc := <span style="color: #ffa500;">"Abc"</span>
+ABC := <span style="color: #ffa500;">"ABC"</span>
+aBc := <span style="color: #ffa500;">"aBc"</span>
+<span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">there are four different variables</span>
+fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"abc = %s, Abc = %s, ABC = %s, aBc = %s"</span>, abc, Abc, ABC, aBc)
+</pre>
+</div>
+</div>
+</div>
 </div>
 
-<div id="outline-container-org4de50f3" class="outline-2">
-<h2 id="org4de50f3"><span class="section-number-2">2</span> Constants</h2>
-<div class="outline-text-2" id="text-2">
+<div id="outline-container-orgd98d729" class="outline-2">
+<h2 id="orgd98d729"><span class="section-number-2">3</span> Constants</h2>
+<div class="outline-text-2" id="text-3">
 <p>
 Constants are declared with the <b>const</b> keyword.
 <span class="underline">Constants can only be</span> <b>character</b>, <b>string</b>, <b>boolean</b>, or <b>numeric</b> values and <span class="underline">cannot be declared using <b>:=</b> syntax</span>.
@@ -421,9 +479,9 @@ Constants are declared with the <b>const</b> keyword.
 </div>
 </div>
 
-<div id="outline-container-orgdc44c6d" class="outline-2">
-<h2 id="orgdc44c6d"><span class="section-number-2">3</span> Printing Constants and Variables</h2>
-<div class="outline-text-2" id="text-3">
+<div id="outline-container-org9cf26e7" class="outline-2">
+<h2 id="org9cf26e7"><span class="section-number-2">4</span> Printing Constants and Variables</h2>
+<div class="outline-text-2" id="text-4">
 <p>
 While you can print the value of a variable or constant using the built-in print and println functions, the more idiomatic and flexible way is to use the fmt package. fmt.Println prints the passed in variables' values and appends a newline. fmt.Printf is used when you want to print one or multiple values using a defined format specifier.
 </p>
@@ -456,9 +514,9 @@ The answer is 42
 </div>
 </div>
 
-<div id="outline-container-org6eabd01" class="outline-2">
-<h2 id="org6eabd01"><span class="section-number-2">4</span> Packages and imports</h2>
-<div class="outline-text-2" id="text-4">
+<div id="outline-container-orgf650e07" class="outline-2">
+<h2 id="orgf650e07"><span class="section-number-2">5</span> Packages and imports</h2>
+<div class="outline-text-2" id="text-5">
 <p>
 Every Go program is made up of packages. Programs start runnig in package <b>main</b>. If you are writing an executable code (versus a library), then you need to define a <b>main package</b> and a <b>main() function</b> which will be the entry point to your software.
 </p>
@@ -502,9 +560,9 @@ The snippet above basically tells the compiler to import the crypto package avai
 </div>
 </div>
 
-<div id="outline-container-org2a43f1a" class="outline-2">
-<h2 id="org2a43f1a"><span class="section-number-2">5</span> Exported names</h2>
-<div class="outline-text-2" id="text-5">
+<div id="outline-container-org61e92d4" class="outline-2">
+<h2 id="org61e92d4"><span class="section-number-2">6</span> Exported names</h2>
+<div class="outline-text-2" id="text-6">
 <p>
 After importing a package, you can refer to the names it exports (meaning variables, methods and functions that are available from outside of the package). In Go, a name is exported if it begins with a capital letter. <b>Foo</b> is an exported name, as is <b>FOO</b>. The name <b>foo</b> is not exported.
 </p>
@@ -541,9 +599,9 @@ After importing a package, you can refer to the names it exports (meaning variab
 </div>
 </div>
 
-<div id="outline-container-org3aa7d8e" class="outline-2">
-<h2 id="org3aa7d8e"><span class="section-number-2">6</span> Functions, signature, return values, named results</h2>
-<div class="outline-text-2" id="text-6">
+<div id="outline-container-org495cbea" class="outline-2">
+<h2 id="org495cbea"><span class="section-number-2">7</span> Functions, signature, return values, named results</h2>
+<div class="outline-text-2" id="text-7">
 <p>
 Function can take zero or more typed arguments. The type comes after the variable name. Functions can be defined to return any number of values that are always typed.;
 </p>
@@ -653,9 +711,9 @@ Matt lives in LA, North America
 </div>
 </div>
 
-<div id="outline-container-org2e50501" class="outline-2">
-<h2 id="org2e50501"><span class="section-number-2">7</span> Pointers</h2>
-<div class="outline-text-2" id="text-7">
+<div id="outline-container-org9e959e6" class="outline-2">
+<h2 id="org9e959e6"><span class="section-number-2">8</span> Pointers</h2>
+<div class="outline-text-2" id="text-8">
 <p>
 Go has pointers (like C++ references), but no pointer arithmetic. Struct fields can be accessed through a struct pointer. Note that by default Go passes arguments by value (copying the arguments), if you want to pass the arguments by reference, you need to pass pointers (or use a structure using reference values like <i>slices</i> and <i>maps</i>). To get the pointer of a value, use the <b>&amp;</b> symbol in front of the value; to dereference a pointer, use the <b>&lowast;</b> (asterisk) symbol. Methods are often defined on pointers and not values (although they can be defined on both), so you will often store a pointer in a variable as in the example below:
 </p>
@@ -667,9 +725,9 @@ resp, err := client.<span style="color: #00ffff; font-weight: bold;">Get</span>(
 </div>
 </div>
 
-<div id="outline-container-org8177f6b" class="outline-2">
-<h2 id="org8177f6b"><span class="section-number-2">8</span> Mutability</h2>
-<div class="outline-text-2" id="text-8">
+<div id="outline-container-org1190535" class="outline-2">
+<h2 id="org1190535"><span class="section-number-2">9</span> Mutability</h2>
+<div class="outline-text-2" id="text-9">
 <p>
 In Go only constants are immutable. However because arguments are passed by value, a function receiving a value argument and mutating it, won’t mutate the original value.
 </p>
@@ -741,7 +799,7 @@ Matt has a total of 43 songs
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Pavel Vavilin</p>
-<p class="date">Created: 2017-10-26 Thu 16:00</p>
+<p class="date">Created: 2017-11-08 Wed 01:55</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
