@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2017-10-25 Wed 22:10 -->
+<!-- 2017-11-09 Thu 19:39 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>GIL в Python</title>
@@ -312,22 +312,22 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgb3d7edc">1. Потоки в Python</a></li>
-<li><a href="#org9c198c6">2. Структуры интерпретатора, обеспечивающие многопоточную работу</a></li>
-<li><a href="#org375af48">3. GIL</a>
+<li><a href="#orga87d831">1. Потоки в Python</a></li>
+<li><a href="#org085a870">2. Структуры интерпретатора, обеспечивающие многопоточную работу</a></li>
+<li><a href="#org5f6e839">3. GIL</a>
 <ul>
-<li><a href="#org48acb60">3.1. Старый GIL: 2.x и 3.0/3.1</a></li>
-<li><a href="#org21433e4">3.2. Новый GIL</a></li>
+<li><a href="#org4c7d827">3.1. Старый GIL: 2.x и 3.0/3.1</a></li>
+<li><a href="#org6a62848">3.2. Новый GIL</a></li>
 </ul>
 </li>
-<li><a href="#org641ea81">4. GIL и системный вызовы</a></li>
+<li><a href="#org71e468f">4. GIL и системный вызовы</a></li>
 </ul>
 </div>
 </div>
 
 
-<div id="outline-container-orgb3d7edc" class="outline-2">
-<h2 id="orgb3d7edc"><span class="section-number-2">1</span> Потоки в Python</h2>
+<div id="outline-container-orga87d831" class="outline-2">
+<h2 id="orga87d831"><span class="section-number-2">1</span> Потоки в Python</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 Python threads — это настоящие потоки (POSIX threads или Windows threads), полностью контролируемые ОС. Рассмотрим поточное выполнение в процессе интерпретатора Python (CPython, написанного на C):
@@ -354,8 +354,8 @@ Python threads — это настоящие потоки (POSIX threads или 
 </div>
 </div>
 
-<div id="outline-container-org9c198c6" class="outline-2">
-<h2 id="org9c198c6"><span class="section-number-2">2</span> Структуры интерпретатора, обеспечивающие многопоточную работу</h2>
+<div id="outline-container-org085a870" class="outline-2">
+<h2 id="org085a870"><span class="section-number-2">2</span> Структуры интерпретатора, обеспечивающие многопоточную работу</h2>
 <div class="outline-text-2" id="text-2">
 <dl class="org-dl">
 <dt>PyInterpreterState</dt><dd>содержит глобальное состояние интерпретатора: загруженные модули <i>modules</i>, указатель на первый (главный) поток <i>tstate_head</i> и разное другое:</dd>
@@ -428,12 +428,12 @@ Python threads — это настоящие потоки (POSIX threads или 
 </div>
 </div>
 
-<div id="outline-container-org375af48" class="outline-2">
-<h2 id="org375af48"><span class="section-number-2">3</span> GIL</h2>
+<div id="outline-container-org5f6e839" class="outline-2">
+<h2 id="org5f6e839"><span class="section-number-2">3</span> GIL</h2>
 <div class="outline-text-2" id="text-3">
 </div>
-<div id="outline-container-org48acb60" class="outline-3">
-<h3 id="org48acb60"><span class="section-number-3">3.1</span> Старый GIL: 2.x и 3.0/3.1</h3>
+<div id="outline-container-org4c7d827" class="outline-3">
+<h3 id="org4c7d827"><span class="section-number-3">3.1</span> Старый GIL: 2.x и 3.0/3.1</h3>
 <div class="outline-text-3" id="text-3-1">
 <p>
 GIL переключается каждые 100 инструкций (или на IO операциях). Сам GIL устроен как нерекурсиваная блокировка. Только что освободивший GIL поток скорее всего обратно сразу же его не получит (если алгоритм переключения потоков в ОС "справедливо" распределяет время работы потоков), а отдаст управление другому потоку и сам встанет в ожидание. Проблемы GIL:
@@ -465,8 +465,8 @@ check interval is: 100
 </div>
 </div>
 
-<div id="outline-container-org21433e4" class="outline-3">
-<h3 id="org21433e4"><span class="section-number-3">3.2</span> Новый GIL</h3>
+<div id="outline-container-org6a62848" class="outline-3">
+<h3 id="org6a62848"><span class="section-number-3">3.2</span> Новый GIL</h3>
 <div class="outline-text-3" id="text-3-2">
 <p>
 Использует усовершенствованную схему, базирующуюся на времени. Кроме того, добавлен специальный механизм для предотвращения повторного захвата GIL.
@@ -493,13 +493,13 @@ check interval is: 100
 </div>
 </div>
 
-<div id="outline-container-org641ea81" class="outline-2">
-<h2 id="org641ea81"><span class="section-number-2">4</span> GIL и системный вызовы</h2>
+<div id="outline-container-org71e468f" class="outline-2">
+<h2 id="org71e468f"><span class="section-number-2">4</span> GIL и системный вызовы</h2>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Pavel Vavilin</p>
-<p class="date">Created: 2017-10-25 Wed 22:10</p>
+<p class="date">Created: 2017-11-09 Thu 19:39</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

@@ -67,7 +67,7 @@
 
 
 ** DFS Paths — поиск пути между двумя вершинами
-   #+BEGIN_SRC python :noweb yes :results output :export both
+   #+BEGIN_SRC python :noweb yes :results output :exports both
      <<graph>>
 
      def dfs_paths(graph, start, goal):

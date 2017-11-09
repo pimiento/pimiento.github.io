@@ -28,7 +28,7 @@
 
 ** Структуры интерпретатора, обеспечивающие многопоточную работу
    - PyInterpreterState :: содержит глобальное состояние интерпретатора: загруженные модули /modules/, указатель на первый (главный) поток /tstate_head/ и разное другое:
-   #+BEGIN_SRC c :export code
+   #+BEGIN_SRC c :exports code
      struct PyInterpreterState {
          PyIterpreterState *next;
          PyThreadState *tstate_head;

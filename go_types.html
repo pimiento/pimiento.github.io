@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2017-11-08 Wed 01:55 -->
+<!-- 2017-11-09 Thu 19:39 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Go: Types</title>
@@ -312,22 +312,22 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgb4a7fdb">1. Basic Types</a></li>
-<li><a href="#orgb3bb470">2. Enumerations</a>
+<li><a href="#orgf35101f">1. Basic Types</a></li>
+<li><a href="#org816b602">2. Enumerations</a>
 <ul>
-<li><a href="#org4493b57">2.1. iota</a></li>
+<li><a href="#orgc0a1bf9">2.1. iota</a></li>
 </ul>
 </li>
-<li><a href="#orgfbf1368">3. Type conversion</a></li>
-<li><a href="#org63f3115">4. Structs</a></li>
-<li><a href="#org3eb59ce">5. Initializing</a></li>
-<li><a href="#org30f022f">6. Composition vs Inheritance</a></li>
+<li><a href="#org2272ba4">3. Type conversion</a></li>
+<li><a href="#org68de756">4. Structs</a></li>
+<li><a href="#orga2092a9">5. Initializing</a></li>
+<li><a href="#orgfcb3c4d">6. Composition vs Inheritance</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgb4a7fdb" class="outline-2">
-<h2 id="orgb4a7fdb"><span class="section-number-2">1</span> Basic Types</h2>
+<div id="outline-container-orgf35101f" class="outline-2">
+<h2 id="orgf35101f"><span class="section-number-2">1</span> Basic Types</h2>
 <div class="outline-text-2" id="text-1">
 <pre class="example">
 bool        true or false
@@ -364,8 +364,8 @@ rune        alias for int32 (represents a Unicode code point)
 </div>
 </div>
 
-<div id="outline-container-orgb3bb470" class="outline-2">
-<h2 id="orgb3bb470"><span class="section-number-2">2</span> Enumerations</h2>
+<div id="outline-container-org816b602" class="outline-2">
+<h2 id="org816b602"><span class="section-number-2">2</span> Enumerations</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 We can group together several constant declarations using the <b>const</b> keyword just once.
@@ -396,10 +396,16 @@ fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(Cyan, Magent
 fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(KB, TB, YB)
 </pre>
 </div>
+
+<pre class="example">
+0 0 0
+1024 1.099511627776e+12 1.2089258196146292e+24
+
+</pre>
 </div>
 
-<div id="outline-container-org4493b57" class="outline-3">
-<h3 id="org4493b57"><span class="section-number-3">2.1</span> iota</h3>
+<div id="outline-container-orgc0a1bf9" class="outline-3">
+<h3 id="orgc0a1bf9"><span class="section-number-3">2.1</span> iota</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 Within a constant declaration, the predeclared identifier <b>iota</b> represents successive untyped integer constants. It is reset to 0 whenever the reserved word <b>const</b> appears in the source and increments after each ConstSpec.
@@ -430,12 +436,17 @@ Within a constant declaration, the predeclared identifier <b>iota</b> represents
 fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"c2 = %d, d = %d, u = %d, v = %.01f, w = %.01f, x = %d y = %d"</span>, c2, d<span style="color: #DC8CC3; background-color: #3F3F3F;">, u, v, w, x, y)</span>
 </pre>
 </div>
+
+<pre class="example">
+c2 = 2, d = 8, u = 0, v = 42.0, w = %!f(int=84), x = 0 y = 0
+
+</pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-orgfbf1368" class="outline-2">
-<h2 id="orgfbf1368"><span class="section-number-2">3</span> Type conversion</h2>
+<div id="outline-container-org2272ba4" class="outline-2">
+<h2 id="org2272ba4"><span class="section-number-2">3</span> Type conversion</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 The expression <b>T(v)</b> converts the value <b>v</b> to the type <b>T</b>. Go assignment between items of different type requires an explicit conversion which means that <span class="underline">you manually need to convert types if you are passing a variable to a function expecting another type</span>.
@@ -450,8 +461,8 @@ f64 := <span style="color: #00ffff; font-weight: bold;">float64</span>(f32)
 </div>
 </div>
 
-<div id="outline-container-org63f3115" class="outline-2">
-<h2 id="org63f3115"><span class="section-number-2">4</span> Structs</h2>
+<div id="outline-container-org68de756" class="outline-2">
+<h2 id="org68de756"><span class="section-number-2">4</span> Structs</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 A struct is a collection of fields/properties. You can define new types as structs or interfaces. You can think of a struct to be a light class that supports composition but not inheritance. You don’t need to define getters and setters on struct fields, they can be accessed automatically. However, note that only exported fields (capitalized) can be accessed from outside of a package.
@@ -484,7 +495,7 @@ A struct is a collection of fields/properties. You can define new types as struc
 </div>
 
 <pre class="example">
-{34.012836 -118.495338 2017-11-08 01:55:11.288886534 +1000 +10}
+{34.012836 -118.495338 2017-11-09 19:39:36.544069188 +1000 +10}
 
 </pre>
 <p>
@@ -535,14 +546,14 @@ A struct literal sets a newly allocated struct value by listing the values of it
 
 <pre class="example">
 {1 2} &amp;{1 2} {1 0} {0 0}
-Event on 2017-11-08 01:55:11.586590478 +1000 +10, location (34.012836, -118.495338)
+Event on 2017-11-09 19:39:36.874991702 +1000 +10, location (34.012836, -118.495338)
 
 </pre>
 </div>
 </div>
 
-<div id="outline-container-org3eb59ce" class="outline-2">
-<h2 id="org3eb59ce"><span class="section-number-2">5</span> Initializing</h2>
+<div id="outline-container-orga2092a9" class="outline-2">
+<h2 id="orga2092a9"><span class="section-number-2">5</span> Initializing</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 Go supports the <b>new</b> expression to <b>allocate a zeroed value</b> of the requested type and to <b>return a pointer</b> to it.
@@ -581,8 +592,8 @@ true
 </div>
 </div>
 
-<div id="outline-container-org30f022f" class="outline-2">
-<h2 id="org30f022f"><span class="section-number-2">6</span> Composition vs Inheritance</h2>
+<div id="outline-container-orgfcb3c4d" class="outline-2">
+<h2 id="orgfcb3c4d"><span class="section-number-2">6</span> Composition vs Inheritance</h2>
 <div class="outline-text-2" id="text-6">
 <div class="org-src-container">
 <pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">package</span> main
@@ -622,7 +633,7 @@ true
 Player struct has the same fields as the User struct but it also has a GameId field. It can be simplified by composing our struct.
 </p>
 <div class="org-src-container">
-<pre class="src src-go" id="orgdae06e9"><span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">User</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+<pre class="src src-go" id="org870caab"><span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">User</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
         Id             int
         Name, Location string
 }
@@ -721,7 +732,7 @@ Hi Matt from LA
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Pavel Vavilin</p>
-<p class="date">Created: 2017-11-08 Wed 01:55</p>
+<p class="date">Created: 2017-11-09 Thu 19:39</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

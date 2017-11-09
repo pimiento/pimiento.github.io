@@ -124,7 +124,7 @@
       К /signature-changing/ декораторам относятся, например, декораторы *@staticmethod* и *@classmethod*, т.к. они принимают на вход функцию и возвращают объект дескриптора, который не является ни функцией, ни вызываемым объектом.
 *** Описание проблемы
     Предположим, что мы хотим /трассировать/ выполнение функции:
-    #+BEGIN_SRC python :results output :export both :noweb no :tangle no
+    #+BEGIN_SRC python :results output :exports both :noweb no :tangle no
       try:
           from functools import update_wrapper
       except ImportError:             # using Python version < 2.5

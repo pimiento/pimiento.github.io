@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2017-10-25 Wed 22:00 -->
+<!-- 2017-11-09 Thu 19:39 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Декораторы в Python</title>
@@ -312,17 +312,17 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgcdf82b8">1. Декораторы в Python</a>
+<li><a href="#orgcda99b7">1. Декораторы в Python</a>
 <ul>
-<li><a href="#org113d4b3">1.1. Декораторы и Паттерн Декоратор</a></li>
-<li><a href="#org4169ad0">1.2. Декораторы функций</a></li>
-<li><a href="#orgea7e88d">1.3. Изменение имени функции, возвращённой из декоратора</a></li>
-<li><a href="#orgbd89b85">1.4. Декораторы с аргументами</a></li>
-<li><a href="#org86c6201">1.5. Модуль decorator</a>
+<li><a href="#org43df04e">1.1. Декораторы и Паттерн Декоратор</a></li>
+<li><a href="#org69adfb7">1.2. Декораторы функций</a></li>
+<li><a href="#org681bf5b">1.3. Изменение имени функции, возвращённой из декоратора</a></li>
+<li><a href="#orgb7bfc4c">1.4. Декораторы с аргументами</a></li>
+<li><a href="#orgb5a3ac6">1.5. Модуль decorator</a>
 <ul>
-<li><a href="#org9b4e7b1">1.5.1. Определение декоратора</a></li>
-<li><a href="#org88bcb80">1.5.2. Описание проблемы</a></li>
-<li><a href="#org64800e8">1.5.3. Решение проблемы</a></li>
+<li><a href="#org1419170">1.5.1. Определение декоратора</a></li>
+<li><a href="#org7ffc1d8">1.5.2. Описание проблемы</a></li>
+<li><a href="#orgad2ffc0">1.5.3. Решение проблемы</a></li>
 </ul>
 </li>
 </ul>
@@ -331,20 +331,20 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-orgcdf82b8" class="outline-2">
-<h2 id="orgcdf82b8"><span class="section-number-2">1</span> Декораторы в Python</h2>
+<div id="outline-container-orgcda99b7" class="outline-2">
+<h2 id="orgcda99b7"><span class="section-number-2">1</span> Декораторы в Python</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-org113d4b3" class="outline-3">
-<h3 id="org113d4b3"><span class="section-number-3">1.1</span> Декораторы и Паттерн Декоратор</h3>
+<div id="outline-container-org43df04e" class="outline-3">
+<h3 id="org43df04e"><span class="section-number-3">1.1</span> Декораторы и Паттерн Декоратор</h3>
 <div class="outline-text-3" id="text-1-1">
 <p>
 Возможно использовать декораторы в Python чтобы реализовать паттерн декоратор, но это крайне редкое их использование. Декораторы в Python больше всего похожи на макросы.
 </p>
 </div>
 </div>
-<div id="outline-container-org4169ad0" class="outline-3">
-<h3 id="org4169ad0"><span class="section-number-3">1.2</span> Декораторы функций</h3>
+<div id="outline-container-org69adfb7" class="outline-3">
+<h3 id="org69adfb7"><span class="section-number-3">1.2</span> Декораторы функций</h3>
 <div class="outline-text-3" id="text-1-2">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">class</span> <span style="color: #00ffff;">myDecorator</span>(<span style="color: #b0c4de; font-weight: bold;">object</span>):
@@ -376,8 +376,8 @@ inside my_decorator.__call__()
 </pre>
 </div>
 </div>
-<div id="outline-container-orgea7e88d" class="outline-3">
-<h3 id="orgea7e88d"><span class="section-number-3">1.3</span> Изменение имени функции, возвращённой из декоратора</h3>
+<div id="outline-container-org681bf5b" class="outline-3">
+<h3 id="org681bf5b"><span class="section-number-3">1.3</span> Изменение имени функции, возвращённой из декоратора</h3>
 <div class="outline-text-3" id="text-1-3">
 <p>
 Если мы используем декоратор-функцию, то возвращённая им функция будет иметь совсем другое название, для решения это проблемы мы можем переопределить аттрибут <i>__name__</i>
@@ -407,8 +407,8 @@ Exited original_name
 </pre>
 </div>
 </div>
-<div id="outline-container-orgbd89b85" class="outline-3">
-<h3 id="orgbd89b85"><span class="section-number-3">1.4</span> Декораторы с аргументами</h3>
+<div id="outline-container-orgb7bfc4c" class="outline-3">
+<h3 id="orgb7bfc4c"><span class="section-number-3">1.4</span> Декораторы с аргументами</h3>
 <div class="outline-text-3" id="text-1-4">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">class</span> <span style="color: #00ffff;">decorator_with_arguments</span>(<span style="color: #b0c4de; font-weight: bold;">object</span>):
@@ -469,15 +469,15 @@ after second sayHello() call
 </pre>
 </div>
 </div>
-<div id="outline-container-org86c6201" class="outline-3">
-<h3 id="org86c6201"><span class="section-number-3">1.5</span> Модуль <a href="http://www.phyast.pitt.edu/~micheles/python/documentation.html">decorator</a></h3>
+<div id="outline-container-orgb5a3ac6" class="outline-3">
+<h3 id="orgb5a3ac6"><span class="section-number-3">1.5</span> Модуль <a href="http://www.phyast.pitt.edu/~micheles/python/documentation.html">decorator</a></h3>
 <div class="outline-text-3" id="text-1-5">
 <p>
 Так как написание корректного декоратора требует значительного опыта и не так уж просто как кажется, то был создан модуль <b>decorator</b>.
 </p>
 </div>
-<div id="outline-container-org9b4e7b1" class="outline-4">
-<h4 id="org9b4e7b1"><span class="section-number-4">1.5.1</span> Определение декоратора</h4>
+<div id="outline-container-org1419170" class="outline-4">
+<h4 id="org1419170"><span class="section-number-4">1.5.1</span> Определение декоратора</h4>
 <div class="outline-text-4" id="text-1-5-1">
 <p>
 Декораторы могут быть двух видов:
@@ -489,8 +489,8 @@ after second sayHello() call
 </ul>
 </div>
 </div>
-<div id="outline-container-org88bcb80" class="outline-4">
-<h4 id="org88bcb80"><span class="section-number-4">1.5.2</span> Описание проблемы</h4>
+<div id="outline-container-org7ffc1d8" class="outline-4">
+<h4 id="org7ffc1d8"><span class="section-number-4">1.5.2</span> Описание проблемы</h4>
 <div class="outline-text-4" id="text-1-5-2">
 <p>
 Предположим, что мы хотим <i>трассировать</i> выполнение функции:
@@ -518,8 +518,9 @@ after second sayHello() call
 </div>
 </div>
 </div>
-<div id="outline-container-org64800e8" class="outline-4">
-<h4 id="org64800e8"><span class="section-number-4">1.5.3</span> Решение проблемы</h4>
+
+<div id="outline-container-orgad2ffc0" class="outline-4">
+<h4 id="orgad2ffc0"><span class="section-number-4">1.5.3</span> Решение проблемы</h4>
 <div class="outline-text-4" id="text-1-5-3">
 <p>
 Решение проблемы с постояным отслеживанием чтобы все аттрибуты функции под декоратором остались прежними (имя, документация) заключается в использовании фабрики генераторов, которая спрячет всю сложность создания <i>signature-preserving</i> декораторов. Вот как мы можем реализовать функцию <i>decorator_trace</i>:
@@ -559,7 +560,7 @@ calling f1 with args (0,), {}
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Pavel Vavilin</p>
-<p class="date">Created: 2017-10-25 Wed 22:00</p>
+<p class="date">Created: 2017-11-09 Thu 19:39</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

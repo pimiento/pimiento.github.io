@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2017-10-25 Wed 22:11 -->
+<!-- 2017-11-09 Thu 19:40 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>работа с графами в Python</title>
@@ -312,23 +312,23 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org352a25d">1. Граф</a></li>
-<li><a href="#org5a1f4ef">2. Depth-First Search — Поиск вглубину</a></li>
-<li><a href="#org453c944">3. DFS Paths — поиск пути между двумя вершинами</a></li>
-<li><a href="#org3517e30">4. Bread-Firsth Search — Поиск вширину</a></li>
-<li><a href="#orgfa9f6d8">5. BFS Paths</a></li>
+<li><a href="#org07efa96">1. Граф</a></li>
+<li><a href="#org0864539">2. Depth-First Search — Поиск вглубину</a></li>
+<li><a href="#orgf88f9be">3. DFS Paths — поиск пути между двумя вершинами</a></li>
+<li><a href="#org99a2ce3">4. Bread-Firsth Search — Поиск вширину</a></li>
+<li><a href="#orgb4630f5">5. BFS Paths</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org352a25d" class="outline-2">
-<h2 id="org352a25d"><span class="section-number-2">1</span> Граф</h2>
+<div id="outline-container-org07efa96" class="outline-2">
+<h2 id="org07efa96"><span class="section-number-2">1</span> Граф</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 Будет использоваться ненаправленный связный граф V=6 E=6. Существует две популярные методики представления графов: матрица смежности (эффективна с плотными графами) и список связей (эффективно с разряженными графами). Будем использовать второй способ.
 </p>
 <div class="org-src-container">
-<pre class="src src-python" id="org758c9d7"><span style="color: #ffffff;">graph</span> = {<span style="color: #ffa500;">'A'</span>: [<span style="color: #ffa500;">'B'</span>, <span style="color: #ffa500;">'C'</span>],
+<pre class="src src-python" id="orgf44594c"><span style="color: #ffffff;">graph</span> = {<span style="color: #ffa500;">'A'</span>: [<span style="color: #ffa500;">'B'</span>, <span style="color: #ffa500;">'C'</span>],
          <span style="color: #ffa500;">'B'</span>: [<span style="color: #ffa500;">'A'</span>, <span style="color: #ffa500;">'D'</span>, <span style="color: #ffa500;">'E'</span>],
          <span style="color: #ffa500;">'C'</span>: [<span style="color: #ffa500;">'A'</span>, <span style="color: #ffa500;">'F'</span>],
          <span style="color: #ffa500;">'D'</span>: [<span style="color: #ffa500;">'B'</span>],
@@ -344,8 +344,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 </div>
-<div id="outline-container-org5a1f4ef" class="outline-2">
-<h2 id="org5a1f4ef"><span class="section-number-2">2</span> Depth-First Search — Поиск вглубину</h2>
+<div id="outline-container-org0864539" class="outline-2">
+<h2 id="org0864539"><span class="section-number-2">2</span> Depth-First Search — Поиск вглубину</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 Алгоритм поиска вглубину: исследуем сначала все возможные вершины (из выбранного корня) доступные из текущей, прежде чем возвращаться назад. Данный алгоритм можно реализовать как рекурсивно, так и итеративно. Последовательность действий:
@@ -418,8 +418,8 @@ for the JavaScript code in this tag.
 </div>
 
 
-<div id="outline-container-org453c944" class="outline-2">
-<h2 id="org453c944"><span class="section-number-2">3</span> DFS Paths — поиск пути между двумя вершинами</h2>
+<div id="outline-container-orgf88f9be" class="outline-2">
+<h2 id="orgf88f9be"><span class="section-number-2">3</span> DFS Paths — поиск пути между двумя вершинами</h2>
 <div class="outline-text-2" id="text-3">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #ffffff;">graph</span> = {<span style="color: #ffa500;">'A'</span>: [<span style="color: #ffa500;">'B'</span>, <span style="color: #ffa500;">'C'</span>],
@@ -442,10 +442,15 @@ for the JavaScript code in this tag.
 <span style="color: #00ff00; font-weight: bold;">print</span>(<span style="color: #b0c4de; font-weight: bold;">list</span>(dfs_paths(graph, <span style="color: #ffa500;">'A'</span>, <span style="color: #ffa500;">'F'</span>)))
 </pre>
 </div>
+
+<pre class="example">
+[['A', 'C', 'F'], ['A', 'B', 'E', 'F']]
+
+</pre>
 </div>
 </div>
-<div id="outline-container-org3517e30" class="outline-2">
-<h2 id="org3517e30"><span class="section-number-2">4</span> Bread-Firsth Search — Поиск вширину</h2>
+<div id="outline-container-org99a2ce3" class="outline-2">
+<h2 id="org99a2ce3"><span class="section-number-2">4</span> Bread-Firsth Search — Поиск вширину</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 Позволяет найти кратчайший путь между двумя вершинами. Довольно сложно реализовать рекурсивно, гораздо проще реализовать его с использованием <i>очереди</i>.
@@ -474,13 +479,13 @@ for the JavaScript code in this tag.
 </div>
 
 <pre class="example">
-['A', 'B', 'C', 'E', 'D', 'F']
+['A', 'B', 'C', 'D', 'E', 'F']
 
 </pre>
 </div>
 </div>
-<div id="outline-container-orgfa9f6d8" class="outline-2">
-<h2 id="orgfa9f6d8"><span class="section-number-2">5</span> BFS Paths</h2>
+<div id="outline-container-orgb4630f5" class="outline-2">
+<h2 id="orgb4630f5"><span class="section-number-2">5</span> BFS Paths</h2>
 <div class="outline-text-2" id="text-5">
 <div class="org-src-container">
 <pre class="src src-python"><span style="color: #00ff00; font-weight: bold;">from</span> queue <span style="color: #00ff00; font-weight: bold;">import</span> deque
@@ -531,7 +536,7 @@ for the JavaScript code in this tag.
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Pavel Vavilin</p>
-<p class="date">Created: 2017-10-25 Wed 22:11</p>
+<p class="date">Created: 2017-11-09 Thu 19:40</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

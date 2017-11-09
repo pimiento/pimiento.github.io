@@ -125,7 +125,7 @@
     : origin is (1, 2)
 
 ** Массивы структур
-   #+BEGIN_SRC C :results output :export both :main no :cmdline <<< '#include <stdio.h> int main (void) { int res = 0; puts("Hello World"); return res; }'
+   #+BEGIN_SRC C :results output :exports both :main no :cmdline <<< '#include <stdio.h> int main (void) { int res = 0; puts("Hello World"); return res; }'
      #include <stdio.h>
      #include <ctype.h>
      #include <string.h>
