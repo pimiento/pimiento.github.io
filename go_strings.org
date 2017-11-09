@@ -1,0 +1,346 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+HTML_MATHJAX: align: center tagside: left font: Neo-Euler
+#+KEYWORDS: Go unicode
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: Go: Strings
+
+* String
+  Go's *string* type is fundamentally different from the equivalent type in many other languages, where /string/ types are all sequence of *fixexd-with* characters, whereas a Go *string* is a _sequence of *variable-width* characters_ where each character is represented by one or more bytes, normally using UTF-8 encoding.
+
+* literals, operators, escapes
+  String literals are created using double quotes *"* or backticks *`*. Double quotes are used to create interpreted string literals, which support the escape sequences but may not span multiple lines. Backticks are used to create raw string literals — these strings may span multiple lines, they do not support any escape sequences and may contain any character except for a backtick.
+  #+BEGIN_SRC go :exports both :results output :imports "fmt"
+    text := "\"What's that?\", he said" // Interpreted string literal
+    text2 := `"What's that?", he said`  // Raw string literal
+    radicals := "√ \u221A \U0000221a"   // radicals == "√ √ √"
+    fmt.Printf("text = %s\ntext2 = %s\nradicals = %s", text, text2, radicals)
+  #+END_SRC
+
+  #+RESULTS:
+  : text = "What's that?", he said
+  : text2 = "What's that?", he said
+  : radicals = √ √ √
+
+  | Syntax             | Description/result                                                                                   |
+  |--------------------+------------------------------------------------------------------------------------------------------|
+  | /                  | <                                                                                                    |
+  |                    | <100>                                                                                                |
+  | *s += t*           | Appends string t to the end of string s                                                              |
+  | *s + t*            | The concatenation of strings s and t                                                                 |
+  | *s[n]*             | The raw byte at index position n (of type uint8 ) in s                                               |
+  | *s[n:m]*           | A string taken from s from index positions n to m - 1                                                |
+  | *s[n:]*            | A string taken from s from index positions n to len(s) - 1                                           |
+  | *s[:m]*            | A string taken from s from index positions 0 to m - 1                                                |
+  | *len(s)*           | The number of bytes in string s                                                                      |
+  | *len([]rune(s))*   | The number of characters in string s —use the faster utf8. RuneCountInString() instead;              |
+  | *[]rune(s)*        | Converts string s into a slice of Unicode code points                                                |
+  | *string(chars)*    | Converts a []rune or []int32 into a string ; assumes that the rune s or int32 s are Unicode code points |
+  | *[]byte(s)*        | Converts string s into a slice of raw bytes without copying; there’s no guarantee that the bytes are valid UTF-8 |
+  | *string(bytes)*    | Converts a []byte or []uint8 into a string without copying; there’s no guarantee that the bytes are valid UTF-8 |
+  | *string(i)*        | Converts i of any integer type into a string ; assumes that iis a Unicode code point; e.g., if i is 65 , it returns "A" |
+  | *strconv. Itoa(i)* | The string representation of i of type int and an error ; e.g., if i is 65 , it returns ( "65" , nil ); |
+  | *fmt.Sprintx*      | The string representation of x of any type; e.g., if x is an integer of value 65 , it returns "65" ; |
+
+* Comparing strings
+  Go strings support the usual comparison operators: $<$, $<=$, $==$, $!=$, $>=$, $>$. The comparison operators compare strings byte by byte in memory. Three problems can arise when performing comparisons:
+  1. Some Unicode characters can be represented by two or more different byte sequences. For example, the character *Å* could be the /Ångström/ symbol or simply an A with a ring above /Å/ and can be represented by Unicode code point U+00C5 (Å) or by the two code points U+0041 and U+030A (A and COMBINING RING ABOVE). In terms of UTF-8 bytes symbols are represented with a different byte sequences and it can be different result for comparison and sorting strings with these symbols. It is always possible to write a custom normalization function that, for example, ensured that, say /é/ was always represented by the bytes $[0xC3, 0xA9]$ rather than, say, $[0x65, 0xCC, 0x81]$ (i.e., an /e/ and an combining character). Normalizing Unicode characters is explanet in the [[http://unicode.org/reports/tr15][Unicode Normalization document]].The Go standard library has an /experimental/ normalization package (exp/norm).
+  2. The second is that there are cases where our users might reasonably expect /different/ characters to be considered equal. Users might expect a search for $5$ to match $5$, $_{5}$, $^{5}$, and maybe even $➄$. As with the first problem this can be solved by using some form of normalization.
+  3. Sorting of some characters is language-specific.
+
+* Characters and strings
+  A single character can be represented by a single *rune* (or int32). Go /strings/ represent sequences of zero or more characters. We can convert a single character into a one-character /string/ using Go's standard conversion syntax:
+  #+BEGIN_SRC go :exports both :results output :imports "fmt"
+    æs := ""
+    for _, char := range []rune{'æ', 0xE6, 0346, 230, '\xE6', '\u00E6'} {
+            fmt.Printf("[0x%X '%c']", char, char)
+            æs += string(char)
+    }
+    fmt.Println()
+    fmt.Println(æs)
+  #+END_SRC
+
+  #+RESULTS:
+  : [0xE6 'æ'][0xE6 'æ'][0xE6 'æ'][0xE6 'æ'][0xE6 'æ'][0xE6 'æ']
+  : ææææææ
+  An entire string can be converted to a slice of /runes/ (i.e. code points) using the syntax *chars := []rune (s)* where *s* is of type *string*. The chars will have type *[]int32* since *rune* is a synonym for *int32*. The reverse conversion is using syntax *s := string(chars)* where *chars* is of type *[]rune* or *[]int32*; *s* will have type *string*. Both conversions are reasonably fast ($O(n)$ where $n$ is the number of bytes)
+
+* Indexing and slicing strings
+  Since Go strings store their text as UTF-8 encoded bytes we must be careful to only ever slice on character boundaries. This is easy if we have 7-bit ASCII text since every byte represents one character, but for non-ASCII text the situation is more challenging since such characters may be represented by one or more bytes. Usually we don't need to slice strings at all but simply iterate over them character by character using a *for … range* loop, but in some situations we really do want to extract substrings using slicing. One way to be sure to use slice indexes that slice on character boundaries is to use functions from Go's *strings* packages, such as *strings.Index()* or *strings.LastIndex()*.
+  If we really need to index individual characters, a couple of options are open to us. For strings that contain only 7-bit ASCII we can simply use the *[]* index operator which gives us very fast ($O(1)$) lookups. For non-ASCII strings we can convert the string to a *[]rune* and use the *[]* index operator. This delivers very fast ($O(1)$) lookup performance, but at the expense of the one-off conversion which costs both CPU and memory ($O(n)$).
+  For arbitrary strings (i.e., those that might contain non-ASCII characters), extracting characters by index is rarely the right apprroach. Much better is to use string slicing — which also has the convenience of returning a *string* rather than a *byte*.
+  #+BEGIN_SRC go :exports both :results output :imports '("fmt" "strings")
+    line := "røde og gule sløjfer"
+    i := strings.Index(line, " ")    // Get the index of the first space
+    firstWord := line[:i]            // Slice up to the first space
+    j := strings.LastIndex(line, " ") // Get the index of the last space
+    lastWord := line[j+1:]           // Slice from after the last space
+    fmt.Println(firstWord, lastWord)
+  #+END_SRC
+
+  #+RESULTS:
+  : røde sløjfer
+  Although this example is fine for spaces and would also work for other 7-bit ASCII characters, it isn't suitable for working with arbitrary Unicode whitespace characters such as U+2028 (Line Separator  ) or U+2029 (Paragraph Separator  ).
+  #+BEGIN_SRC go :exports both :results output :imports '("fmt" "strings" "unicode" "unicode/utf8")
+    line := "rå tørt\u2028vær"
+    i := strings.IndexFunc(line, unicode.IsSpace)
+    firstWord := line[:i]
+    j := strings.LastIndexFunc(line, unicode.IsSpace)
+    _, size := utf8.DecodeRuneInString(line[j:])
+    lastWord := line[j+size:]
+    fmt.Println(firstWord, lastWord)
+  #+END_SRC
+
+  #+RESULTS:
+  : rå vær
+
+* String formatting with the fmt package
+  Go's standard library's *fmt* package provides print functions for writing data as strings to the console, to files and other values satisfying the *io.Writer* interface, and to other strings. The *fmt* package also provides various /scan/ functions for reading data from the console, from the files, and from strings.
+
+  #+CAPTION: fmt print functions
+  | Syntax                                 | Description/result                                                               |
+  |----------------------------------------+----------------------------------------------------------------------------------|
+  | /                                      | <                                                                                |
+  |                                        | <80>                                                                             |
+  | *fmt.Errorf(format, args...)*       | Returns an error value containing a string created with the /format/ string and the /args/ |
+  | *fmt.Fprint(writer, args...)*          | Writes the /args/ to the /writer/ each using format %v and space-separating nonstrings; returns the number of bytes written, and an /error/ or /nil/ |
+  | *fmt.Fprintf(writer, format, args...)* | Writes the /args/ to the /writer/ using the /format/ string; returns the number of bytes written, and an /error/ or /nil/ |
+  | *fmt.Fprintln(writer, args...)*        | Writes the /args/ to the writer each using format %v, space-separated and ending with a newline; returns the number of bytes written, and an /error/ or /nil/ |
+  | *fmt.Print(args...)*                   | Write the /args/ to /os.Stdout/ each using format %v and space-separating nonstrings; return the number of bytes written, and an /error/ or /nil/ |
+  | *fmt.Printf(format, args...)*          | Writes the /args/ to /os.Stdout/ using the /format/ string; returns the number of bytes written, and an /error/ or /nil/ |
+  | *fmt.Println(args...)*                 | Writes the /args/ to /os.Stdout/ each using format %v , spaceseparated and ending with a newline; returns the number of bytes written, and an /error/ or /nil/ |
+  | *fmt.Sprint(args...)*                  | Returns a string of the /args/ , each formatted using format %v and space-separating nonstrings |
+  | *fmt.Sprintf(format, args...)*         | Returns a string of the /args/ formatted using the /format/ string               |
+  | *fmt.Sprintln(args...)*                | Returns a string of the /args/ , each formatted using format %v , space-separated and ending with a newline |
+-----
+  #+CAPTION: fmt verbs
+  | Verb | Description/result                                                               |
+  |------+----------------------------------------------------------------------------------|
+  | /    | <                                                                                |
+  |      | <90>                                                                             |
+  | *%%* | A literal % character                                                            |
+  | *%b* | An integer value as a binary (base 2) number, or (advanced) a ﬂoating-point number in scientiﬁc notation with a power of 2 exponent |
+  | *%c* | An integer code point value as a Unicode character                               |
+  | *%d* | An integer value as a decimal (base 10) number                                   |
+  | *%e* | A ﬂoating-point or complex value in scientiﬁc notation with e                    |
+  | *%E* | A ﬂoating-point or complex value in scientiﬁc notation with E                    |
+  | *%f* | A ﬂoating-point or complex value in standard notation                            |
+  | *%g* | A ﬂoating-point or complex value using %e or %f , whichever produces the most compact output |
+  | *%G* | A ﬂoating-point or complex value using %E or %f , whichever produces the most compact output |
+  | *%o* | An integer value as an octal (base 8) number                                     |
+  | *%p* | A value’s address as a hexadecimal (base 16) number with a preﬁx of 0x and using lowercase for the digits a – f (for debugging) |
+  | *%q* | The string or []byte as a double-quoted string, or the integer as a single-quoted string, using Go syntax and using escapes where necessary |
+  | *%s* | The string or []byte as raw UTF-8 bytes; this will produce correct Unicode output for a text ﬁle or on a UTF-8-savvy console |
+  | *%t* | A bool value as true or false                                                    |
+  | *%T* | A value’s type using Go syntax                                                   |
+  | *%U* | An integer code point value using Unicode notation defaulting to four digits; e.g., fmt.Printf("%U", '¶' ) outputs U+00B6 |
+  | *%v* | A built-in or custom type’s value using a default format, or a custom value using its type’s String() method if it exists |
+  | *%x* | An integer value as a hexadecimal (base 16) number or a string or []byte value as hexadecimal digits (two per byte), using lowercase for the digits a – f |
+  | *%X* | An integer value as a hexadecimal (base 16) number or a string or []byte value as hexadecimal digits (two per byte), using uppercase for the digits A – F |
+-----
+  #+CAPTION: fmt verb modifiers
+  | Modiﬁer        | Description/result                                                                         |
+  |----------------+--------------------------------------------------------------------------------------------|
+  | /              | <                                                                                          |
+  |                | <90>                                                                                       |
+  | *space*        | Makes the verb output “ - ” before negative numbers and a space before positive numbers or to put spaces between the bytes printed when using the %x or %X verbs; e.g., fmt.Printf("% X", "←" ) outputs E2 86 92 |
+  |----------------+--------------------------------------------------------------------------------------------|
+  | *#*            | Makes the verb use an “alternative” output format:                                         |
+  |                | %#o outputs octal with a leading 0                                                         |
+  |                | %#p outputs a pointer without the leading 0x                                               |
+  |                | %#q outputs a string or []byte as a raw string (using backticks) if possible—otherwise outputs a double-quoted string |
+  |                | %#v outputs a value as itself using Go syntax                                              |
+  |                | %#x outputs hexadecimal with a leading 0x                                                  |
+  |                | %#X outputs hexadecimal with a leading 0X                                                  |
+  |----------------+--------------------------------------------------------------------------------------------|
+  | *+*            | Makes the verb output + or - for numbers, ASCII characters (with others escaped) for strings, and ﬁeld names for structs |
+  |----------------+--------------------------------------------------------------------------------------------|
+  | *-*            | Makes the verb left-justify the value (the default is to right-justify)                    |
+  |----------------+--------------------------------------------------------------------------------------------|
+  | *0*            | Makes the verb pad with leading 0 s instead of spaces                                      |
+  |----------------+--------------------------------------------------------------------------------------------|
+  | *n.m* *n* *.m* | For numbers, makes the verb output a ﬂoating-point or complex value using n (of type int ) characters (or more if necessary to avoid truncation) and with m (of type int ) digits after the decimal point(s). For strings n speciﬁes the minimum ﬁeld width, and will result in space padding if the string has too few characters, and .m speciﬁes the maximum number of the string’s characters to use (going from left to right), and will result in the string being truncated if it is too long. Either or both of m and n can be replaced with * in which case their values are taken from the arguments. Either n or .m may be omitted. |
+  #+BEGIN_SRC go :expotrs both :results output :imports "fmt"
+    type polar struct{ radius, θ float64 }
+
+    p := polar{8.32, .49}
+    fmt.Print(-18.5, 17, "Elephant", -8+.7i, 0x3C7, '\u03C7', "a", "b", p)
+    fmt.Println()
+    fmt.Println(-18.5, 17, "Elephant", -8+.7i, 0x3C7, '\u03C7', "a", "b", p)
+  #+END_SRC
+
+  #+RESULTS:
+  : -18.5 17Elephant(-8+0.7i) 967 967ab{8.32 0.49}
+  : -18.5 17 Elephant (-8+0.7i) 967 967 a b {8.32 0.49}
+
+** Formatting booleans
+   Boolean values are output using the %t (truth value) verb
+   #+BEGIN_SRC go :exports both :results output :imports "fmt"
+     fmt.Printf("%t %t\n", true, false)
+   #+END_SRC
+
+   #+RESULTS:
+   : true false
+   If we want output booleans as integers we must do the conversion ourselves:
+   #+BEGIN_SRC go :exports both :results output
+     package main
+
+     import "fmt"
+
+     func IntForBool(b bool) int {
+             if b {
+                     return 1
+             }
+             return 0
+     }
+
+     func main() {
+             fmt.Printf("%d %d\n", IntForBool(true), IntForBool(false))
+     }
+   #+END_SRC
+
+   #+RESULTS:
+   : 1 0
+
+** Formatting integers
+   #+CAPTION: Binary formatting
+   #+BEGIN_SRC go :exports both :results output :imports "fmt"
+     fmt.Printf("|%b|%9b|%-9b|%09b|% 9b|", 37, 37, 37, 37, 37)
+   #+END_SRC
+
+   #+RESULTS:
+   : |100101|   100101|100101   |000100101|   100101|
+   #+CAPTION: Octal formatting
+   #+BEGIN_SRC go :exports both :results output :imports "fmt"
+     fmt.Printf("|%o|%#o|%# 8o|%#+ 8o|%+08o|", 41, 41, 41, 41, -41)
+   #+END_SRC
+
+   #+RESULTS:
+   : |51|051|     051|    +051|-0000051|
+   #+CAPTION: Hexadecimal formatting
+   #+BEGIN_SRC go :exports both :results output :imports "fmt"
+     i := 3931
+     fmt.Printf("|%x|%X|%8x|%08x|%#04X|0x%04X|", i, i, i ,i, i, i)
+   #+END_SRC
+
+   #+RESULTS:
+   : |f5b|F5B|     f5b|00000f5b|0X0F5B|0x0F5B|
+   #+CAPTION: Decimal formatting
+   #+BEGIN_SRC go :exports both :results output :imports "fmt"
+     fmt.Printf("|%d|%06d|%+06d|", 569, 569, 569)
+   #+END_SRC
+
+   #+RESULTS:
+   : |569|000569|+00569|
+
+** Formatting characters
+   Go characters are rune s (i.e., int32 s), and they can be output as numbers or as Unicode characters.
+   #+CAPTION: Character formatting
+   #+BEGIN_SRC go :exports both :results output :imports "fmt"
+     fmt.Printf("%d %#04x %U '%c'", 0x3A6, 934, '\u03A6', '\U000003A6')
+   #+END_SRC
+
+   #+RESULTS:
+   : 934 0x03a6 U+03A6 'Φ'
+
+** Formatting floating-point numbers
+   For ﬂoating-point numbers we can specify the overall width, the number of digits after the decimal place—and whether to use standard or scientiﬁc notation.
+   #+CAPTION: Floating-point formatting
+   #+BEGIN_SRC go :exports both :results output :imports "fmt"
+     for _, x := range []float64{-.258, 7194.84, -60897162.0218, 1.500089e-8} {
+             fmt.Printf("|%20.5e|%20.5f|\n", x, x,)
+     }
+   #+END_SRC
+
+   #+RESULTS:
+   : |        -2.58000e-01|            -0.25800|
+   : |         7.19484e+03|          7194.84000|
+   : |        -6.08972e+07|     -60897162.02180|
+   : |         1.50009e-08|             0.00000|
+
+** Formatting strings and slices
+   Strings can be output with a minimum ﬁeld width (which the print functions will pad with spaces if the string is too short), and with a maximum number of characters (which will result in truncation for any string that’s too long). Strings can be output as Unicode (i.e., characters), or as a sequence of code points (i.e., rune s) or as the UTF-8 bytes that represent them.
+   #+NAME: slogan
+   #+BEGIN_SRC go :results none :exports none
+     slogan := "End Óréttlæti♥"
+   #+END_SRC
+
+   #+CAPTION: String formatting
+   #+BEGIN_SRC go :results output :exports both :imports '("fmt" "strings") :noweb yes
+     <<slogan>>
+     fmt.Printf("%s\n%q\n%+q\n%#q\n", slogan, slogan, slogan, slogan)
+     s := "Dare to be naïve"
+     fmt.Printf("|%22s|%-22s|%10s|\n", s, s, s)
+     i := strings.Index(s, "n")
+     fmt.Printf("|%.10s|%.*s|%-22.10s|%22.10s|%s|\n", s, i, s, s, s, s)
+   #+END_SRC
+
+   #+RESULTS:
+   : End Óréttlæti♥
+   : "End Óréttlæti♥"
+   : "End \u00d3r\u00e9ttl\u00e6ti\u2665"
+   : `End Óréttlæti♥`
+   : |      Dare to be naïve|Dare to be naïve      |Dare to be naïve|
+   : |Dare to be|Dare to be |Dare to be            |            Dare to be|Dare to be naïve|
+
+   #+CAPTION: Slice of chars formatting
+   #+BEGIN_SRC go :results output :exports both :imports "fmt" :noweb strip-export
+     <<slogan>>
+     chars := []rune(slogan)
+     fmt.Printf("%x\n%#x\n%#X\n", chars, chars, chars)
+   #+END_SRC
+
+   #+RESULTS:
+   : [45 6e 64 20 d3 72 e9 74 74 6c e6 74 69 2665]
+   : [0x45 0x6e 0x64 0x20 0xd3 0x72 0xe9 0x74 0x74 0x6c 0xe6 0x74 0x69 0x2665]
+   : [0X45 0X6E 0X64 0X20 0XD3 0X72 0XE9 0X74 0X74 0X6C 0XE6 0X74 0X69 0X2665]
+
+   #+CAPTION: Slice of bytes formatting
+   #+BEGIN_SRC go :results output :exports both :imports "fmt" :noweb strip-export
+     <<slogan>>
+     bytes := []byte(slogan)
+     fmt.Printf("%s\n%x\n%X\n% X\n%v\n", bytes, bytes, bytes, bytes, bytes)
+   #+END_SRC
+
+   #+RESULTS:
+   : End Óréttlæti♥
+   : 456e6420c39372c3a974746cc3a67469e299a5
+   : 456E6420C39372C3A974746CC3A67469E299A5
+   : 45 6E 64 20 C3 93 72 C3 A9 74 74 6C C3 A6 74 69 E2 99 A5
+   : [69 110 100 32 195 147 114 195 169 116 116 108 195 166 116 105 226 153 165]
+
+** Formatting for debuging
+   The %T (type) verb is used to print a built-in or custom value’s type, and the %v verb is used to print a built-in value’s value. In fact, %v can also print the value of custom types, using a default format for types that do not have a String() method deﬁned, or using the type’s String() method if it has one.
+   #+CAPTION: Debug formatting
+   #+BEGIN_SRC go :results output :exports both :imports '("fmt" "math")
+     type polar struct{ radius, θ float64 }
+
+     p := polar{-83.40, 71.60}
+     fmt.Printf("|%T|%v|%#v|\n", p, p, p)
+     fmt.Printf("|%T|%v|%t|\n", false, false, false)
+     fmt.Printf("|%T|%v|%d|\n", 7607, 7607, 7607)
+     fmt.Printf("|%T|%v|%f|\n", math.E, math.E, math.E)
+     fmt.Printf("|%T|%v|%f|\n", 5+7i, 5+7i, 5+7i)
+     s := "Relativity"
+     fmt.Printf("|%T|\"%v\"|\"%s\"|%q|\n", s, s, s, s)
+   #+END_SRC
+
+   #+RESULTS:
+   : |main.polar|{-83.4 71.6}|main.polar{radius:-83.4, θ:71.6}|
+   : |bool|false|false|
+   : |int|7607|7607|
+   : |float64|2.718281828459045|2.718282|
+   : |complex128|(5+7i)|(5.000000+7.000000i)|
+   : |string|"Relativity"|"Relativity"|"Relativity"|
+   #+CAPTION: Pointer formatting
+   #+BEGIN_SRC go :exports both :results output :imports "fmt"
+     i := 5
+     f := -48.3124
+     s := "Tomás Bretón"
+     fmt.Printf("|%p → %d|%p → %f|%#p → %s|\n", &i, i, &f, f, &s, s)
+   #+END_SRC
+
+   #+RESULTS:
+   : |0xc82000a350 → 5|0xc82000a358 → -48.312400|c82000a360 → Tomás Bretón|

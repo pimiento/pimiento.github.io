@@ -1,0 +1,1085 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2017-11-09 Thu 21:40 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Go: Strings</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Pavel Vavilin" />
+<meta name="keywords" content="Go unicode" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+
+<script type="text/javascript" src="org-info.js">
+/**
+ *
+ * @source: org-info.js
+ *
+ * @licstart  The following is the entire license notice for the
+ *  JavaScript code in org-info.js.
+ *
+ * Copyright (C) 2012-2017 Free Software Foundation, Inc.
+ *
+ *
+ * The JavaScript code in this tag is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU
+ * General Public License (GNU GPL) as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.  The code is distributed WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+ *
+ * As additional permission under GNU GPL version 3 section 7, you
+ * may distribute non-source (e.g., minimized or compacted) forms of
+ * that code without the copy of the GNU GPL normally required by
+ * section 4, provided you include this license notice and a URL
+ * through which recipients can access the Corresponding Source.
+ *
+ * @licend  The above is the entire license notice
+ * for the JavaScript code in org-info.js.
+ *
+ */
+</script>
+
+<script type="text/javascript">
+
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+
+<!--/*--><![CDATA[/*><!--*/
+org_html_manager.set("TOC_DEPTH", "3");
+org_html_manager.set("LINK_HOME", "https://pimiento.github.io/");
+org_html_manager.set("LINK_UP", "https://pimiento.github.io/");
+org_html_manager.set("LOCAL_TOC", "1");
+org_html_manager.set("VIEW_BUTTONS", "0");
+org_html_manager.set("MOUSE_HINT", "underline");
+org_html_manager.set("FIXED_TOC", "0");
+org_html_manager.set("TOC", "1");
+org_html_manager.set("VIEW", "1");
+org_html_manager.setup();  // activate after the parameters are set
+/*]]>*///-->
+</script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "Neo-Euler"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "Neo-Euler"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "left",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="https://pimiento.github.io/"> UP </a>
+ |
+ <a accesskey="H" href="https://pimiento.github.io/"> HOME </a>
+</div><div id="content">
+<h1 class="title">Go: Strings</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgbbbb657">1. String</a></li>
+<li><a href="#org477669a">2. literals, operators, escapes</a></li>
+<li><a href="#orgaab3eaf">3. Comparing strings</a></li>
+<li><a href="#orgfe49d28">4. Characters and strings</a></li>
+<li><a href="#orge63c9ab">5. Indexing and slicing strings</a></li>
+<li><a href="#orgb507103">6. String formatting with the fmt package</a>
+<ul>
+<li><a href="#org6babb0c">6.1. Formatting booleans</a></li>
+<li><a href="#orge6b5984">6.2. Formatting integers</a></li>
+<li><a href="#org8ebe5e9">6.3. Formatting characters</a></li>
+<li><a href="#orgdd58c60">6.4. Formatting floating-point numbers</a></li>
+<li><a href="#org79669df">6.5. Formatting strings and slices</a></li>
+<li><a href="#org3061bf0">6.6. Formatting for debuging</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgbbbb657" class="outline-2">
+<h2 id="orgbbbb657"><span class="section-number-2">1</span> String</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+Go's <b>string</b> type is fundamentally different from the equivalent type in many other languages, where <i>string</i> types are all sequence of <b>fixexd-with</b> characters, whereas a Go <b>string</b> is a <span class="underline">sequence of <b>variable-width</b> characters</span> where each character is represented by one or more bytes, normally using UTF-8 encoding.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org477669a" class="outline-2">
+<h2 id="org477669a"><span class="section-number-2">2</span> literals, operators, escapes</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+String literals are created using double quotes <b>"</b> or backticks <b>`</b>. Double quotes are used to create interpreted string literals, which support the escape sequences but may not span multiple lines. Backticks are used to create raw string literals — these strings may span multiple lines, they do not support any escape sequences and may contain any character except for a backtick.
+</p>
+<div class="org-src-container">
+<pre class="src src-go">text := <span style="color: #ffa500;">"\"What's that?\", he said"</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Interpreted string literal</span>
+text2 := <span style="color: #ffa500;">`"What's that?", he said`</span>  <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Raw string literal</span>
+radicals := <span style="color: #ffa500;">"&#8730; \u221A \U0000221a"</span>   <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">radicals == "&#8730; &#8730; &#8730;"</span>
+fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"text = %s\ntext2 = %s\nradicals = %s"</span>, text, text2, radicals)
+</pre>
+</div>
+
+<pre class="example">
+text = "What's that?", he said
+text2 = "What's that?", he said
+radicals = √ √ √
+
+</pre>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Syntax</th>
+<th scope="col" class="org-left">Description/result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><b>s += t</b></td>
+<td class="org-left">Appends string t to the end of string s</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>s + t</b></td>
+<td class="org-left">The concatenation of strings s and t</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>s[n]</b></td>
+<td class="org-left">The raw byte at index position n (of type uint8 ) in s</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>s[n:m]</b></td>
+<td class="org-left">A string taken from s from index positions n to m - 1</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>s[n:]</b></td>
+<td class="org-left">A string taken from s from index positions n to len(s) - 1</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>s[:m]</b></td>
+<td class="org-left">A string taken from s from index positions 0 to m - 1</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>len(s)</b></td>
+<td class="org-left">The number of bytes in string s</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>len([]rune(s))</b></td>
+<td class="org-left">The number of characters in string s —use the faster utf8. RuneCountInString() instead;</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>[]rune(s)</b></td>
+<td class="org-left">Converts string s into a slice of Unicode code points</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>string(chars)</b></td>
+<td class="org-left">Converts a []rune or []int32 into a string ; assumes that the rune s or int32 s are Unicode code points</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>[]byte(s)</b></td>
+<td class="org-left">Converts string s into a slice of raw bytes without copying; there’s no guarantee that the bytes are valid UTF-8</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>string(bytes)</b></td>
+<td class="org-left">Converts a []byte or []uint8 into a string without copying; there’s no guarantee that the bytes are valid UTF-8</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>string(i)</b></td>
+<td class="org-left">Converts i of any integer type into a string ; assumes that iis a Unicode code point; e.g., if i is 65 , it returns "A"</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>strconv. Itoa(i)</b></td>
+<td class="org-left">The string representation of i of type int and an error ; e.g., if i is 65 , it returns ( "65" , nil );</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>fmt.Sprintx</b></td>
+<td class="org-left">The string representation of x of any type; e.g., if x is an integer of value 65 , it returns "65" ;</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-orgaab3eaf" class="outline-2">
+<h2 id="orgaab3eaf"><span class="section-number-2">3</span> Comparing strings</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Go strings support the usual comparison operators: \(<\), \(<=\), \(==\), \(!=\), \(>=\), \(>\). The comparison operators compare strings byte by byte in memory. Three problems can arise when performing comparisons:
+</p>
+<ol class="org-ol">
+<li>Some Unicode characters can be represented by two or more different byte sequences. For example, the character <b>Å</b> could be the <i>Ångström</i> symbol or simply an A with a ring above <i>Å</i> and can be represented by Unicode code point U+00C5 (Å) or by the two code points U+0041 and U+030A (A and COMBINING RING ABOVE). In terms of UTF-8 bytes symbols are represented with a different byte sequences and it can be different result for comparison and sorting strings with these symbols. It is always possible to write a custom normalization function that, for example, ensured that, say <i>é</i> was always represented by the bytes \([0xC3, 0xA9]\) rather than, say, \([0x65, 0xCC, 0x81]\) (i.e., an <i>e</i> and an combining character). Normalizing Unicode characters is explanet in the <a href="http://unicode.org/reports/tr15">Unicode Normalization document</a>.The Go standard library has an <i>experimental</i> normalization package (exp/norm).</li>
+<li>The second is that there are cases where our users might reasonably expect <i>different</i> characters to be considered equal. Users might expect a search for \(5\) to match \(5\), \(_{5}\), \(^{5}\), and maybe even \(➄\). As with the first problem this can be solved by using some form of normalization.</li>
+<li>Sorting of some characters is language-specific.</li>
+</ol>
+</div>
+</div>
+
+<div id="outline-container-orgfe49d28" class="outline-2">
+<h2 id="orgfe49d28"><span class="section-number-2">4</span> Characters and strings</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+A single character can be represented by a single <b>rune</b> (or int32). Go <i>strings</i> represent sequences of zero or more characters. We can convert a single character into a one-character <i>string</i> using Go's standard conversion syntax:
+</p>
+<div class="org-src-container">
+<pre class="src src-go">&#230;s := <span style="color: #ffa500;">""</span>
+<span style="color: #00ff00; font-weight: bold;">for</span> _, char := <span style="color: #00ff00; font-weight: bold;">range</span> []<span style="color: #00ffff;">rune</span>{<span style="color: #ffa500;">'&#230;'</span>, 0xE6, 0346, 230, <span style="color: #ffa500;">'\xE6'</span>, <span style="color: #ffa500;">'\u00E6'</span>} {
+        fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"[0x%X '%c']"</span>, char, char)
+        &#230;s += <span style="color: #00ffff; font-weight: bold;">string</span>(char)
+}
+fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>()
+fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(&#230;s)
+</pre>
+</div>
+
+<pre class="example">
+[0xE6 'æ'][0xE6 'æ'][0xE6 'æ'][0xE6 'æ'][0xE6 'æ'][0xE6 'æ']
+ææææææ
+
+</pre>
+<p>
+An entire string can be converted to a slice of <i>runes</i> (i.e. code points) using the syntax <b>chars := []rune (s)</b> where <b>s</b> is of type <b>string</b>. The chars will have type <b>[]int32</b> since <b>rune</b> is a synonym for <b>int32</b>. The reverse conversion is using syntax <b>s := string(chars)</b> where <b>chars</b> is of type <b>[]rune</b> or <b>[]int32</b>; <b>s</b> will have type <b>string</b>. Both conversions are reasonably fast (\(O(n)\) where \(n\) is the number of bytes)
+</p>
+</div>
+</div>
+
+<div id="outline-container-orge63c9ab" class="outline-2">
+<h2 id="orge63c9ab"><span class="section-number-2">5</span> Indexing and slicing strings</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+Since Go strings store their text as UTF-8 encoded bytes we must be careful to only ever slice on character boundaries. This is easy if we have 7-bit ASCII text since every byte represents one character, but for non-ASCII text the situation is more challenging since such characters may be represented by one or more bytes. Usually we don't need to slice strings at all but simply iterate over them character by character using a <b>for … range</b> loop, but in some situations we really do want to extract substrings using slicing. One way to be sure to use slice indexes that slice on character boundaries is to use functions from Go's <b>strings</b> packages, such as <b>strings.Index()</b> or <b>strings.LastIndex()</b>.
+If we really need to index individual characters, a couple of options are open to us. For strings that contain only 7-bit ASCII we can simply use the <b>[]</b> index operator which gives us very fast (\(O(1)\)) lookups. For non-ASCII strings we can convert the string to a <b>[]rune</b> and use the <b>[]</b> index operator. This delivers very fast (\(O(1)\)) lookup performance, but at the expense of the one-off conversion which costs both CPU and memory (\(O(n)\)).
+For arbitrary strings (i.e., those that might contain non-ASCII characters), extracting characters by index is rarely the right apprroach. Much better is to use string slicing — which also has the convenience of returning a <b>string</b> rather than a <b>byte</b>.
+</p>
+<div class="org-src-container">
+<pre class="src src-go">line := <span style="color: #ffa500;">"r&#248;de og gule sl&#248;jfer"</span>
+i := strings.<span style="color: #00ffff; font-weight: bold;">Index</span>(line, <span style="color: #ffa500;">" "</span>)    <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Get the index of the first space</span>
+firstWord := line[:i]            <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Slice up to the first space</span>
+j := strings.<span style="color: #00ffff; font-weight: bold;">LastIndex</span>(line, <span style="color: #ffa500;">" "</span>) <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Get the index of the last space</span>
+lastWord := line[j+1:]           <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Slice from after the last space</span>
+fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(firstWord, lastWord)
+</pre>
+</div>
+
+<pre class="example">
+røde sløjfer
+
+</pre>
+<p>
+Although this example is fine for spaces and would also work for other 7-bit ASCII characters, it isn't suitable for working with arbitrary Unicode whitespace characters such as U+2028 (Line Separator  ) or U+2029 (Paragraph Separator  ).
+</p>
+<div class="org-src-container">
+<pre class="src src-go">line := <span style="color: #ffa500;">"r&#229; t&#248;rt\u2028v&#230;r"</span>
+i := strings.<span style="color: #00ffff; font-weight: bold;">IndexFunc</span>(line, unicode.IsSpace)
+firstWord := line[:i]
+j := strings.<span style="color: #00ffff; font-weight: bold;">LastIndexFunc</span>(line, unicode.IsSpace)
+_, size := utf8.<span style="color: #00ffff; font-weight: bold;">DecodeRuneInString</span>(line[j:])
+lastWord := line[j+size:]
+fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(firstWord, lastWord)
+</pre>
+</div>
+
+<pre class="example">
+rå vær
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgb507103" class="outline-2">
+<h2 id="orgb507103"><span class="section-number-2">6</span> String formatting with the fmt package</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+Go's standard library's <b>fmt</b> package provides print functions for writing data as strings to the console, to files and other values satisfying the <b>io.Writer</b> interface, and to other strings. The <b>fmt</b> package also provides various <i>scan</i> functions for reading data from the console, from the files, and from strings.
+</p>
+
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 1:</span> fmt print functions</caption>
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Syntax</th>
+<th scope="col" class="org-left">Description/result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><b>fmt.Errorf(format, args&#x2026;)</b></td>
+<td class="org-left">Returns an error value containing a string created with the <i>format</i> string and the <i>args</i></td>
+</tr>
+
+<tr>
+<td class="org-left"><b>fmt.Fprint(writer, args&#x2026;)</b></td>
+<td class="org-left">Writes the <i>args</i> to the <i>writer</i> each using format %v and space-separating nonstrings; returns the number of bytes written, and an <i>error</i> or <i>nil</i></td>
+</tr>
+
+<tr>
+<td class="org-left"><b>fmt.Fprintf(writer, format, args&#x2026;)</b></td>
+<td class="org-left">Writes the <i>args</i> to the <i>writer</i> using the <i>format</i> string; returns the number of bytes written, and an <i>error</i> or <i>nil</i></td>
+</tr>
+
+<tr>
+<td class="org-left"><b>fmt.Fprintln(writer, args&#x2026;)</b></td>
+<td class="org-left">Writes the <i>args</i> to the writer each using format %v, space-separated and ending with a newline; returns the number of bytes written, and an <i>error</i> or <i>nil</i></td>
+</tr>
+
+<tr>
+<td class="org-left"><b>fmt.Print(args&#x2026;)</b></td>
+<td class="org-left">Write the <i>args</i> to <i>os.Stdout</i> each using format %v and space-separating nonstrings; return the number of bytes written, and an <i>error</i> or <i>nil</i></td>
+</tr>
+
+<tr>
+<td class="org-left"><b>fmt.Printf(format, args&#x2026;)</b></td>
+<td class="org-left">Writes the <i>args</i> to <i>os.Stdout</i> using the <i>format</i> string; returns the number of bytes written, and an <i>error</i> or <i>nil</i></td>
+</tr>
+
+<tr>
+<td class="org-left"><b>fmt.Println(args&#x2026;)</b></td>
+<td class="org-left">Writes the <i>args</i> to <i>os.Stdout</i> each using format %v , spaceseparated and ending with a newline; returns the number of bytes written, and an <i>error</i> or <i>nil</i></td>
+</tr>
+
+<tr>
+<td class="org-left"><b>fmt.Sprint(args&#x2026;)</b></td>
+<td class="org-left">Returns a string of the <i>args</i> , each formatted using format %v and space-separating nonstrings</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>fmt.Sprintf(format, args&#x2026;)</b></td>
+<td class="org-left">Returns a string of the <i>args</i> formatted using the <i>format</i> string</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>fmt.Sprintln(args&#x2026;)</b></td>
+<td class="org-left">Returns a string of the <i>args</i> , each formatted using format %v , space-separated and ending with a newline</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 2:</span> fmt verbs</caption>
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Verb</th>
+<th scope="col" class="org-left">Description/result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><b>%%</b></td>
+<td class="org-left">A literal % character</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>%b</b></td>
+<td class="org-left">An integer value as a binary (base 2) number, or (advanced) a ﬂoating-point number in scientiﬁc notation with a power of 2 exponent</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>%c</b></td>
+<td class="org-left">An integer code point value as a Unicode character</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>%d</b></td>
+<td class="org-left">An integer value as a decimal (base 10) number</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>%e</b></td>
+<td class="org-left">A ﬂoating-point or complex value in scientiﬁc notation with e</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>%E</b></td>
+<td class="org-left">A ﬂoating-point or complex value in scientiﬁc notation with E</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>%f</b></td>
+<td class="org-left">A ﬂoating-point or complex value in standard notation</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>%g</b></td>
+<td class="org-left">A ﬂoating-point or complex value using %e or %f , whichever produces the most compact output</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>%G</b></td>
+<td class="org-left">A ﬂoating-point or complex value using %E or %f , whichever produces the most compact output</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>%o</b></td>
+<td class="org-left">An integer value as an octal (base 8) number</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>%p</b></td>
+<td class="org-left">A value’s address as a hexadecimal (base 16) number with a preﬁx of 0x and using lowercase for the digits a – f (for debugging)</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>%q</b></td>
+<td class="org-left">The string or []byte as a double-quoted string, or the integer as a single-quoted string, using Go syntax and using escapes where necessary</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>%s</b></td>
+<td class="org-left">The string or []byte as raw UTF-8 bytes; this will produce correct Unicode output for a text ﬁle or on a UTF-8-savvy console</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>%t</b></td>
+<td class="org-left">A bool value as true or false</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>%T</b></td>
+<td class="org-left">A value’s type using Go syntax</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>%U</b></td>
+<td class="org-left">An integer code point value using Unicode notation defaulting to four digits; e.g., fmt.Printf("%U", '¶' ) outputs U+00B6</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>%v</b></td>
+<td class="org-left">A built-in or custom type’s value using a default format, or a custom value using its type’s String() method if it exists</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>%x</b></td>
+<td class="org-left">An integer value as a hexadecimal (base 16) number or a string or []byte value as hexadecimal digits (two per byte), using lowercase for the digits a – f</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>%X</b></td>
+<td class="org-left">An integer value as a hexadecimal (base 16) number or a string or []byte value as hexadecimal digits (two per byte), using uppercase for the digits A – F</td>
+</tr>
+</tbody>
+</table>
+<hr />
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption class="t-above"><span class="table-number">Table 3:</span> fmt verb modifiers</caption>
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Modiﬁer</th>
+<th scope="col" class="org-left">Description/result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left"><b>space</b></td>
+<td class="org-left">Makes the verb output “ - ” before negative numbers and a space before positive numbers or to put spaces between the bytes printed when using the %x or %X verbs; e.g., fmt.Printf("% X", "←" ) outputs E2 86 92</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><b>#</b></td>
+<td class="org-left">Makes the verb use an “alternative” output format:</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">%#o outputs octal with a leading 0</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">%#p outputs a pointer without the leading 0x</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">%#q outputs a string or []byte as a raw string (using backticks) if possible—otherwise outputs a double-quoted string</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">%#v outputs a value as itself using Go syntax</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">%#x outputs hexadecimal with a leading 0x</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">%#X outputs hexadecimal with a leading 0X</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><b>+</b></td>
+<td class="org-left">Makes the verb output + or - for numbers, ASCII characters (with others escaped) for strings, and ﬁeld names for structs</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><b>-</b></td>
+<td class="org-left">Makes the verb left-justify the value (the default is to right-justify)</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><b>0</b></td>
+<td class="org-left">Makes the verb pad with leading 0 s instead of spaces</td>
+</tr>
+</tbody>
+<tbody>
+<tr>
+<td class="org-left"><b>n.m</b> <b>n</b> <b>.m</b></td>
+<td class="org-left">For numbers, makes the verb output a ﬂoating-point or complex value using n (of type int ) characters (or more if necessary to avoid truncation) and with m (of type int ) digits after the decimal point(s). For strings n speciﬁes the minimum ﬁeld width, and will result in space padding if the string has too few characters, and .m speciﬁes the maximum number of the string’s characters to use (going from left to right), and will result in the string being truncated if it is too long. Either or both of m and n can be replaced with * in which case their values are taken from the arguments. Either n or .m may be omitted.</td>
+</tr>
+</tbody>
+</table>
+<div class="org-src-container">
+<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">polar</span> <span style="color: #00ff00; font-weight: bold;">struct</span>{ radius, &#952; float64 }
+
+p := <span style="color: #00ffff;">polar</span>{8.32, .49}
+fmt.<span style="color: #00ffff; font-weight: bold;">Print</span>(-18.5, 17, <span style="color: #ffa500;">"Elephant"</span>, -8+.7i, 0x3C7, <span style="color: #ffa500;">'\u03C7'</span>, <span style="color: #ffa500;">"a"</span>, <span style="color: #ffa500;">"b"</span>, p)
+fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>()
+fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(-18.5, 17, <span style="color: #ffa500;">"Elephant"</span>, -8+.7i, 0x3C7, <span style="color: #ffa500;">'\u03C7'</span>, <span style="color: #ffa500;">"a"</span>, <span style="color: #ffa500;">"b"</span>, p)
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org6babb0c" class="outline-3">
+<h3 id="org6babb0c"><span class="section-number-3">6.1</span> Formatting booleans</h3>
+<div class="outline-text-3" id="text-6-1">
+<p>
+Boolean values are output using the %t (truth value) verb
+</p>
+<div class="org-src-container">
+<pre class="src src-go">fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"%t %t\n"</span>, <span style="color: #7fffd4;">true</span>, <span style="color: #7fffd4;">false</span>)
+</pre>
+</div>
+
+<pre class="example">
+true false
+
+</pre>
+<p>
+If we want output booleans as integers we must do the conversion ourselves:
+</p>
+<div class="org-src-container">
+<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">package</span> main
+
+<span style="color: #00ff00; font-weight: bold;">import</span> <span style="color: #ffa500;">"fmt"</span>
+
+<span style="color: #00ff00; font-weight: bold;">func</span> <span style="color: #00ffff; font-weight: bold;">IntForBool</span>(b <span style="color: #00ffff;">bool</span>) <span style="color: #00ffff;">int</span> {
+        <span style="color: #00ff00; font-weight: bold;">if</span> b {
+                <span style="color: #00ff00; font-weight: bold;">return</span> 1
+        }
+        <span style="color: #00ff00; font-weight: bold;">return</span> 0
+}
+
+<span style="color: #00ff00; font-weight: bold;">func</span> <span style="color: #00ffff; font-weight: bold;">main</span>() {
+        fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"%d %d\n"</span>, <span style="color: #00ffff; font-weight: bold;">IntForBool</span>(<span style="color: #7fffd4;">true</span>), <span style="color: #00ffff; font-weight: bold;">IntForBool</span>(<span style="color: #7fffd4;">false</span>))
+}
+</pre>
+</div>
+
+<pre class="example">
+1 0
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orge6b5984" class="outline-3">
+<h3 id="orge6b5984"><span class="section-number-3">6.2</span> Formatting integers</h3>
+<div class="outline-text-3" id="text-6-2">
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 1: </span>Binary formatting</label><pre class="src src-go">fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"|%b|%9b|%-9b|%09b|% 9b|"</span>, 37, 37, 37, 37, 37)
+</pre>
+</div>
+
+<pre class="example">
+|100101|   100101|100101   |000100101|   100101|
+
+</pre>
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 2: </span>Octal formatting</label><pre class="src src-go">fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"|%o|%#o|%# 8o|%#+ 8o|%+08o|"</span>, 41, 41, 41, 41, -41)
+</pre>
+</div>
+
+<pre class="example">
+|51|051|     051|    +051|-0000051|
+
+</pre>
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 3: </span>Hexadecimal formatting</label><pre class="src src-go">i := 3931
+fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"|%x|%X|%8x|%08x|%#04X|0x%04X|"</span>, i, i, i ,i, i, i)
+</pre>
+</div>
+
+<pre class="example">
+|f5b|F5B|     f5b|00000f5b|0X0F5B|0x0F5B|
+
+</pre>
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 4: </span>Decimal formatting</label><pre class="src src-go">fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"|%d|%06d|%+06d|"</span>, 569, 569, 569)
+</pre>
+</div>
+
+<pre class="example">
+|569|000569|+00569|
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org8ebe5e9" class="outline-3">
+<h3 id="org8ebe5e9"><span class="section-number-3">6.3</span> Formatting characters</h3>
+<div class="outline-text-3" id="text-6-3">
+<p>
+Go characters are rune s (i.e., int32 s), and they can be output as numbers or as Unicode characters.
+</p>
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 5: </span>Character formatting</label><pre class="src src-go">fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"%d %#04x %U '%c'"</span>, 0x3A6, 934, <span style="color: #ffa500;">'\u03A6'</span>, <span style="color: #ffa500;">'\U000003A6'</span>)
+</pre>
+</div>
+
+<pre class="example">
+934 0x03a6 U+03A6 'Φ'
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-orgdd58c60" class="outline-3">
+<h3 id="orgdd58c60"><span class="section-number-3">6.4</span> Formatting floating-point numbers</h3>
+<div class="outline-text-3" id="text-6-4">
+<p>
+For ﬂoating-point numbers we can specify the overall width, the number of digits after the decimal place—and whether to use standard or scientiﬁc notation.
+</p>
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 6: </span>Floating-point formatting</label><pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">for</span> _, x := <span style="color: #00ff00; font-weight: bold;">range</span> []<span style="color: #00ffff;">float64</span>{-.258, 7194.84, -60897162.0218, 1.500089e-8} {
+        fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"|%20.5e|%20.5f|\n"</span>, x, x,)
+}
+</pre>
+</div>
+
+<pre class="example">
+|        -2.58000e-01|            -0.25800|
+|         7.19484e+03|          7194.84000|
+|        -6.08972e+07|     -60897162.02180|
+|         1.50009e-08|             0.00000|
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org79669df" class="outline-3">
+<h3 id="org79669df"><span class="section-number-3">6.5</span> Formatting strings and slices</h3>
+<div class="outline-text-3" id="text-6-5">
+<p>
+Strings can be output with a minimum ﬁeld width (which the print functions will pad with spaces if the string is too short), and with a maximum number of characters (which will result in truncation for any string that’s too long). Strings can be output as Unicode (i.e., characters), or as a sequence of code points (i.e., rune s) or as the UTF-8 bytes that represent them.
+</p>
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 7: </span>String formatting</label><pre class="src src-go">slogan := <span style="color: #ffa500;">"End &#211;r&#233;ttl&#230;ti&#9829;"</span>
+fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"%s\n%q\n%+q\n%#q\n"</span>, slogan, slogan, slogan, slogan)
+s := <span style="color: #ffa500;">"Dare to be na&#239;ve"</span>
+fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"|%22s|%-22s|%10s|\n"</span>, s, s, s)
+i := strings.<span style="color: #00ffff; font-weight: bold;">Index</span>(s, <span style="color: #ffa500;">"n"</span>)
+fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"|%.10s|%.*s|%-22.10s|%22.10s|%s|\n"</span>, s, i, s, s, s, s)
+</pre>
+</div>
+
+<pre class="example">
+End Óréttlæti♥
+"End Óréttlæti♥"
+"End \u00d3r\u00e9ttl\u00e6ti\u2665"
+`End Óréttlæti♥`
+|      Dare to be naïve|Dare to be naïve      |Dare to be naïve|
+|Dare to be|Dare to be |Dare to be            |            Dare to be|Dare to be naïve|
+
+</pre>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 8: </span>Slice of chars formatting</label><pre class="src src-go">chars := []<span style="color: #00ffff; font-weight: bold;">rune</span>(slogan)
+fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"%x\n%#x\n%#X\n"</span>, chars, chars, chars)
+</pre>
+</div>
+
+<pre class="example">
+[45 6e 64 20 d3 72 e9 74 74 6c e6 74 69 2665]
+[0x45 0x6e 0x64 0x20 0xd3 0x72 0xe9 0x74 0x74 0x6c 0xe6 0x74 0x69 0x2665]
+[0X45 0X6E 0X64 0X20 0XD3 0X72 0XE9 0X74 0X74 0X6C 0XE6 0X74 0X69 0X2665]
+
+</pre>
+
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 9: </span>Slice of bytes formatting</label><pre class="src src-go">bytes := []<span style="color: #00ffff; font-weight: bold;">byte</span>(slogan)
+fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"%s\n%x\n%X\n% X\n%v\n"</span>, bytes, bytes, bytes, bytes, bytes)
+</pre>
+</div>
+
+<pre class="example">
+End Óréttlæti♥
+456e6420c39372c3a974746cc3a67469e299a5
+456E6420C39372C3A974746CC3A67469E299A5
+45 6E 64 20 C3 93 72 C3 A9 74 74 6C C3 A6 74 69 E2 99 A5
+[69 110 100 32 195 147 114 195 169 116 116 108 195 166 116 105 226 153 165]
+
+</pre>
+</div>
+</div>
+
+<div id="outline-container-org3061bf0" class="outline-3">
+<h3 id="org3061bf0"><span class="section-number-3">6.6</span> Formatting for debuging</h3>
+<div class="outline-text-3" id="text-6-6">
+<p>
+The %T (type) verb is used to print a built-in or custom value’s type, and the %v verb is used to print a built-in value’s value. In fact, %v can also print the value of custom types, using a default format for types that do not have a String() method deﬁned, or using the type’s String() method if it has one.
+</p>
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 10: </span>Debug formatting</label><pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">polar</span> <span style="color: #00ff00; font-weight: bold;">struct</span>{ radius, &#952; float64 }
+
+p := <span style="color: #00ffff;">polar</span>{-83.40, 71.60}
+fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"|%T|%v|%#v|\n"</span>, p, p, p)
+fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"|%T|%v|%t|\n"</span>, <span style="color: #7fffd4;">false</span>, <span style="color: #7fffd4;">false</span>, <span style="color: #7fffd4;">false</span>)
+fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"|%T|%v|%d|\n"</span>, 7607, 7607, 7607)
+fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"|%T|%v|%f|\n"</span>, math.E, math.E, math.E)
+fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"|%T|%v|%f|\n"</span>, 5+7i, 5+7i, 5+7i)
+s := <span style="color: #ffa500;">"Relativity"</span>
+fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"|%T|\"%v\"|\"%s\"|%q|\n"</span>, s, s, s, s)
+</pre>
+</div>
+
+<pre class="example">
+|main.polar|{-83.4 71.6}|main.polar{radius:-83.4, θ:71.6}|
+|bool|false|false|
+|int|7607|7607|
+|float64|2.718281828459045|2.718282|
+|complex128|(5+7i)|(5.000000+7.000000i)|
+|string|"Relativity"|"Relativity"|"Relativity"|
+
+</pre>
+<div class="org-src-container">
+<label class="org-src-name"><span class="listing-number">Listing 11: </span>Pointer formatting</label><pre class="src src-go">i := 5
+f := -48.3124
+s := <span style="color: #ffa500;">"Tom&#225;s Bret&#243;n"</span>
+fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"|%p &#8594; %d|%p &#8594; %f|%#p &#8594; %s|\n"</span>, &amp;i, i, &amp;f, f, &amp;s, s)
+</pre>
+</div>
+
+<pre class="example">
+|0xc82000a350 → 5|0xc82000a358 → -48.312400|c82000a360 → Tomás Bretón|
+
+</pre>
+</div>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Pavel Vavilin</p>
+<p class="date">Created: 2017-11-09 Thu 21:40</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
