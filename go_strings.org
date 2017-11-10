@@ -41,7 +41,7 @@
   | *[]byte(s)*        | Converts string s into a slice of raw bytes without copying; there’s no guarantee that the bytes are valid UTF-8 |
   | *string(bytes)*    | Converts a []byte or []uint8 into a string without copying; there’s no guarantee that the bytes are valid UTF-8 |
   | *string(i)*        | Converts i of any integer type into a string ; assumes that iis a Unicode code point; e.g., if i is 65 , it returns "A" |
-  | *strconv. Itoa(i)* | The string representation of i of type int and an error ; e.g., if i is 65 , it returns ( "65" , nil ); |
+  | *strconv.Itoa(i)*  | The string representation of i of type int and an error ; e.g., if i is 65 , it returns ( "65" , nil ); |
   | *fmt.Sprintx*      | The string representation of x of any type; e.g., if x is an integer of value 65 , it returns "65" ; |
 
 * Comparing strings

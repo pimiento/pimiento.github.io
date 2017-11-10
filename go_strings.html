@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2017-11-09 Thu 21:40 -->
+<!-- 2017-11-10 Fri 13:26 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Go: Strings</title>
@@ -334,27 +334,27 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgbbbb657">1. String</a></li>
-<li><a href="#org477669a">2. literals, operators, escapes</a></li>
-<li><a href="#orgaab3eaf">3. Comparing strings</a></li>
-<li><a href="#orgfe49d28">4. Characters and strings</a></li>
-<li><a href="#orge63c9ab">5. Indexing and slicing strings</a></li>
-<li><a href="#orgb507103">6. String formatting with the fmt package</a>
+<li><a href="#orgc352f0f">1. String</a></li>
+<li><a href="#org899f977">2. literals, operators, escapes</a></li>
+<li><a href="#org5096230">3. Comparing strings</a></li>
+<li><a href="#org23730fe">4. Characters and strings</a></li>
+<li><a href="#org9067b7c">5. Indexing and slicing strings</a></li>
+<li><a href="#org695c7a1">6. String formatting with the fmt package</a>
 <ul>
-<li><a href="#org6babb0c">6.1. Formatting booleans</a></li>
-<li><a href="#orge6b5984">6.2. Formatting integers</a></li>
-<li><a href="#org8ebe5e9">6.3. Formatting characters</a></li>
-<li><a href="#orgdd58c60">6.4. Formatting floating-point numbers</a></li>
-<li><a href="#org79669df">6.5. Formatting strings and slices</a></li>
-<li><a href="#org3061bf0">6.6. Formatting for debuging</a></li>
+<li><a href="#orgb283db4">6.1. Formatting booleans</a></li>
+<li><a href="#org7231d2f">6.2. Formatting integers</a></li>
+<li><a href="#org5f443c5">6.3. Formatting characters</a></li>
+<li><a href="#orgd204bd6">6.4. Formatting floating-point numbers</a></li>
+<li><a href="#orgf4ba0d4">6.5. Formatting strings and slices</a></li>
+<li><a href="#orgde46684">6.6. Formatting for debuging</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgbbbb657" class="outline-2">
-<h2 id="orgbbbb657"><span class="section-number-2">1</span> String</h2>
+<div id="outline-container-orgc352f0f" class="outline-2">
+<h2 id="orgc352f0f"><span class="section-number-2">1</span> String</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 Go's <b>string</b> type is fundamentally different from the equivalent type in many other languages, where <i>string</i> types are all sequence of <b>fixexd-with</b> characters, whereas a Go <b>string</b> is a <span class="underline">sequence of <b>variable-width</b> characters</span> where each character is represented by one or more bytes, normally using UTF-8 encoding.
@@ -362,8 +362,8 @@ Go's <b>string</b> type is fundamentally different from the equivalent type in m
 </div>
 </div>
 
-<div id="outline-container-org477669a" class="outline-2">
-<h2 id="org477669a"><span class="section-number-2">2</span> literals, operators, escapes</h2>
+<div id="outline-container-org899f977" class="outline-2">
+<h2 id="org899f977"><span class="section-number-2">2</span> literals, operators, escapes</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 String literals are created using double quotes <b>"</b> or backticks <b>`</b>. Double quotes are used to create interpreted string literals, which support the escape sequences but may not span multiple lines. Backticks are used to create raw string literals — these strings may span multiple lines, they do not support any escape sequences and may contain any character except for a backtick.
@@ -466,7 +466,7 @@ radicals = √ √ √
 </tr>
 
 <tr>
-<td class="org-left"><b>strconv. Itoa(i)</b></td>
+<td class="org-left"><b>strconv.Itoa(i)</b></td>
 <td class="org-left">The string representation of i of type int and an error ; e.g., if i is 65 , it returns ( "65" , nil );</td>
 </tr>
 
@@ -479,8 +479,8 @@ radicals = √ √ √
 </div>
 </div>
 
-<div id="outline-container-orgaab3eaf" class="outline-2">
-<h2 id="orgaab3eaf"><span class="section-number-2">3</span> Comparing strings</h2>
+<div id="outline-container-org5096230" class="outline-2">
+<h2 id="org5096230"><span class="section-number-2">3</span> Comparing strings</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 Go strings support the usual comparison operators: \(<\), \(<=\), \(==\), \(!=\), \(>=\), \(>\). The comparison operators compare strings byte by byte in memory. Three problems can arise when performing comparisons:
@@ -493,8 +493,8 @@ Go strings support the usual comparison operators: \(<\), \(<=\), \(==\), \(!=\)
 </div>
 </div>
 
-<div id="outline-container-orgfe49d28" class="outline-2">
-<h2 id="orgfe49d28"><span class="section-number-2">4</span> Characters and strings</h2>
+<div id="outline-container-org23730fe" class="outline-2">
+<h2 id="org23730fe"><span class="section-number-2">4</span> Characters and strings</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 A single character can be represented by a single <b>rune</b> (or int32). Go <i>strings</i> represent sequences of zero or more characters. We can convert a single character into a one-character <i>string</i> using Go's standard conversion syntax:
@@ -521,8 +521,8 @@ An entire string can be converted to a slice of <i>runes</i> (i.e. code points) 
 </div>
 </div>
 
-<div id="outline-container-orge63c9ab" class="outline-2">
-<h2 id="orge63c9ab"><span class="section-number-2">5</span> Indexing and slicing strings</h2>
+<div id="outline-container-org9067b7c" class="outline-2">
+<h2 id="org9067b7c"><span class="section-number-2">5</span> Indexing and slicing strings</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 Since Go strings store their text as UTF-8 encoded bytes we must be careful to only ever slice on character boundaries. This is easy if we have 7-bit ASCII text since every byte represents one character, but for non-ASCII text the situation is more challenging since such characters may be represented by one or more bytes. Usually we don't need to slice strings at all but simply iterate over them character by character using a <b>for … range</b> loop, but in some situations we really do want to extract substrings using slicing. One way to be sure to use slice indexes that slice on character boundaries is to use functions from Go's <b>strings</b> packages, such as <b>strings.Index()</b> or <b>strings.LastIndex()</b>.
@@ -564,8 +564,8 @@ rå vær
 </div>
 </div>
 
-<div id="outline-container-orgb507103" class="outline-2">
-<h2 id="orgb507103"><span class="section-number-2">6</span> String formatting with the fmt package</h2>
+<div id="outline-container-org695c7a1" class="outline-2">
+<h2 id="org695c7a1"><span class="section-number-2">6</span> String formatting with the fmt package</h2>
 <div class="outline-text-2" id="text-6">
 <p>
 Go's standard library's <b>fmt</b> package provides print functions for writing data as strings to the console, to files and other values satisfying the <b>io.Writer</b> interface, and to other strings. The <b>fmt</b> package also provides various <i>scan</i> functions for reading data from the console, from the files, and from strings.
@@ -848,8 +848,8 @@ fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(-18.5, 17, <
 </div>
 </div>
 
-<div id="outline-container-org6babb0c" class="outline-3">
-<h3 id="org6babb0c"><span class="section-number-3">6.1</span> Formatting booleans</h3>
+<div id="outline-container-orgb283db4" class="outline-3">
+<h3 id="orgb283db4"><span class="section-number-3">6.1</span> Formatting booleans</h3>
 <div class="outline-text-3" id="text-6-1">
 <p>
 Boolean values are output using the %t (truth value) verb
@@ -891,8 +891,8 @@ If we want output booleans as integers we must do the conversion ourselves:
 </div>
 </div>
 
-<div id="outline-container-orge6b5984" class="outline-3">
-<h3 id="orge6b5984"><span class="section-number-3">6.2</span> Formatting integers</h3>
+<div id="outline-container-org7231d2f" class="outline-3">
+<h3 id="org7231d2f"><span class="section-number-3">6.2</span> Formatting integers</h3>
 <div class="outline-text-3" id="text-6-2">
 <div class="org-src-container">
 <label class="org-src-name"><span class="listing-number">Listing 1: </span>Binary formatting</label><pre class="src src-go">fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"|%b|%9b|%-9b|%09b|% 9b|"</span>, 37, 37, 37, 37, 37)
@@ -934,8 +934,8 @@ fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="
 </div>
 </div>
 
-<div id="outline-container-org8ebe5e9" class="outline-3">
-<h3 id="org8ebe5e9"><span class="section-number-3">6.3</span> Formatting characters</h3>
+<div id="outline-container-org5f443c5" class="outline-3">
+<h3 id="org5f443c5"><span class="section-number-3">6.3</span> Formatting characters</h3>
 <div class="outline-text-3" id="text-6-3">
 <p>
 Go characters are rune s (i.e., int32 s), and they can be output as numbers or as Unicode characters.
@@ -952,8 +952,8 @@ Go characters are rune s (i.e., int32 s), and they can be output as numbers or a
 </div>
 </div>
 
-<div id="outline-container-orgdd58c60" class="outline-3">
-<h3 id="orgdd58c60"><span class="section-number-3">6.4</span> Formatting floating-point numbers</h3>
+<div id="outline-container-orgd204bd6" class="outline-3">
+<h3 id="orgd204bd6"><span class="section-number-3">6.4</span> Formatting floating-point numbers</h3>
 <div class="outline-text-3" id="text-6-4">
 <p>
 For ﬂoating-point numbers we can specify the overall width, the number of digits after the decimal place—and whether to use standard or scientiﬁc notation.
@@ -975,8 +975,8 @@ For ﬂoating-point numbers we can specify the overall width, the number of digi
 </div>
 </div>
 
-<div id="outline-container-org79669df" class="outline-3">
-<h3 id="org79669df"><span class="section-number-3">6.5</span> Formatting strings and slices</h3>
+<div id="outline-container-orgf4ba0d4" class="outline-3">
+<h3 id="orgf4ba0d4"><span class="section-number-3">6.5</span> Formatting strings and slices</h3>
 <div class="outline-text-3" id="text-6-5">
 <p>
 Strings can be output with a minimum ﬁeld width (which the print functions will pad with spaces if the string is too short), and with a maximum number of characters (which will result in truncation for any string that’s too long). Strings can be output as Unicode (i.e., characters), or as a sequence of code points (i.e., rune s) or as the UTF-8 bytes that represent them.
@@ -1031,8 +1031,8 @@ End Óréttlæti♥
 </div>
 </div>
 
-<div id="outline-container-org3061bf0" class="outline-3">
-<h3 id="org3061bf0"><span class="section-number-3">6.6</span> Formatting for debuging</h3>
+<div id="outline-container-orgde46684" class="outline-3">
+<h3 id="orgde46684"><span class="section-number-3">6.6</span> Formatting for debuging</h3>
 <div class="outline-text-3" id="text-6-6">
 <p>
 The %T (type) verb is used to print a built-in or custom value’s type, and the %v verb is used to print a built-in value’s value. In fact, %v can also print the value of custom types, using a default format for types that do not have a String() method deﬁned, or using the type’s String() method if it has one.
@@ -1078,7 +1078,7 @@ fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Pavel Vavilin</p>
-<p class="date">Created: 2017-11-09 Thu 21:40</p>
+<p class="date">Created: 2017-11-10 Fri 13:26</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
