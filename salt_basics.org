@@ -1,0 +1,74 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: Salt Python
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: Salt: Basics
+
+* Install
+  The installation is covered by [[https://docs.saltstack.com/en/latest/topics/installation/index.html][instruction]]. The configuration file for the salt-master is located at /etc/salt/master by default.
+
+* Architecture model
+  Salt uses a server-agent communication model. The server component is called the Salt *master*, and the agent is called the Salt *minion*. The Salt master is responsible for sending commands to Salt minions, and then aggregating and displaying the results of those commands. A single Salt master can manage thousands of systems.
+
+  Salt communicates with managed systems using a /publish-subscribe/ pattern. Connections are initiated by the Salt minions, which means that you do not need to open any incoming ports on those systems. The Salt master uses ports 4505 and 4506, which must be opened to accept incoming connections.
+  #+BEGIN_CENTER
+  [[https://docs.saltstack.com/en/getstarted/images/basic-comm.png]]
+  #+END_CENTER
+  |                  | <100>                                                                                                |
+  | /                | <                                                                                                    |
+  | *Publisher*      | (port 4505) All Salt minions establish a persistent connection to the publisher port where they listen for messages. Commands are sent asynchronously to all connections over this port, which enables commands to be executed over large numbers of systems simultaniously. |
+  |                  |                                                                                                      |
+  | *Request Server* | (port 4506) Salt minions connect to the request server as needed to send results to the Salt master, and to securely request files and minion-specific data values (called Salt pillar). Connections to this port are 1:1 between the Salt master and Salt minion (not asynchronous). |
+
+* Authentication
+  When the minion starts for the first time, it searches the network for a system named *salt* (can be changed to an IP address or a different hostname). When found, the minion initiats a handshake and then sends it public key to the Salt master.
+  After this initial connection, the Salt minion’s public key is stored on the server, and it must be accepted on the Salt master using the salt-key command (or through some automated mechanism; the Salt minion won’t run any commands until its key is accepted)
+  After the minion key is accepted, the Salt master returns its public key along with a rotating AES key that is used to encrypt and decrypt messages that are sent by the Salt master. The returned AES key is encrypted using the public key initially sent by the Salt minion, and can therefore be decrypted only by that Salt minion.
+
+  All further communication between the Salt master and the Salt minion is encrypted using AES keys.
+  A rotating AES key is used to encrypt jobs that are sent to the Salt minion by the Salt master, and to encrypt connections to the Salt master fileserver. A new key is generated and used each time the Salt master restarts and each time a Salt minion key is deleted using the salt-key command. After the key is rotated, all Salt minions must re-authenticate to receive the updated key.
+
+  Before a command is sent to minions, Salt performs some internal checks against the Publisher ACL to make sure that the user executing the command has the correct privileges. If the user is authorized to run the specified command against the specified target, the command is sent. If not, an error is returned.
+
+* Remote execution
+  + All salt commands return results in a consistent data structure. This make it easy to examine results or store them in a database.
+  + All targeted systems can run a job at the same time since they all receive the command simultaneously
+  + Any application or service that can be accessed using Python, a shell command, or nearly any other interface can be exposed as an execution module in Salt.
+  The remote execution system is accessed using the *salt* command-line interface.
+  #+BEGIN_SRC sh :exports code :results none
+    salt '*' test.rand_sleep 120
+  #+END_SRC
+  1. This command is sent over the publisher port to all connected minions.
+  2. Each minion examines the command, evaluates itself against the target, and decides whether or not it should run the command.
+  3. Targeted systems run the command and then return the results to the request server.
+  All of the commands that are used to manage systems are provided by Salt execution modules. When the Salt minion receives a command, it simply finds the correct module (in this example, the *test* module), and then calls the corresponding function (*rand_sleep*) providing the supplied arguments (*120*)
+
+* State system
+  Salt state modules are very similar to Salt remote execution modules, with one importand difference. State modules contain logic to see if the system /is already in the correct state/. In fact, after this determination is made, the State module often simply calls the remote execution module to do the work.
+  + All state module commands return results in a consistent data structure.
+  + All targeted systems can run a job at the same time.
+  + Any application or service that can be accessed using Python, a shell command, or nearly any other interface can be exposed as an execution module in Salt.
+  The primary difference between the state system and the remote execution system are the flow controls within the state system. Salt provides specials commands that let you define dependencies, reuse code, branch on failure, control flow, and leverage variables and templates.
+
+* Runners
+  The runner subsystem provides Salt modules that execute *on the Salt master*. Runners are available to list job status, view events in real-time, manage Salt's fileserver, view Salt mine data, wake-on-lan minions, call webhooks and make other http-requests, and much more.
+  + Runners are called using the *salt-run* command line interface. They do not take a target because the target is the Salt master where you execute the command.
+  + The syntaxt for passing arguments to Salt runners is identical to the syntax used to pass arguments to Salt execution modules.
+
+* Grains
+  Grains are used to get data about your systems. Grains are static information about the underlying operation system, memory, disks, and many other system properties. Grains are gathered automatically when the minion starts and are refreshed periodically or by using a remote execution command.
+
+* Pillar
+  Salt Pillar is used to deliver data to your systems. Salt Pillar lets you define data values (user names, service URLs, preferred paths, ports, etc) and then assign them to one or more minions using targets. The values can then be inserted into Salt states using variables.
+  Salt Pillar data is encrypted using the targeted minion's public key and sent over a secure channel. Salt pillar data is never written to disk on the minion.
+
+* Mine
+  The Salt Mine is used to share data values among Salt minions.
+
+* Python modules
+  In Salt, each subsystem plug-in is a Python module. In Salt terms, you can think of a module as a group of functions (aka commands) that manage an application (mysql, docker), a system component (disk, file), or interact wit an external system (gitfs)
+  + All of the modules are in the *salt* folder in the source. A separate folder exists for each subsystem, and each module is a separate file ending in *.py*
+  + Modules are namespaced in the format /salt.subsystem.module/. Execution modules start with a *salt.module* since they were the first and only modules available in the initial versions of Salt
+  You can think of functions as the specific commands whithin a module that you can call to manage and configure system. For example, *salt.modules.pkg.install*, *salt.modules.network.interfaces* and *salt.modules.user.add* are all common execution functions. Functions are the verbs of Salt, and you can usually figure out which function you want to call by opening the module docs and looking at the function names.

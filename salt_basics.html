@@ -1,0 +1,511 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<head>
+<!-- 2017-11-10 Fri 18:42 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Salt: Basics</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Pavel Vavilin" />
+<meta name="keywords" content="Salt Python" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+
+<script type="text/javascript" src="org-info.js">
+/**
+ *
+ * @source: org-info.js
+ *
+ * @licstart  The following is the entire license notice for the
+ *  JavaScript code in org-info.js.
+ *
+ * Copyright (C) 2012-2017 Free Software Foundation, Inc.
+ *
+ *
+ * The JavaScript code in this tag is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU
+ * General Public License (GNU GPL) as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.  The code is distributed WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+ *
+ * As additional permission under GNU GPL version 3 section 7, you
+ * may distribute non-source (e.g., minimized or compacted) forms of
+ * that code without the copy of the GNU GPL normally required by
+ * section 4, provided you include this license notice and a URL
+ * through which recipients can access the Corresponding Source.
+ *
+ * @licend  The above is the entire license notice
+ * for the JavaScript code in org-info.js.
+ *
+ */
+</script>
+
+<script type="text/javascript">
+
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+
+<!--/*--><![CDATA[/*><!--*/
+org_html_manager.set("TOC_DEPTH", "3");
+org_html_manager.set("LINK_HOME", "https://pimiento.github.io/");
+org_html_manager.set("LINK_UP", "https://pimiento.github.io/");
+org_html_manager.set("LOCAL_TOC", "1");
+org_html_manager.set("VIEW_BUTTONS", "0");
+org_html_manager.set("MOUSE_HINT", "underline");
+org_html_manager.set("FIXED_TOC", "0");
+org_html_manager.set("TOC", "1");
+org_html_manager.set("VIEW", "1");
+org_html_manager.setup();  // activate after the parameters are set
+/*]]>*///-->
+</script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2017 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="https://pimiento.github.io/"> UP </a>
+ |
+ <a accesskey="H" href="https://pimiento.github.io/"> HOME </a>
+</div><div id="content">
+<h1 class="title">Salt: Basics</h1>
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#orgbafa84c">1. Install</a></li>
+<li><a href="#orgc61ce87">2. Architecture model</a></li>
+<li><a href="#orgc2058c4">3. Authentication</a></li>
+<li><a href="#org5471d90">4. Remote execution</a></li>
+<li><a href="#org3979140">5. State system</a></li>
+<li><a href="#org41ec150">6. Runners</a></li>
+<li><a href="#org7e773e9">7. Grains</a></li>
+<li><a href="#org4976ead">8. Pillar</a></li>
+<li><a href="#org327179c">9. Mine</a></li>
+<li><a href="#org4d153ae">10. Python modules</a></li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-orgbafa84c" class="outline-2">
+<h2 id="orgbafa84c"><span class="section-number-2">1</span> Install</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+The installation is covered by <a href="https://docs.saltstack.com/en/latest/topics/installation/index.html">instruction</a>. The configuration file for the salt-master is located at /etc/salt/master by default.
+</p>
+</div>
+</div>
+
+<div id="outline-container-orgc61ce87" class="outline-2">
+<h2 id="orgc61ce87"><span class="section-number-2">2</span> Architecture model</h2>
+<div class="outline-text-2" id="text-2">
+<p>
+Salt uses a server-agent communication model. The server component is called the Salt <b>master</b>, and the agent is called the Salt <b>minion</b>. The Salt master is responsible for sending commands to Salt minions, and then aggregating and displaying the results of those commands. A single Salt master can manage thousands of systems.
+</p>
+
+<p>
+Salt communicates with managed systems using a <i>publish-subscribe</i> pattern. Connections are initiated by the Salt minions, which means that you do not need to open any incoming ports on those systems. The Salt master uses ports 4505 and 4506, which must be opened to accept incoming connections.
+</p>
+<div class="org-center">
+
+<div class="figure">
+<p><img src="https://docs.saltstack.com/en/getstarted/images/basic-comm.png" alt="basic-comm.png" />
+</p>
+</div>
+</div>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+
+<colgroup>
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left"><b>Publisher</b></td>
+<td class="org-left">(port 4505) All Salt minions establish a persistent connection to the publisher port where they listen for messages. Commands are sent asynchronously to all connections over this port, which enables commands to be executed over large numbers of systems simultaniously.</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">&#xa0;</td>
+</tr>
+
+<tr>
+<td class="org-left"><b>Request Server</b></td>
+<td class="org-left">(port 4506) Salt minions connect to the request server as needed to send results to the Salt master, and to securely request files and minion-specific data values (called Salt pillar). Connections to this port are 1:1 between the Salt master and Salt minion (not asynchronous).</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+<div id="outline-container-orgc2058c4" class="outline-2">
+<h2 id="orgc2058c4"><span class="section-number-2">3</span> Authentication</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+When the minion starts for the first time, it searches the network for a system named <b>salt</b> (can be changed to an IP address or a different hostname). When found, the minion initiats a handshake and then sends it public key to the Salt master.
+After this initial connection, the Salt minion’s public key is stored on the server, and it must be accepted on the Salt master using the salt-key command (or through some automated mechanism; the Salt minion won’t run any commands until its key is accepted)
+After the minion key is accepted, the Salt master returns its public key along with a rotating AES key that is used to encrypt and decrypt messages that are sent by the Salt master. The returned AES key is encrypted using the public key initially sent by the Salt minion, and can therefore be decrypted only by that Salt minion.
+</p>
+
+<p>
+All further communication between the Salt master and the Salt minion is encrypted using AES keys.
+A rotating AES key is used to encrypt jobs that are sent to the Salt minion by the Salt master, and to encrypt connections to the Salt master fileserver. A new key is generated and used each time the Salt master restarts and each time a Salt minion key is deleted using the salt-key command. After the key is rotated, all Salt minions must re-authenticate to receive the updated key.
+</p>
+
+<p>
+Before a command is sent to minions, Salt performs some internal checks against the Publisher ACL to make sure that the user executing the command has the correct privileges. If the user is authorized to run the specified command against the specified target, the command is sent. If not, an error is returned.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org5471d90" class="outline-2">
+<h2 id="org5471d90"><span class="section-number-2">4</span> Remote execution</h2>
+<div class="outline-text-2" id="text-4">
+<ul class="org-ul">
+<li>All salt commands return results in a consistent data structure. This make it easy to examine results or store them in a database.</li>
+<li>All targeted systems can run a job at the same time since they all receive the command simultaneously</li>
+<li>Any application or service that can be accessed using Python, a shell command, or nearly any other interface can be exposed as an execution module in Salt.</li>
+</ul>
+<p>
+The remote execution system is accessed using the <b>salt</b> command-line interface.
+</p>
+<div class="org-src-container">
+<pre class="src src-sh">salt <span style="color: #ffa500;">'*'</span> test.rand_sleep 120
+</pre>
+</div>
+<ol class="org-ol">
+<li>This command is sent over the publisher port to all connected minions.</li>
+<li>Each minion examines the command, evaluates itself against the target, and decides whether or not it should run the command.</li>
+<li>Targeted systems run the command and then return the results to the request server.</li>
+</ol>
+<p>
+All of the commands that are used to manage systems are provided by Salt execution modules. When the Salt minion receives a command, it simply finds the correct module (in this example, the <b>test</b> module), and then calls the corresponding function (<b>rand_sleep</b>) providing the supplied arguments (<b>120</b>)
+</p>
+</div>
+</div>
+
+<div id="outline-container-org3979140" class="outline-2">
+<h2 id="org3979140"><span class="section-number-2">5</span> State system</h2>
+<div class="outline-text-2" id="text-5">
+<p>
+Salt state modules are very similar to Salt remote execution modules, with one importand difference. State modules contain logic to see if the system <i>is already in the correct state</i>. In fact, after this determination is made, the State module often simply calls the remote execution module to do the work.
+</p>
+<ul class="org-ul">
+<li>All state module commands return results in a consistent data structure.</li>
+<li>All targeted systems can run a job at the same time.</li>
+<li>Any application or service that can be accessed using Python, a shell command, or nearly any other interface can be exposed as an execution module in Salt.</li>
+</ul>
+<p>
+The primary difference between the state system and the remote execution system are the flow controls within the state system. Salt provides specials commands that let you define dependencies, reuse code, branch on failure, control flow, and leverage variables and templates.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org41ec150" class="outline-2">
+<h2 id="org41ec150"><span class="section-number-2">6</span> Runners</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+The runner subsystem provides Salt modules that execute <b>on the Salt master</b>. Runners are available to list job status, view events in real-time, manage Salt's fileserver, view Salt mine data, wake-on-lan minions, call webhooks and make other http-requests, and much more.
+</p>
+<ul class="org-ul">
+<li>Runners are called using the <b>salt-run</b> command line interface. They do not take a target because the target is the Salt master where you execute the command.</li>
+<li>The syntaxt for passing arguments to Salt runners is identical to the syntax used to pass arguments to Salt execution modules.</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-org7e773e9" class="outline-2">
+<h2 id="org7e773e9"><span class="section-number-2">7</span> Grains</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+Grains are used to get data about your systems. Grains are static information about the underlying operation system, memory, disks, and many other system properties. Grains are gathered automatically when the minion starts and are refreshed periodically or by using a remote execution command.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4976ead" class="outline-2">
+<h2 id="org4976ead"><span class="section-number-2">8</span> Pillar</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+Salt Pillar is used to deliver data to your systems. Salt Pillar lets you define data values (user names, service URLs, preferred paths, ports, etc) and then assign them to one or more minions using targets. The values can then be inserted into Salt states using variables.
+Salt Pillar data is encrypted using the targeted minion's public key and sent over a secure channel. Salt pillar data is never written to disk on the minion.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org327179c" class="outline-2">
+<h2 id="org327179c"><span class="section-number-2">9</span> Mine</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+The Salt Mine is used to share data values among Salt minions.
+</p>
+</div>
+</div>
+
+<div id="outline-container-org4d153ae" class="outline-2">
+<h2 id="org4d153ae"><span class="section-number-2">10</span> Python modules</h2>
+<div class="outline-text-2" id="text-10">
+<p>
+In Salt, each subsystem plug-in is a Python module. In Salt terms, you can think of a module as a group of functions (aka commands) that manage an application (mysql, docker), a system component (disk, file), or interact wit an external system (gitfs)
+</p>
+<ul class="org-ul">
+<li>All of the modules are in the <b>salt</b> folder in the source. A separate folder exists for each subsystem, and each module is a separate file ending in <b>.py</b></li>
+<li>Modules are namespaced in the format <i>salt.subsystem.module</i>. Execution modules start with a <b>salt.module</b> since they were the first and only modules available in the initial versions of Salt</li>
+</ul>
+<p>
+You can think of functions as the specific commands whithin a module that you can call to manage and configure system. For example, <b>salt.modules.pkg.install</b>, <b>salt.modules.network.interfaces</b> and <b>salt.modules.user.add</b> are all common execution functions. Functions are the verbs of Salt, and you can usually figure out which function you want to call by opening the module docs and looking at the function names.
+</p>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">Author: Pavel Vavilin</p>
+<p class="date">Created: 2017-11-10 Fri 18:42</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>

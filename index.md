@@ -1,5 +1,6 @@
 <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
 
+* [Salt: Basics](https://pimiento.github.io/salt_basics.html "Salt: Basics")
 * [Go: Strings](https://pimiento.github.io/go_strings.html "Go: Strings")
 * [работа с графами в Python](https://pimiento.github.io/python_graphs.html "работа с графами в Python")
 * [структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")
@@ -77,35 +78,42 @@ C|Go|Linux
 
 
 
-bit-field|c++|cast
+Python|Salt|bit-field
 | --- |:---:|---:|
-[структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")|[C++ named cast](https://pimiento.github.io/cast.html "C++ named cast")|[C++ named cast](https://pimiento.github.io/cast.html "C++ named cast")
+[Salt: Basics](https://pimiento.github.io/salt_basics.html "Salt: Basics")|[Salt: Basics](https://pimiento.github.io/salt_basics.html "Salt: Basics")|[структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")
 
 
 
-combynatorics|gc|linking
+c++|cast|combynatorics
 | --- |:---:|---:|
-[fish, rat, bird](https://pimiento.github.io/fish_rat_or_bird.html "fish, rat, bird")|[GC в Python](https://pimiento.github.io/python_gc.html "GC в Python")|[Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")
+[C++ named cast](https://pimiento.github.io/cast.html "C++ named cast")|[C++ named cast](https://pimiento.github.io/cast.html "C++ named cast")|[fish, rat, bird](https://pimiento.github.io/fish_rat_or_bird.html "fish, rat, bird")
 
 
 
-math|python|struct
+gc|linking|math
 | --- |:---:|---:|
-[работа с графами в Python](https://pimiento.github.io/python_graphs.html "работа с графами в Python")|[работа с графами в Python](https://pimiento.github.io/python_graphs.html "работа с графами в Python")|[структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")
-[fish, rat, bird](https://pimiento.github.io/fish_rat_or_bird.html "fish, rat, bird")|[GIL в Python](https://pimiento.github.io/python_gil.html "GIL в Python")|
-|[Декораторы в Python](https://pimiento.github.io/decorators.html "Декораторы в Python")|
-|[модуль os в Python](https://pimiento.github.io/python_os.html "модуль os в Python")|
-|[GC в Python](https://pimiento.github.io/python_gc.html "GC в Python")|
-|[Модуль collections в Python](https://pimiento.github.io/python_collections.html "Модуль collections в Python")|
+[GC в Python](https://pimiento.github.io/python_gc.html "GC в Python")|[Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")|[работа с графами в Python](https://pimiento.github.io/python_graphs.html "работа с графами в Python")
+||[fish, rat, bird](https://pimiento.github.io/fish_rat_or_bird.html "fish, rat, bird")
 
 
 
-typedef|types|unicode
+python|struct|typedef
 | --- |:---:|---:|
-[структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")|[C++ named cast](https://pimiento.github.io/cast.html "C++ named cast")|[Go: Strings](https://pimiento.github.io/go_strings.html "Go: Strings")
+[работа с графами в Python](https://pimiento.github.io/python_graphs.html "работа с графами в Python")|[структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")|[структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")
+[GIL в Python](https://pimiento.github.io/python_gil.html "GIL в Python")||
+[Декораторы в Python](https://pimiento.github.io/decorators.html "Декораторы в Python")||
+[модуль os в Python](https://pimiento.github.io/python_os.html "модуль os в Python")||
+[GC в Python](https://pimiento.github.io/python_gc.html "GC в Python")||
+[Модуль collections в Python](https://pimiento.github.io/python_collections.html "Модуль collections в Python")||
 
 
 
-union|vararg|
+types|unicode|union
 | --- |:---:|---:|
-[структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")|[переменное число аргументов функции в C](https://pimiento.github.io/c_varargs.html "переменное число аргументов функции в C")|
+[C++ named cast](https://pimiento.github.io/cast.html "C++ named cast")|[Go: Strings](https://pimiento.github.io/go_strings.html "Go: Strings")|[структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")
+
+
+
+vararg||
+| --- |:---:|---:|
+[переменное число аргументов функции в C](https://pimiento.github.io/c_varargs.html "переменное число аргументов функции в C")||
