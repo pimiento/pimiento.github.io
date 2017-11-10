@@ -1,0 +1,111 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+HTML_MATHJAX: align: center tagside: left font: Neo-Euler
+#+KEYWORDS: Go unicode
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: Go: String-related packages
+
+* [[https://golang.org/pkg/strings/][Strings]]
+  #+CAPTION: strings.Split example
+  #+BEGIN_SRC go :exports both :results output :imports '("fmt" "strings")
+    names := "Niccolò•Noël•Geoffrey•Amélie••Turlough•José"
+    fmt.Print("|")
+    for _, name := range strings.Split(names, "•") {
+    fmt.Printf("%s|", name)
+    }
+    fmt.Println()
+  #+END_SRC
+
+  #+RESULTS:
+  : |Niccolò|Noël|Geoffrey|Amélie||Turlough|José|
+  #+CAPTION: strings.FieldsFunc example
+  #+BEGIN_SRC go :exports both :results output :imports '("fmt" "strings")
+    for _, record := range []string{
+            "László Lajtha*1892*1963",
+            "Édouard Lalo\t1823\t1892",
+            "José Ángel Lamas|1775|1814"} {
+                    fmt.Println(strings.FieldsFunc(record, func(char rune) bool {
+                            switch char {
+                            case '\t', '*', '|':
+                                    return true
+                            }
+                            return false
+                    }))
+            }
+  #+END_SRC
+
+  #+RESULTS:
+  : [László Lajtha 1892 1963]
+  : [Édouard Lalo 1823 1892]
+  : [José Ángel Lamas 1775 1814]
+  #+CAPTION: strings.Replace example
+  #+BEGIN_SRC go :exports both :results output :imports '("fmt" "strings")
+    names := " Antônio\tAndré\tFriedrich\t\t\tJean\t\tÉlisabeth\tIsabella \t"
+    names = strings.Replace(names, "\t", " ", -1)
+    fmt.Printf("|%s|\n", names)
+  #+END_SRC
+
+  #+RESULTS:
+  : | Antônio André Friedrich   Jean  Élisabeth Isabella  |
+  #+CAPTION: strings.Map example
+  #+BEGIN_SRC go :exports both :results output :imports '("fmt" "strings")
+    asciiOnly := func(char rune) rune {
+            if char > 127 {
+                    return '?'
+            }
+            return char
+    }
+    fmt.Println(strings.Map(asciiOnly, "Jérôme Österreich"))
+  #+END_SRC
+
+  #+RESULTS:
+  : J?r?me ?sterreich
+
+* [[https://golang.org/pkg/strconv/][Strconv]]
+  #+CAPTION: strconv.ParseBool example
+  #+BEGIN_SRC go :exports both :results output :imports '("fmt" "strconv")
+    for _, truth := range []string{"1", "t", "TRUE", "false", "F", "0", "5"} {
+            if b, err := strconv.ParseBool(truth); err != nil {
+                    fmt.Printf("\n{%v}", err)
+            } else {
+                    fmt.Print(b, " ")
+            }
+    }
+  #+END_SRC
+
+  #+RESULTS:
+  : true true true false false false
+  : {strconv.ParseBool: parsing "5": invalid syntax}
+  #+CAPTION: strconv.FormatInt examples
+  #+BEGIN_SRC go :exports both :results output :imports '("fmt" "strconv")
+    i := 16769023
+    fmt.Println(strconv.Itoa(i))
+    fmt.Println(strconv.FormatInt(int64(i), 10))
+    fmt.Println(strconv.FormatInt(int64(i), 2))
+    fmt.Println(strconv.FormatInt(int64(i), 16))
+  #+END_SRC
+
+  #+RESULTS:
+  : 16769023
+  : 16769023
+  : 111111111101111111111111
+  : ffdfff
+  #+CAPTION: strconv.Quote example
+  #+BEGIN_SRC go :results output :exports both :imports '("fmt" "strconv")
+    s := "Alle ønsker å være fri."
+    quoted := strconv.Quote(s)
+    fmt.Println(quoted)
+    fmt.Println(strconv.Unquote(quoted))
+  #+END_SRC
+
+  #+RESULTS:
+  : Alle ønsker å være fri.
+
+* [[https://golang.org/pkg/unicode/utf8/][Utf8]] and the [[https://golang.org/pkg/unicode/utf8/][unicode]]
+  - The *unicode/utf8* package provides several useful functions for querying and manipulating strings and []byte s which hold UTF-8 bytes.
+  - The *unicode* package provides functions for querying Unicode code points to determine if they meet certain criteria—for example, whether the character they represent is a digit or a lowercase letter.
+
+* [[https://golang.org/pkg/regexp/][Regexp]]
+  The regexp package is a Go implementation of Russ Cox’s [[http://code.google.com/p/re2/][RE2]] regular expression engine. ✪ This engine is fast and thread-safe. The [[http://code.google.com/p/re2/][RE2]] engine doesn’t use backtracking, so guarantees linear time execution $O(n)$ where $n$ is the length of the matched string, whereas backtracking engines can easily take exponential time $O(2)$. The superior performance is gained at the expense of having no support for backreferences in searches.
