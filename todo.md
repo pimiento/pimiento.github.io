@@ -15,7 +15,5 @@
 * C++ access control
 * Go: Concurrency
 * Go: Get Setup
-* Tornado: Web framework
-* Tornado: HTTP servers and clients
-* Tornado: Asynchronous networking
-* Tornado: coroutines and concurrency
+* Vagrant
+* Docker
