@@ -1,0 +1,161 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: Go
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: Go: defer, panic and recover
+
+* Defer
+  The *defer* statement is used to defer the execution of a function or method (or of
+  an anonymous function created on the spot) until just before the enclosing function or method returns,
+  but after the return values (if any) have been evaluated.
+  This makes it possible to modify a function's named return values inside a deferred function
+  (e.g., by assigning them using the *=* assignment operator). If more than one *defer* statement is used in a function or method,
+  they are executed in LIFO (Last In First Out) order.
+  #+BEGIN_SRC go :results none :exports code
+    var file *os.File
+    var err error
+    if file, err = os.Open(filename); err != nil {
+            log.Println("failed to open the file: ", err)
+            return
+    }
+    defer file.Close()
+  #+END_SRC
+  1. A deferred function's arguments are evaluated when the defer statement is evaluated.
+     #+NAME: main_f
+     #+BEGIN_SRC go :results none :exports none
+       package main
+
+       import "fmt"
+
+       func main() {
+               f()
+       }
+     #+END_SRC
+
+     #+BEGIN_SRC go :results output :exports both :noweb strip-export :main no
+       <<main_f>>
+       func f() {
+               i := 0
+               defer fmt.Println(i)
+               i++
+               return
+       }
+     #+END_SRC
+
+     #+RESULTS:
+     : 0
+
+  2. Deferred function calls are executed in Last In First Out order after the surrounding function returns.
+     #+BEGIN_SRC go :results output :exports both :noweb strip-export :main no
+       <<main_f>>
+       func f() {
+               for i := 0; i < 4; i++ {
+                       defer fmt.Println(i)
+               }
+       }
+     #+END_SRC
+
+     #+RESULTS:
+     : 3
+     : 2
+     : 1
+     : 0
+
+  3. Deferred functions may read and assign to the returning function's named return values.
+     #+BEGIN_SRC go :results output :exports both :noweb strip-export :main no
+       <<main_f>>
+       func f() {
+               fmt.Println(fn())
+       }
+
+       func fn() (i int) {
+               defer func() {i++}()
+               return 1
+       }
+     #+END_SRC
+
+     #+RESULTS:
+     : 2
+
+* Panic and recover
+  + *Panic* is a built-in function that stops the ordinary flow of control and begins of /panicking/.
+    When the function F calls *panic*, execution of F stops, any deferred function in F are executed normally, and then F returns to its caller.
+    To the caller, F then behaves like a call to a *panic*, so the process is then repeated in the caller: execution stops, deferreds are called, and so on.
+    The process continues up the stack untill all functions in the current goroutine have returned, at which point the program crashes with a stack trace dumped to os.Stderr including the value that was given to the original *panic* call.
+  + *Recover* is a built-in function that regains control of a panicking goroutine. *Recover* is only useful inside deferred functions. During normal execution, a call to *recover* will return *nil* and have no other effect.
+    If the current goroutine is /panicking/, a call to *recover* will capture the value given to panic and resume normal execution.
+
+  #+BEGIN_SRC go :results output :exports both
+    package main
+
+    import "fmt"
+
+    func main() {
+            f()
+            fmt.Println("Returned normally from f.")
+    }
+
+    func f() {
+            defer func() {
+                    if r := recover(); r != nil {
+                            fmt.Println("Recovered in f", r)
+                    }
+            }()
+            fmt.Println("Calling g.")
+            g(0)
+            fmt.Println("Returned normally from g.")
+    }
+
+    func g(i int) {
+            if i > 3 {
+                    fmt.Println("Panicking!")
+                    panic(fmt.Sprintf("%v", i))
+            }
+            fmt.Println("Printing in g", i)
+            defer fmt.Println("Defer in g", i)
+            g(i + 1)
+    }
+  #+END_SRC
+
+  #+RESULTS:
+  #+begin_example
+  Calling g.
+  Printing in g 0
+  Printing in g 1
+  Printing in g 2
+  Printing in g 3
+  Panicking!
+  Defer in g 3
+  Defer in g 2
+  Defer in g 1
+  Defer in g 0
+  Recovered in f 4
+  Returned normally from f.
+  #+end_example
+  There are few ways we can respond to panic.
+  1. First solution is to ignore the panic, in which case control will pass to the caller of the function with the deferred *recover()* call which will then continue to execute normally.
+     This approach is not recommended, but if used, at the very least the panic should be logged so that the problem isn't completely hidden.
+  2. Another solution is to do whatever cleanup we like and then call *panic()* ourselves to continue the propogation of the problem.
+     #+BEGIN_SRC go :results none :exports code
+       func ConvertInt64ToInt(x int64) int {
+               if math.MinInt32 <= x && x <= math.MaxInt32 {
+                       return int(x)
+               }
+               panic(fmt.Sprintf("%d is out of the int32 range", x))
+       }
+     #+END_SRC
+  3. A more common solution is to create an *error* value and set that as the (or one of the) return values of the function with the deferred *recover()* call, thus turning the exception (*panic()*) into an error (*error*).
+     #+BEGIN_SRC go :results none :exports code
+       func IntFromInt64(x int64) (i int, err error) {
+               defer func() {
+                       if e := recover(); e != nil {
+                               err = fmt.Errorf("%v", e)
+                       }
+               }()
+
+               i = ConvertInt64ToInt(x)
+               return i, nil
+       }
+     #+END_SRC

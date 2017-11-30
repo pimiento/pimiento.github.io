@@ -1,5 +1,6 @@
 <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
 
+* [Go: defer, panic and recover](https://pimiento.github.io/go_defer_panic_recover.html "Go: defer, panic and recover")
 * [Go: String-related packages](https://pimiento.github.io/go_string_packages.html "Go: String-related packages")
 * [Salt: Basics](https://pimiento.github.io/salt_basics.html "Salt: Basics")
 * [Go: Strings](https://pimiento.github.io/go_strings.html "Go: Strings")
@@ -66,10 +67,11 @@
 
 C|Go|Linux
 | --- |:---:|---:|
-[структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")|[Go: String-related packages](https://pimiento.github.io/go_string_packages.html "Go: String-related packages")|[hardlink и symlink в UNIX](https://pimiento.github.io/unix_hardlink_symlink.html "hardlink и symlink в UNIX")
-[Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")|[Go: Strings](https://pimiento.github.io/go_strings.html "Go: Strings")|[Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")
-[переменное число аргументов функции в C](https://pimiento.github.io/c_varargs.html "переменное число аргументов функции в C")|[Go: Types](https://pimiento.github.io/go_types.html "Go: Types")|[модуль os в Python](https://pimiento.github.io/python_os.html "модуль os в Python")
-|[Go: The Basics](https://pimiento.github.io/go_basics.html "Go: The Basics")|[Процессы в Linux](https://pimiento.github.io/processes.html "Процессы в Linux")
+[структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")|[Go: defer, panic and recover](https://pimiento.github.io/go_defer_panic_recover.html "Go: defer, panic and recover")|[hardlink и symlink в UNIX](https://pimiento.github.io/unix_hardlink_symlink.html "hardlink и symlink в UNIX")
+[Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")|[Go: String-related packages](https://pimiento.github.io/go_string_packages.html "Go: String-related packages")|[Линковка в Linux](https://pimiento.github.io/linkers.html "Линковка в Linux")
+[переменное число аргументов функции в C](https://pimiento.github.io/c_varargs.html "переменное число аргументов функции в C")|[Go: Strings](https://pimiento.github.io/go_strings.html "Go: Strings")|[модуль os в Python](https://pimiento.github.io/python_os.html "модуль os в Python")
+|[Go: Types](https://pimiento.github.io/go_types.html "Go: Types")|[Процессы в Linux](https://pimiento.github.io/processes.html "Процессы в Linux")
+|[Go: The Basics](https://pimiento.github.io/go_basics.html "Go: The Basics")|
 |[Go: Type Assertions](https://pimiento.github.io/go_type_assertions.html "Go: Type Assertions")|
 |[Go: Interfaces](https://pimiento.github.io/go_interfaces.html "Go: Interfaces")|
 |[Go: Methods](https://pimiento.github.io/go_methods.html "Go: Methods")|
