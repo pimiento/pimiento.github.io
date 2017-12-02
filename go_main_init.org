@@ -1,0 +1,22 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: Go
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: Go: Main and Init functions
+
+Go reserves two function names for special purposes: *init()* (in all packages) and *main()* (only in package /main/).
+These two functions must always be defined as taking no arguments and returning nothing.
+
+* Program startup sequence
+  The initialization and execution of a Go program always begins with the /main/ package.
+  If there are imports, each imported package is imported in turn. Packages are imported only once even if more than one package has an import statement for the same package.
+  When a package is imported, if it has its own imports, these are performed first. Then, the package's package-level constants and variables are created.
+  And then the package's *init()* functions are called (if it has any). Eventually, all the packages are imported in the /main/ package (and their imports and so on) are finished,
+  at which point the /main/ package's constants and variables are created and the /main/ package's *init()* functions are called (if it has any).
+  And finally, the /main/ package's *main()* function is called and program execution proper begins.
+  #+BEGIN_CENTER
+  [[./go_startup_sequence.png]]
+  #+END_CENTER
+  A package may have as many *init()* functions as we like, however some Go compilers _support only a single_ *init()* function per package, so it is recommended using at most one *init()* function in each package.
