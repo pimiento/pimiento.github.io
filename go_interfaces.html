@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2017-10-27 Fri 01:08 -->
+<!-- 2017-12-12 Tue 00:36 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Go: Interfaces</title>
@@ -312,14 +312,14 @@ for the JavaScript code in this tag.
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org0a3d239">1. Interfaces</a></li>
-<li><a href="#org2a2ee1d">2. Errors</a></li>
+<li><a href="#org48412c2">1. Interfaces</a></li>
+<li><a href="#org03ed831">2. Errors</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-org0a3d239" class="outline-2">
-<h2 id="org0a3d239"><span class="section-number-2">1</span> Interfaces</h2>
+<div id="outline-container-org48412c2" class="outline-2">
+<h2 id="org48412c2"><span class="section-number-2">1</span> Interfaces</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 An interface type is defined by a set of methods. A value of interface type can hold any value that implements those methods.
@@ -379,11 +379,16 @@ Dear Pavel Vavilin
 hello, writer
 
 </pre>
+<div class="org-center">
+<p>
+The Go convention for <i>interface</i> names is that they should end wiht <i>er</i>
+</p>
+</div>
 </div>
 </div>
 
-<div id="outline-container-org2a2ee1d" class="outline-2">
-<h2 id="org2a2ee1d"><span class="section-number-2">2</span> Errors</h2>
+<div id="outline-container-org03ed831" class="outline-2">
+<h2 id="org03ed831"><span class="section-number-2">2</span> Errors</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 An error is anything that can describe itself as an error string. The idea is captured by the predefined, built-in interface type, error, with its single method, <b>Error</b>, returning a string:
@@ -430,7 +435,7 @@ The <b>fmt</b> package’s various print routines automatically know to call the
 </div>
 
 <pre class="example">
-at 2017-10-27 01:08:06.463604058 +1000 +10, it didn't work
+at 2017-12-12 00:36:21.148564468 +0500 +05, it didn't work
 
 </pre>
 </div>
@@ -438,7 +443,7 @@ at 2017-10-27 01:08:06.463604058 +1000 +10, it didn't work
 </div>
 <div id="postamble" class="status">
 <p class="author">Author: Pavel Vavilin</p>
-<p class="date">Created: 2017-10-27 Fri 01:08</p>
+<p class="date">Created: 2017-12-12 Tue 00:36</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

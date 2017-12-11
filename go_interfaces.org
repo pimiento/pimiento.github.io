@@ -60,6 +60,9 @@
   #+RESULTS:
   : Dear Pavel Vavilin
   : hello, writer
+  #+BEGIN_CENTER
+  The Go convention for /interface/ names is that they should end wiht /er/
+  #+END_CENTER
 
 * Errors
   An error is anything that can describe itself as an error string. The idea is captured by the predefined, built-in interface type, error, with its single method, *Error*, returning a string:
