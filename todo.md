@@ -13,7 +13,6 @@
 * C++: header files
 * C++: nested structures
 * C++ access control
-* Go: Concurrency
-* Go: Get Setup
 * Vagrant
 * Docker
+* Kubernetes

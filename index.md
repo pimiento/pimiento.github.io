@@ -48,10 +48,9 @@
 * [C++: header files](#, "TODO")
 * [C++: nested structures](#, "TODO")
 * [C++ access control](#, "TODO")
-* [Go: Concurrency](#, "TODO")
-* [Go: Get Setup](#, "TODO")
 * [Vagrant](#, "TODO")
 * [Docker](#, "TODO")
+* [Kubernetes](#, "TODO")
 
 ---
 
