@@ -57,6 +57,21 @@ def tag_link_template(links):
     return ('|'.join('{}' for link in links)).format(*links)
 
 
+def append_tag_cloud(lines, keywords, N=2):
+    # add blank field
+    lines.append(blank_field(10))
+    lines.append("\n---\n")
+    lines.append(maybe_h("-", 3).format("ugly implimentation of tags cloud"))
+    lines.append("\n---\n")
+
+    keys_iterator = iter(sorted(keywords.keys()))
+    for tags in zip_longest(*[keys_iterator]*3, fillvalue=''):
+        lines.append("\n"*2)
+        lines.append(tag_template(tags))
+        for links in zip_longest(*[keywords[t] for t in tags], fillvalue=''):
+            lines.append(tag_link_template(links))
+
+
 def get_index_page():
     keywords = defaultdict(list)
     lines = []
@@ -74,20 +89,7 @@ def get_index_page():
     lines.extend(get_todo())
     lines.append("\n---\n")
 
-
-    # add blank field
-    lines.append(blank_field(10))
-    lines.append("\n---\n")
-    lines.append(maybe_h("-", 3).format("ugly implimentation of tags cloud"))
-    lines.append("\n---\n")
-
-    keys_iterator = iter(sorted(keywords.keys()))
-    for tags in zip_longest(*[keys_iterator]*3, fillvalue=''):
-        lines.append("\n"*2)
-        lines.append(tag_template(tags))
-        for links in zip_longest(*[keywords[t] for t in tags], fillvalue=''):
-            lines.append(tag_link_template(links))
-
+    # append_tag_cloud(lines, keywords, 3)
     return lines
 
 
