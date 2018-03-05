@@ -1,0 +1,34 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: Salt Python
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: Salt: Blackout mode
+
+* Minion Blackout Configuration
+  Since version 2016.3.0 salt supports minion blackouts. There is a [[https://docs.saltstack.com/en/latest/topics/blackout/index.html][documentation]] about that mode.
+  When a minion is in blackout mode, all remote execution commands are disabled.
+  This allows production minions to be put "on hold", eliminating the risk of an untimely configuration change.
+  Salt also supports an explicit whitelist of additional functions that will be allowed during blackout.
+  This is configured with the special pillar key minion_blackout_whitelist, which is formed as a list:
+  #+BEGIN_SRC yaml
+    minion_blackout_whitelist:
+      - test.ping
+      - pillar.get
+  #+END_SRC
+
+* Modern Minion Blackout Configuration
+  Since [[https://github.com/saltstack/salt/commit/9409392caf85bf0e165705f9f8cab051a6d32018][that pull request was merged]] blackout mode could be configured in a *grains* on a minion side.
+  That means that we can configure a minion (/etc/salt/minion) that way:
+  #+BEGIN_SRC yaml
+    file_client: local
+    use_master_when_local: True
+    minion_blackout: True
+    minion_blackout_whitelist:
+      - state.apply
+  #+END_SRC
+  and then we will get a minion node that will only allow master to call *state.apply* command
+  that will be search for a state files localy on that minion.
+  Before that patch it was possible that commands are listed in /minion_blackout_whitelist/ in a *pillar* will override
+  /minion_blackout_whitelist/ in a *grains*.
