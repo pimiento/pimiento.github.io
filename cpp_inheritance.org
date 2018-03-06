@@ -1,0 +1,157 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: c++ inheritance
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: C++ Inheritance
+
+* Inheritance
+  It is a mechanizme that allows to create a new classes which extend the existed one.
+  #+NAME: includes
+  #+BEGIN_SRC cpp :exports none :noweb none :results none :flags -std=c++11
+    #include <iostream>
+    #include <string>
+  #+END_SRC
+  #+NAME: main
+  #+BEGIN_SRC cpp :exports none :noweb none :results none :flags -std=c++11
+    int main() {
+  #+END_SRC
+  #+NAME: main_end
+  #+BEGIN_SRC cpp :exports none :noweb none :results none :flags -std=c++11
+      return 0;
+    }
+  #+END_SRC
+  #+NAME: person_student
+  #+BEGIN_SRC cpp :exports code :noweb yes :results none :flags -std=c++11
+    class Person {
+        std::string name_;
+        int age_;
+
+    public:
+        Person () : name_("John"), age_(33) {}
+        std::string name() const { return name_; }
+        int          age() const { return age_;  }
+    };
+
+    struct Student : Person {
+        Student () : uni_("USMA") {}
+        std::string university() const { return uni_; }
+
+    private:
+        std::string uni_;
+    };
+  #+END_SRC
+  Objects of the derived class can call public methods of the base class
+  #+BEGIN_SRC cpp :exports both :noweb strip-export :results output :flags -std=c++11
+    <<includes>>
+    <<person_student>>
+    <<main>>
+    Student s;
+    std::cout << s.name() << std::endl
+              << s.age() << std::endl
+              << s.university() << std::endl;
+    <<main_end>>
+  #+END_SRC
+
+  #+RESULTS:
+  : John
+  : 33
+  : USMA
+  There is an object of the base class inside a derived class.
+  When you create an object of a derived class, compiler call the constructor of the base class and then the constructor of a derived class.
+  #+NAME: person_student_2
+  #+BEGIN_SRC cpp :exports code :noweb yes :results none :flags -std=c++11
+    class Person {
+        std::string name_;
+        int age_;
+
+    public:
+        Person () : name_("John"), age_(33) {}
+        Person (const std::string& name, int age) :
+            name_(name), age_(age) {}
+        std::string name() const { return name_; }
+        int          age() const { return age_;  }
+    };
+
+    class Student : public Person {
+        std::string uni_;
+
+    public:
+        Student () : uni_("USMA") {}
+        Student (const std::string name, int age, const std::string uni) :
+            Person(name, age), uni_(uni) {}
+        std::string university() const { return uni_; }
+    };
+  #+END_SRC
+
+  #+BEGIN_SRC cpp :exports both :noweb strip-export :results output :flags -std=c++11
+    <<includes>>
+    <<person_student_2>>
+    <<main>>
+    Student s("Pavel", 29, "None");
+    std::cout << s.name() << std::endl
+              << s.age() << std::endl
+              << s.university() << std::endl;
+    <<main_end>>
+  #+END_SRC
+
+  #+RESULTS:
+  : Pavel
+  : 29
+  : None
+  Now we can use Person object as Student object:
+  #+BEGIN_SRC cpp :exports code :noweb strip-export :results none :flags -std=c++11
+    Student s("Pavel", 29, "None");
+    Person & l = s;                 // Student & -> Person &
+    Person * r = &s;                // Student * -> Person *
+    Person p = s;                   // Person("Pavel", 29);
+  #+END_SRC
+
+  When we assign an object of the derived class to an object of the base class we do copy only these fields that
+  were defined in the base class.
+  (We call construct Person(Person const& p) which doesn't know anything about *uni_* field.)
+
+* Protected
+  If a structure has access modificator *protected* it means that
+  1. Derived class has no access to *private* members of the base class.
+  2. Derived class has access to a *protected* members of the base class.
+  #+BEGIN_SRC cpp :exports code :noweb strip-export :results none :flags -std=c++11
+    struct Person {
+        // …
+    protected:
+        std::string name_;
+        int age_;
+    };
+
+    // Can change fields name_ and age_ of the base class Person
+    struct Student : Person {
+        // …
+    };
+  #+END_SRC
+
+* Access Control and Inheritance
+  A derived class can access all the non-private members of its base class.
+  | Access        | public | protected | private |
+  |---------------+--------+-----------+---------|
+  | /             | <>     | <>        | <>      |
+  |               | <c>    | <c>       | <c>     |
+  | Same class    | yes    | yes       | yes     |
+  | Derived class | yes    | yes       | no      |
+  | Outside class | yes    | no        | no      |
+  A derived class inherits all base class methods with the following exceptions:
+  - Constructors, desctructors and copy constructors of the base class.
+  - Overloaded operators of the base class.
+  - The friend functions of the base class.
+
+* Type of Inheritance
+  When deriving a class from a base class, the base class may be inherited through *public*, *protected* or *private* inheritance.
+  *protected* or *private* inheritance are hardly used, but *public* inheritacne is commonly used.
+  - Public inheritance :: When deriving a class from a *public* base class, *public* members of the base class become *public* memebers
+       of the derived class and *protected* members of the base class become *protected* members of the derived class.
+       A base class *private* members are never accessible directly from a derived class, but can be accessed through calls to the *public*
+       and *protected* members of the base class.
+  - Protected inheritance :: When deriving from a *protected* base class, *public* and *protected* members of the base class become *protected*
+       members of the derived class.
+  - Private inheritance :: When deriving from a *private* base class, *public* and *protected* members of the base class become *private*
+       members of the derived class.
