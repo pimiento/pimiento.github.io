@@ -17,7 +17,7 @@
 
 * Solution
   #+name: solution
-  #+begin_src python :results none :noweb strip-export
+  #+begin_src python :results none
     def solution(l, k):
         """
         Whether any two numbers from the lst add up to num.
@@ -39,7 +39,7 @@
   #+end_src
 
 
-  #+begin_src python :noweb no-export :tangle 6_2_2019.py :shebang "#!/usr/bin/env python3" :results output
+  #+begin_src python :noweb strip-export :tangle 6_2_2019.py :shebang "#!/usr/bin/env python3" :results output :exports both
     <<solution>>
 
     test_data = (
