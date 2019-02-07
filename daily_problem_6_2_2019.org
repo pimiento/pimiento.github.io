@@ -1,0 +1,61 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: python
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: Алгоритмическая задачка 6.2.2019
+
+* Problem
+  This problem was recently asked by Google.
+
+  Given a list of numbers and a number k, return whether any two numbers from the list add up to k.
+
+  For example, given [10, 15, 3, 7] and k of 17, return true since 10 + 7 is 17.
+
+  Bonus: Can you do this in one pass?
+
+* Solution
+  #+name: solution
+  #+begin_src python :results none :noweb strip-export
+    def solution(l, k):
+        """
+        Whether any two numbers from the lst add up to num.
+        Assume that there are no elements in l that are bigger than k.
+        Assume that all elements in l are non-negative.
+
+        :param list l: list of integers
+        :param int k: seeked result of sum
+        :return: True when there are such numbers, False otherwise
+        :rtype: bool
+        """
+        additions = [None] * (k+1)
+        for n in l:
+            add = k - n
+            if additions[add] is not None:
+                return True
+            additions[n] = n
+        return False
+  #+end_src
+
+
+  #+begin_src python :noweb no-export :tangle 6_2_2019.py :shebang "#!/usr/bin/env python3" :results output
+    <<solution>>
+
+    test_data = (
+        ([10, 15, 3, 7], 17, True),
+        ([10, 15, 4, 8], 17, False),
+        ([], 20, False),
+        ([1], 1, False),
+        ([1, 2], 3, True),
+        ([1, 2, 3, 4, 5], 8, True)
+    )
+
+    for l, k, res in test_data:
+        temp = solution(l, k)
+        assert temp == res, '{} | {} -> {} <- {}'.format(l, k, temp, res)
+    print("ALL TESTS WERE PASSED")
+  #+end_src
+
+  #+RESULTS:
+  : ALL TESTS WERE PASSED
