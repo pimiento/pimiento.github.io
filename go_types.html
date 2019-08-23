@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru" xml:lang="ru">
 <head>
-<!-- 2017-11-09 Thu 19:39 -->
+<!-- 2019-08-23 Fri 12:24 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Go: Types</title>
 <meta name="generator" content="Org mode" />
-<meta name="author" content="Pavel Vavilin" />
+<meta name="author" content="Pavel" />
 <meta name="keywords" content="Go" />
 <style type="text/css">
  <!--/*--><![CDATA[/*><!--*/
@@ -162,6 +162,19 @@
   .footdef  { margin-bottom: 1em; }
   .figure { padding: 1em; }
   .figure p { text-align: center; }
+  .equation-container {
+    display: table;
+    text-align: center;
+    width: 100%;
+  }
+  .equation {
+    vertical-align: middle;
+  }
+  .equation-label {
+    display: table-cell;
+    text-align: right;
+    vertical-align: middle;
+  }
   .inlinetask {
     padding: 10px;
     border: 2px solid gray;
@@ -191,7 +204,7 @@
  * @licstart  The following is the entire license notice for the
  *  JavaScript code in org-info.js.
  *
- * Copyright (C) 2012-2017 Free Software Foundation, Inc.
+ * Copyright (C) 2012-2019 Free Software Foundation, Inc.
  *
  *
  * The JavaScript code in this tag is free software: you can
@@ -220,7 +233,7 @@
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012-2017 Free Software Foundation, Inc.
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -259,7 +272,7 @@ org_html_manager.setup();  // activate after the parameters are set
 @licstart  The following is the entire license notice for the
 JavaScript code in this tag.
 
-Copyright (C) 2012-2017 Free Software Foundation, Inc.
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
 
 The JavaScript code in this tag is free software: you can
 redistribute it and/or modify it under the terms of the GNU
@@ -309,25 +322,25 @@ for the JavaScript code in this tag.
 </div><div id="content">
 <h1 class="title">Go: Types</h1>
 <div id="table-of-contents">
-<h2>Table of Contents</h2>
+<h2>&#1057;&#1086;&#1076;&#1077;&#1088;&#1078;&#1072;&#1085;&#1080;&#1077;</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#orgf35101f">1. Basic Types</a></li>
-<li><a href="#org816b602">2. Enumerations</a>
+<li><a href="#org484214c">1. Basic Types</a></li>
+<li><a href="#org7417cee">2. Enumerations</a>
 <ul>
-<li><a href="#orgc0a1bf9">2.1. iota</a></li>
+<li><a href="#org76444b1">2.1. iota</a></li>
 </ul>
 </li>
-<li><a href="#org2272ba4">3. Type conversion</a></li>
-<li><a href="#org68de756">4. Structs</a></li>
-<li><a href="#orga2092a9">5. Initializing</a></li>
-<li><a href="#orgfcb3c4d">6. Composition vs Inheritance</a></li>
+<li><a href="#org172bbf1">3. Type conversion</a></li>
+<li><a href="#org59fef20">4. Structs</a></li>
+<li><a href="#org580ac17">5. Initializing</a></li>
+<li><a href="#orge272b5b">6. Composition vs Inheritance</a></li>
 </ul>
 </div>
 </div>
 
-<div id="outline-container-orgf35101f" class="outline-2">
-<h2 id="orgf35101f"><span class="section-number-2">1</span> Basic Types</h2>
+<div id="outline-container-org484214c" class="outline-2">
+<h2 id="org484214c"><span class="section-number-2">1</span> Basic Types</h2>
 <div class="outline-text-2" id="text-1">
 <pre class="example">
 bool        true or false
@@ -364,26 +377,26 @@ rune        alias for int32 (represents a Unicode code point)
 </div>
 </div>
 
-<div id="outline-container-org816b602" class="outline-2">
-<h2 id="org816b602"><span class="section-number-2">2</span> Enumerations</h2>
+<div id="outline-container-org7417cee" class="outline-2">
+<h2 id="org7417cee"><span class="section-number-2">2</span> Enumerations</h2>
 <div class="outline-text-2" id="text-2">
 <p>
 We can group together several constant declarations using the <b>const</b> keyword just once.
 </p>
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">const</span> (
-        Cyan = 0<span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">0</span>
-        Magenta <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">0</span>
-        Yellow  <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">0</span>
+<pre class="src src-go">const (
+        Cyan = 0// 0
+        Magenta // 0
+        Yellow  // 0
 )
 
-fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(Cyan, Magenta, Yellow)
+fmt.Println(Cyan, Magenta, Yellow)
 
-<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">ByteSize</span> <span style="color: #00ffff;">float64</span>
+type ByteSize float64
 
-<span style="color: #00ff00; font-weight: bold;">const</span> (
-        _           = <span style="color: #7fffd4;">iota</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">ignore first value by assigning to blank identifie</span><span style="color: #DC8CC3; background-color: #3F3F3F; font-style: italic;">r</span>
-        KB ByteSize = 1 &lt;&lt; (10 * <span style="color: #7fffd4;">iota</span>)
+const (
+        _           = iota // ignore first value by assigning to blank identifier
+        KB ByteSize = 1 &lt;&lt; (10 * iota)
         MB
         GB
         TB
@@ -393,152 +406,150 @@ fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(Cyan, Magent
         YB
 )
 
-fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(KB, TB, YB)
+fmt.Println(KB, TB, YB)
 </pre>
 </div>
 
 <pre class="example">
 0 0 0
 1024 1.099511627776e+12 1.2089258196146292e+24
-
 </pre>
 </div>
 
-<div id="outline-container-orgc0a1bf9" class="outline-3">
-<h3 id="orgc0a1bf9"><span class="section-number-3">2.1</span> iota</h3>
+<div id="outline-container-org76444b1" class="outline-3">
+<h3 id="org76444b1"><span class="section-number-3">2.1</span> iota</h3>
 <div class="outline-text-3" id="text-2-1">
 <p>
 Within a constant declaration, the predeclared identifier <b>iota</b> represents successive untyped integer constants. It is reset to 0 whenever the reserved word <b>const</b> appears in the source and increments after each ConstSpec.
 </p>
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">const</span> ( <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">iota is reset to 0</span>
-        c0 = <span style="color: #7fffd4;">iota</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">c0 == 0</span>
-        c1 = <span style="color: #7fffd4;">iota</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">c1 == 1</span>
-        c2 = <span style="color: #7fffd4;">iota</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">c2 == 2</span>
+<pre class="src src-go">const ( // iota is reset to 0
+        c0 = iota // c0 == 0
+        c1 = iota // c1 == 1
+        c2 = iota // c2 == 2
 )
 
-<span style="color: #00ff00; font-weight: bold;">const</span> ( <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">iota is reset to 0</span>
-        a = 1 &lt;&lt; <span style="color: #7fffd4;">iota</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">a == 1</span>
-        b = 1 &lt;&lt; <span style="color: #7fffd4;">iota</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">b == 2</span>
-        c = 3 <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">c == 3 (iota is not used but still incremented)</span>
-        d = 1 &lt;&lt; <span style="color: #7fffd4;">iota</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">d == 8</span>
+const ( // iota is reset to 0
+        a = 1 &lt;&lt; iota // a == 1
+        b = 1 &lt;&lt; iota // b == 2
+        c = 3 // c == 3 (iota is not used but still incremented)
+        d = 1 &lt;&lt; iota // d == 8
 )
 
-<span style="color: #00ff00; font-weight: bold;">const</span> ( <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">iota is reset to 0</span>
-        u = <span style="color: #7fffd4;">iota</span> * 42 <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">u == 0 (untyped integer constant)</span>
-        v float64 = <span style="color: #7fffd4;">iota</span> * 42 <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">v == 42.0 (float64 constant)</span>
-        w = <span style="color: #7fffd4;">iota</span> * 42 <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">w == 84 (untyped integer constant)</span>
+const ( // iota is reset to 0
+        u = iota * 42 // u == 0 (untyped integer constant)
+        v float64 = iota * 42 // v == 42.0 (float64 constant)
+        w = iota * 42 // w == 84 (untyped integer constant)
 )
 
-<span style="color: #00ff00; font-weight: bold;">const</span> x = <span style="color: #7fffd4;">iota</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">x == 0 (iota has been reset)</span>
-<span style="color: #00ff00; font-weight: bold;">const</span> y = <span style="color: #7fffd4;">iota</span> <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">y == 0 (iota has been reset)</span>
+const x = iota // x == 0 (iota has been reset)
+const y = iota // y == 0 (iota has been reset)
 
-fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"c2 = %d, d = %d, u = %d, v = %.01f, w = %.01f, x = %d y = %d"</span>, c2, d<span style="color: #DC8CC3; background-color: #3F3F3F;">, u, v, w, x, y)</span>
+fmt.Printf("c2 = %d, d = %d, u = %d, v = %.01f, w = %d, x = %d y = %d", c2, d, u, v, w, x, y)
 </pre>
 </div>
 
 <pre class="example">
-c2 = 2, d = 8, u = 0, v = 42.0, w = %!f(int=84), x = 0 y = 0
-
+c2 = 2, d = 8, u = 0, v = 42.0, w = 84, x = 0 y = 0
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org2272ba4" class="outline-2">
-<h2 id="org2272ba4"><span class="section-number-2">3</span> Type conversion</h2>
+<div id="outline-container-org172bbf1" class="outline-2">
+<h2 id="org172bbf1"><span class="section-number-2">3</span> Type conversion</h2>
 <div class="outline-text-2" id="text-3">
 <p>
 The expression <b>T(v)</b> converts the value <b>v</b> to the type <b>T</b>. Go assignment between items of different type requires an explicit conversion which means that <span class="underline">you manually need to convert types if you are passing a variable to a function expecting another type</span>.
 </p>
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">var</span> i int32 = 42
-<span style="color: #00ff00; font-weight: bold;">var</span> f32 float32 = <span style="color: #00ffff; font-weight: bold;">float32</span>(i)
-f64 := <span style="color: #00ffff; font-weight: bold;">float64</span>(f32)
-<span style="color: #00ff00; font-weight: bold;">var</span> u unit = <span style="color: #00ffff; font-weight: bold;">unit</span>(f)
+<pre class="src src-go">var i int32 = 42
+var f32 float32 = float32(i)
+f64 := float64(f32)
+var u unit = unit(f)
 </pre>
 </div>
 </div>
 </div>
 
-<div id="outline-container-org68de756" class="outline-2">
-<h2 id="org68de756"><span class="section-number-2">4</span> Structs</h2>
+<div id="outline-container-org59fef20" class="outline-2">
+<h2 id="org59fef20"><span class="section-number-2">4</span> Structs</h2>
 <div class="outline-text-2" id="text-4">
 <p>
 A struct is a collection of fields/properties. You can define new types as structs or interfaces. You can think of a struct to be a light class that supports composition but not inheritance. You don’t need to define getters and setters on struct fields, they can be accessed automatically. However, note that only exported fields (capitalized) can be accessed from outside of a package.
 </p>
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">package</span> main
+<pre class="src src-go">package main
 
-<span style="color: #00ff00; font-weight: bold;">import</span> (
-        <span style="color: #ffa500;">"fmt"</span>
-        <span style="color: #ffa500;">"time"</span>
+import (
+        "fmt"
+        "time"
 )
 
-<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">Bootcamp</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
-        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Latitude of the event</span>
+type Bootcamp struct {
+        // Latitude of the event
         Lat float64
-        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Longitude of the event</span>
+        // Longitude of the event
         Lon float64
-        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Date of the event</span>
+        // Date of the event
         Date time.Time
 }
 
-<span style="color: #00ff00; font-weight: bold;">func</span> <span style="color: #00ffff; font-weight: bold;">main</span>() {
-        fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(<span style="color: #00ffff;">Bootcamp</span>{
-                <span style="color: #7fffd4;">Lat</span>:  34.012836,
-                <span style="color: #7fffd4;">Lon</span>:  -118.495338,
-                <span style="color: #7fffd4;">Date</span>: time.<span style="color: #00ffff; font-weight: bold;">Now</span>(),
+func main() {
+        fmt.Println(Bootcamp{
+                Lat:  34.012836,
+                Lon:  -118.495338,
+                Date: time.Now(),
         })
 }
 </pre>
 </div>
 
 <pre class="example">
-{34.012836 -118.495338 2017-11-09 19:39:36.544069188 +1000 +10}
-
+{34.012836 -118.495338 2019-08-23 12:24:42.70724893 +0500 +05 m=+0.000209487}
 </pre>
+
 <p>
 A struct literal sets a newly allocated struct value by listing the values of its fields. You can list just a subset of fields by using the "Name:" syntax (the order of named fields is irrelevant when using this syntax). The special prefix &amp; constructs a pointer to a newly allocated struct.
 </p>
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">package</span> main
+<pre class="src src-go">package main
 
-<span style="color: #00ff00; font-weight: bold;">import</span> (
-        <span style="color: #ffa500;">"fmt"</span>
-        <span style="color: #ffa500;">"time"</span>
+import (
+        "fmt"
+        "time"
 )
 
-<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">Point</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+type Point struct {
         X, Y int
 }
 
-<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">Bootcamp</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
-        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Latitude of the event</span>
+type Bootcamp struct {
+        // Latitude of the event
         Lat float64
-        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Longitude of the event</span>
+        // Longitude of the event
         Lon float64
-        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Date of the event</span>
+        // Date of the event
         Date time.Time
 }
 
-<span style="color: #00ff00; font-weight: bold;">var</span> (
-        p = <span style="color: #00ffff;">Point</span>{1, 2}  <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">has type Point</span>
-        q = &amp;<span style="color: #00ffff;">Point</span>{1, 2} <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">has type *Point</span>
-        r = <span style="color: #00ffff;">Point</span>{X: 1}  <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Y:0 is implicit</span>
-        s = <span style="color: #00ffff;">Point</span>{}      <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">X:0 and Y:0</span>
+var (
+        p = Point{1, 2}  // has type Point
+        q = &amp;Point{1, 2} // has type *Point
+        r = Point{X: 1}  // Y:0 is implicit
+        s = Point{}      // X:0 and Y:0
 )
 
-<span style="color: #00ff00; font-weight: bold;">func</span> <span style="color: #00ffff; font-weight: bold;">main</span>() {
-        fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(p, q, r, s)
+func main() {
+        fmt.Println(p, q, r, s)
 
-        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">accessing fields using the dot notation</span>
-        event := <span style="color: #00ffff;">Bootcamp</span>{
-                <span style="color: #7fffd4;">Lat</span>: 34.012836,
-                <span style="color: #7fffd4;">Lon</span>: -118.495338,
+        // accessing fields using the dot notation
+        event := Bootcamp{
+                Lat: 34.012836,
+                Lon: -118.495338,
         }
-        event.Date = time.<span style="color: #00ffff; font-weight: bold;">Now</span>()
-        fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"Event on %s, location (%f, %f)"</span>,
+        event.Date = time.Now()
+        fmt.Printf("Event on %s, location (%f, %f)",
                 event.Date, event.Lat, event.Lon)
 }
 </pre>
@@ -546,99 +557,97 @@ A struct literal sets a newly allocated struct value by listing the values of it
 
 <pre class="example">
 {1 2} &amp;{1 2} {1 0} {0 0}
-Event on 2017-11-09 19:39:36.874991702 +1000 +10, location (34.012836, -118.495338)
-
+Event on 2019-08-23 12:24:42.972590607 +0500 +05 m=+0.000230459, location (34.012836, -118.495338)
 </pre>
 </div>
 </div>
 
-<div id="outline-container-orga2092a9" class="outline-2">
-<h2 id="orga2092a9"><span class="section-number-2">5</span> Initializing</h2>
+<div id="outline-container-org580ac17" class="outline-2">
+<h2 id="org580ac17"><span class="section-number-2">5</span> Initializing</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 Go supports the <b>new</b> expression to <b>allocate a zeroed value</b> of the requested type and to <b>return a pointer</b> to it.
 </p>
 <div class="org-src-container">
-<pre class="src src-go">x := <span style="color: #b0c4de; font-weight: bold;">new</span>(<span style="color: #00ffff;">int</span>)
+<pre class="src src-go">x := new(int)
 </pre>
 </div>
 <p>
 Following expressions using new and an empty struct literal are equivalent and result in the same kind of allocation/initialization.
 </p>
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">package</span> main
+<pre class="src src-go">package main
 
-<span style="color: #00ff00; font-weight: bold;">import</span> (
-        <span style="color: #ffa500;">"fmt"</span>
+import (
+        "fmt"
 )
 
-<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">Bootcamp</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+type Bootcamp struct {
         Lat float64
         Lon float64
 }
 
-<span style="color: #00ff00; font-weight: bold;">func</span> <span style="color: #00ffff; font-weight: bold;">main</span>() {
-        x := <span style="color: #b0c4de; font-weight: bold;">new</span>(<span style="color: #00ffff;">Bootcamp</span>)
-        y := &amp;<span style="color: #00ffff;">Bootcamp</span>{}
-        fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(*x == *y)
+func main() {
+        x := new(Bootcamp)
+        y := &amp;Bootcamp{}
+        fmt.Println(*x == *y)
 }
 </pre>
 </div>
 
 <pre class="example">
 true
-
 </pre>
 </div>
 </div>
 
-<div id="outline-container-orgfcb3c4d" class="outline-2">
-<h2 id="orgfcb3c4d"><span class="section-number-2">6</span> Composition vs Inheritance</h2>
+<div id="outline-container-orge272b5b" class="outline-2">
+<h2 id="orge272b5b"><span class="section-number-2">6</span> Composition vs Inheritance</h2>
 <div class="outline-text-2" id="text-6">
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">package</span> main
+<pre class="src src-go">package main
 
-<span style="color: #00ff00; font-weight: bold;">import</span> <span style="color: #ffa500;">"fmt"</span>
+import "fmt"
 
-<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">User</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+type User struct {
         Id       int
         Name     string
         Location string
 }
 
-<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">Player</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+type Player struct {
         Id       int
         Name     string
         Location string
-        GameId<span style="background-color: #BC8383;">  </span> int
+        GameId	 int
 }
 
-<span style="color: #00ff00; font-weight: bold;">func</span> <span style="color: #00ffff; font-weight: bold;">main</span>() {
-        p := <span style="color: #00ffff;">Player</span>{}
+func main() {
+        p := Player{}
         p.Id = 42
-        p.Name = <span style="color: #ffa500;">"Matt"</span>
-        p.Location = <span style="color: #ffa500;">"LA"</span>
+        p.Name = "Matt"
+        p.Location = "LA"
         p.GameId = 90404
-        fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"%+v"</span>, p)
+        fmt.Printf("%+v", p)
 }
 </pre>
 </div>
 
 <pre class="example">
 {Id:42 Name:Matt Location:LA GameId:90404}
-
 </pre>
+
 
 <p>
 Player struct has the same fields as the User struct but it also has a GameId field. It can be simplified by composing our struct.
 </p>
 <div class="org-src-container">
-<pre class="src src-go" id="org870caab"><span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">User</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+<pre class="src src-go" id="orga91c173">type User struct {
         Id             int
         Name, Location string
 }
 
-<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">Player</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+type Player struct {
         User
         GameId int
 }
@@ -648,39 +657,39 @@ Player struct has the same fields as the User struct but it also has a GameId fi
 We can initialize a new variable of type Player two different ways.
 </p>
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">package</span> main
+<pre class="src src-go">package main
 
-<span style="color: #00ff00; font-weight: bold;">import</span> <span style="color: #ffa500;">"fmt"</span>
+import "fmt"
 
-<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">User</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+type User struct {
         Id             int
         Name, Location string
 }
 
-<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">Player</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+type Player struct {
         User
         GameId int
 }
 
-<span style="color: #00ff00; font-weight: bold;">func</span> <span style="color: #00ffff; font-weight: bold;">main</span>() {
-        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">1. Using the dot notation to set the fields</span>
-        p1 := <span style="color: #00ffff;">Player</span>{}
+func main() {
+        // 1. Using the dot notation to set the fields
+        p1 := Player{}
         p1.Id = 42
-        p1.Name = <span style="color: #ffa500;">"Matt"</span>
-        p1.Location = <span style="color: #ffa500;">"LA"</span>
+        p1.Name = "Matt"
+        p1.Location = "LA"
         p1.GameId = 90404
-        fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"%+v"</span>, p1)
-        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">2. Use struct literal</span>
-        p2 := <span style="color: #00ffff;">Player</span>{
-                <span style="color: #00ffff;">User</span>{Id: 42, Name: <span style="color: #ffa500;">"Matt"</span>, Location: <span style="color: #ffa500;">"LA"</span>},
+        fmt.Printf("%+v", p1)
+        // 2. Use struct literal
+        p2 := Player{
+                User{Id: 42, Name: "Matt", Location: "LA"},
                 90404,
         }
-        fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(
-                <span style="color: #ffa500;">"Id: %d, Name: %s, Location: %s, Game id: %d\n"</span>,
+        fmt.Printf(
+                "Id: %d, Name: %s, Location: %s, Game id: %d\n",
                 p2.Id, p2.Name, p2.Location, p2.GameId)
-        <span style="color: #5F7F5F;">// </span><span style="color: #ffa500; font-style: italic;">Directly set a field defined on the Player struct</span>
+        // Directly set a field defined on the Player struct
         p2.Id = 11
-        fmt.<span style="color: #00ffff; font-weight: bold;">Printf</span>(<span style="color: #ffa500;">"%+v"</span>, p2)
+        fmt.Printf("%+v", p2)
 }
 </pre>
 </div>
@@ -688,51 +697,50 @@ We can initialize a new variable of type Player two different ways.
 <pre class="example">
 {User:{Id:42 Name:Matt Location:LA} GameId:90404}Id: 42, Name: Matt, Location: LA, Game id: 90404
 {User:{Id:11 Name:Matt Location:LA} GameId:90404}
-
 </pre>
+
 <p>
 Because our struct is composed of another struct, the methods on the User struct is also available to the Player.
 </p>
 <div class="org-src-container">
-<pre class="src src-go"><span style="color: #00ff00; font-weight: bold;">package</span> main
+<pre class="src src-go">package main
 
-<span style="color: #00ff00; font-weight: bold;">import</span> <span style="color: #ffa500;">"fmt"</span>
+import "fmt"
 
-<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">User</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+type User struct {
         Id             int
         Name, Location string
 }
 
-<span style="color: #00ff00; font-weight: bold;">type</span> <span style="color: #00ffff;">Player</span> <span style="color: #00ff00; font-weight: bold;">struct</span> {
+type Player struct {
         User
         GameId int
 }
 
-<span style="color: #00ff00; font-weight: bold;">func</span> (u *<span style="color: #00ffff;">User</span>) <span style="color: #00ffff; font-weight: bold;">Greetings</span>() <span style="color: #00ffff;">string</span> {
-        <span style="color: #00ff00; font-weight: bold;">return</span> fmt.<span style="color: #00ffff; font-weight: bold;">Sprintf</span>(<span style="color: #ffa500;">"Hi %s from %s"</span>,
+func (u *User) Greetings() string {
+        return fmt.Sprintf("Hi %s from %s",
                 u.Name, u.Location)
 }
 
-<span style="color: #00ff00; font-weight: bold;">func</span> <span style="color: #00ffff; font-weight: bold;">main</span>() {
-        p := <span style="color: #00ffff;">Player</span>{}
+func main() {
+        p := Player{}
         p.Id = 42
-        p.Name = <span style="color: #ffa500;">"Matt"</span>
-        p.Location = <span style="color: #ffa500;">"LA"</span>
-        fmt.<span style="color: #00ffff; font-weight: bold;">Println</span>(p.<span style="color: #00ffff; font-weight: bold;">Greetings</span>())
+        p.Name = "Matt"
+        p.Location = "LA"
+        fmt.Println(p.Greetings())
 }
 </pre>
 </div>
 
 <pre class="example">
 Hi Matt from LA
-
 </pre>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="author">Author: Pavel Vavilin</p>
-<p class="date">Created: 2017-11-09 Thu 19:39</p>
+<p class="author">&#1040;&#1074;&#1090;&#1086;&#1088;: Pavel</p>
+<p class="date">Created: 2019-08-23 Fri 12:24</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>

@@ -99,11 +99,11 @@ rune        alias for int32 (represents a Unicode code point)
      const x = iota // x == 0 (iota has been reset)
      const y = iota // y == 0 (iota has been reset)
 
-     fmt.Printf("c2 = %d, d = %d, u = %d, v = %.01f, w = %.01f, x = %d y = %d", c2, d, u, v, w, x, y)
+     fmt.Printf("c2 = %d, d = %d, u = %d, v = %.01f, w = %d, x = %d y = %d", c2, d, u, v, w, x, y)
    #+END_SRC
 
    #+RESULTS:
-   : c2 = 2, d = 8, u = 0, v = 42.0, w = %!f(int=84), x = 0 y = 0
+   : c2 = 2, d = 8, u = 0, v = 42.0, w = 84, x = 0 y = 0
 
 * Type conversion
   The expression *T(v)* converts the value *v* to the type *T*. Go assignment between items of different type requires an explicit conversion which means that _you manually need to convert types if you are passing a variable to a function expecting another type_.
