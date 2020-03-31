@@ -1,5 +1,7 @@
 <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
 
+* [Некоторые хитрости в ML](https://pimiento.github.io/ML_notes.html "Некоторые хитрости в ML")
+* [Go: Types](https://pimiento.github.io/go_types.html "Go: Types")
 * [Алгоритмическая задачка 6.2.2019](https://pimiento.github.io/daily_problem_6_2_2019.html "Алгоритмическая задачка 6.2.2019")
 * [C++ Inheritance](https://pimiento.github.io/cpp_inheritance.html "C++ Inheritance")
 * [Salt: Blackout mode](https://pimiento.github.io/salt_blackout.html "Salt: Blackout mode")
@@ -14,7 +16,6 @@
 * [работа с графами в Python](https://pimiento.github.io/python_graphs.html "работа с графами в Python")
 * [структуры в C](https://pimiento.github.io/c_structures.html "структуры в C")
 * [GIL в Python](https://pimiento.github.io/python_gil.html "GIL в Python")
-* [Go: Types](https://pimiento.github.io/go_types.html "Go: Types")
 * [Декораторы в Python](https://pimiento.github.io/decorators.html "Декораторы в Python")
 * [Go: The Basics](https://pimiento.github.io/go_basics.html "Go: The Basics")
 * [Go: Type Assertions](https://pimiento.github.io/go_type_assertions.html "Go: Type Assertions")

@@ -1,0 +1,266 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: C struct union typedef bit-field
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: Некоторые хитрости в ML
+* Линейная регрессия (простая):
+  $Ŷ = \beta{}_{0} + \beta{}_{1}*X$
+
+  Где
+
+  $\beta{}_{1} = \frac{sd_{x}}{sd_{y}} * r_{xy}$,
+
+  $\beta{}_{0} = Ŷ - \beta_{1} * X$.
+
+* Порядок использования линейной регрессии (простой):
+  1. Построить scatter plot и посмотреть, что данные подчиняются линейному закону.
+  2. Посчитать $R^{2}$ и выяснить подчиняются ли данные линейной корреляции.
+  3. Проверить гомоскедастичность данных (homoscedasticity vs heteroscedasticity)
+  4. Высчитать $\beta_{0}$ и $\beta_{1}$.
+  5. Проверить нулевую гипотезу $H_{0}: \beta_{1} = 0$
+* Diagnostic plots in Python
+  Используя R (или воспользоваться Rserve + pyRserve: https://www.rforge.net/Rserve/doc.html) можно сделать очень быстро и просто
+  #+BEGIN_SRC R :exports both :results graphics :noweb no :file file:/tmp/Rcode.png
+    library(MASS)
+    model <- lm(medv ~ ., data=Boston)
+    par(mfrow=c(2,2))
+    plot(model)
+  #+END_SRC
+
+  #+NAME: preparation
+  #+BEGIN_SRC python :exports code :noweb no
+    import numpy as np
+    import pandas as pd
+    import seaborn as sns
+    import statsmodels.api as sm
+    import matplotlib.pyplot as plt
+
+    from sklearn.datasets import load_boston
+    from statsmodels.graphics.gofplots import ProbPlot
+
+    plt.style.use('seaborn')  # pretty matplotlib plots
+    plt.rc('font', size=14)
+    plt.rc('figure', titlesize=18)
+    plt.rc('axes', labelsize=15)
+    plt.rc('axes', titlesize=18)
+
+    boston = load_boston()
+
+    X = pd.DataFrame(boston.data, columns=boston.feature_names)
+    y = pd.DataFrame(boston.target)
+
+    # generate OLS model
+    model = sm.OLS(y, sm.add_constant(X))
+    model_fit = model.fit()
+
+    # create dataframe from X, y for easier plot handling
+    dataframe = pd.concat([X, y], axis=1)
+
+    # model values
+    model_fitted_y = model_fit.fittedvalues
+    # model residuals
+    model_residuals = model_fit.resid
+    # normalized residuals
+    model_norm_residuals = model_fit.get_influence().resid_studentized_internal
+    # absolute squared normalized residuals
+    model_norm_residuals_abs_sqrt = np.sqrt(np.abs(model_norm_residuals))
+    # absolute residuals
+    model_abs_resid = np.abs(model_residuals)
+    # leverage, from statsmodels internals
+    model_leverage = model_fit.get_influence().hat_matrix_diag
+    # cook's distance, from statsmodels internals
+    model_cooks = model_fit.get_influence().cooks_distance[0]
+  #+END_SRC
+** Residuals vs Fitted
+   #+NAME: residuals_vs_fitted
+   #+BEGIN_SRC python :exports code :noweb no
+     plot_lm_1 = plt.figure()
+     plot_lm_1.axes[0] = sns.residplot(
+         model_fitted_y,
+         dataframe[dataframe.columns[-1]],
+         lowess=True,
+         scatter_kws={'alpha': 0.5},
+         line_kws={'color': 'red', 'lw': 1, 'alpha': 0.8}
+     )
+
+     plot_lm_1.axes[0].set_title('Residuals vs Fitted')
+     plot_lm_1.axes[0].set_xlabel('Fitted values')
+     plot_lm_1.axes[0].set_ylabel('Residuals');
+   #+END_SRC
+
+   Идеальный график Residuals (расстояние от реального значения до линии регрессии — остаток) vs Fitted (значение на линии регрессии) будет выглядеть как случайный шум, там не будет никаких видимых закономерностей в данных и красная линия будет прямой. На графике красная линия не прямая, это означает что мы упустили какую-то нелинейную корреляцию (underfitting the model). Возможно, необходимо было использовать квадратичную функцию регрессии.
+
+   #+BEGIN_SRC python :results file :exports results :noweb strip-export :tangle no
+     <<preparation>>
+     <<residuals_vs_fitted>>
+
+     figpath = '/tmp/residuals_vs_fitted.png'
+     plt.savefig(figpath)
+     return figpath
+   #+END_SRC
+
+** Normal Q-Q Plot
+   Проверим распределение остатков — в идеале оно должнобыть нормальным.
+   #+NAME: normal_qq
+   #+BEGIN_SRC python :exports code :noweb no
+     QQ = ProbPlot(model_norm_residuals)
+     plot_lm_2 = QQ.qqplot(line='45', alpha=0.5, color='#4C72B0', lw=1)
+     plot_lm_2.axes[0].set_title('Normal Q-Q')
+     plot_lm_2.axes[0].set_xlabel('Theoretical Quantiles')
+     plot_lm_2.axes[0].set_ylabel('Standardized Residuals');
+     # annotations
+     abs_norm_resid = np.flip(np.argsort(np.abs(model_norm_residuals)), 0)
+     abs_norm_resid_top_3 = abs_norm_resid[:3]
+     for r, i in enumerate(abs_norm_resid_top_3):
+         plot_lm_2.axes[0].annotate(
+             i,
+             xy=(np.flip(QQ.theoretical_quantiles, 0)[r], model_norm_residuals[i])
+         )
+   #+END_SRC
+
+   #+BEGIN_SRC python :results file :exports results :noweb strip-export :tangle no
+     <<preparation>>
+     <<normal_qq>>
+
+     figpath = '/tmp/normal_qq.png'
+     plt.savefig(figpath)
+     return figpath
+   #+END_SRC
+
+** Scale Location
+   Проверим страдают ли остатки (residuals) от непостоянной дисперсии — гетероскедастичность.
+   #+NAME: scale_location
+   #+BEGIN_SRC python :exports code :noweb strip-export
+     <<normal_qq>>
+
+     plot_lm_3 = plt.figure()
+     plt.scatter(model_fitted_y, model_norm_residuals_abs_sqrt, alpha=0.5)
+     sns.regplot(
+         model_fitted_y,
+         model_norm_residuals_abs_sqrt,
+         scatter=False,
+         ci=False,
+         lowess=True,
+         line_kws={'color': 'red', 'lw': 1, 'alpha': 0.8}
+     )
+     plot_lm_3.axes[0].set_title('Scale-Location')
+     plot_lm_3.axes[0].set_xlabel('Fitted values')
+     plot_lm_3.axes[0].set_ylabel('$\sqrt{|Standardized Residuals|}$')
+
+     # annotations
+     abs_sq_norm_resid = np.flip(np.argsort(model_norm_residuals_abs_sqrt), 0)
+     abs_sq_norm_resid_top_3 = abs_sq_norm_resid[:3]
+     for i in abs_norm_resid_top_3:
+         plot_lm_3.axes[0].annotate(
+             i,
+             xy=(model_fitted_y[i], model_norm_residuals_abs_sqrt[i])
+         );
+   #+END_SRC
+
+   #+BEGIN_SRC python :results file :exports results :noweb strip-export :tangle no
+     <<preparation>>
+     <<scale_location>>
+
+     figpath = '/tmp/scale_location.png'
+     plt.savefig(figpath)
+     return figpath
+   #+END_SRC
+
+** Residuals vs Leverage
+
+   В отличие от выбросов, которые выделаются от остальных значений по $y$, рычаги выделяются по значению $x$. Из-за того что они имеют большую дистануию с остальными значениями независимой переменной, то линия регрессии будет склоняться к тому чтобы проходить через них, а значит эти "рычаги" имеют большое влияние на коэффициенты $\beta{}$.
+   #+NAME: residuals_vs_leverage
+   #+BEGIN_SRC python :results none :exports code :noweb strip-export :tangle no
+     <<scale_location>>
+     plot_lm_4 = plt.figure();
+     plt.scatter(model_leverage, model_norm_residuals, alpha=0.5);
+     sns.regplot(
+         model_leverage,
+         model_norm_residuals,
+         scatter=False,
+         ci=False,
+         lowess=True,
+         line_kws={'color': 'red', 'lw': 1, 'alpha': 0.8}
+     );
+     plot_lm_4.axes[0].set_xlim(0, max(model_leverage)+0.01)
+     plot_lm_4.axes[0].set_ylim(-3, 5)
+     plot_lm_4.axes[0].set_title('Residuals vs Leverage')
+     plot_lm_4.axes[0].set_xlabel('Leverage')
+     plot_lm_4.axes[0].set_ylabel('Standardized Residuals');
+
+     # annotations
+     leverage_top_3 = np.flip(np.argsort(model_cooks), 0)[:3]
+     for i in leverage_top_3:
+         plot_lm_4.axes[0].annotate(
+             i,
+             xy=(model_leverage[i], model_norm_residuals[i])
+         );
+   #+END_SRC
+
+   Точками "рычага" будут являться те точки, которые лежат за пределами значения $0.5$. ([[http://www.machinelearning.ru/wiki/index.php?title=%25D0%25A0%25D0%25B0%25D1%2581%25D1%2581%25D1%2582%25D0%25BE%25D1%258F%25D0%25BD%25D0%25B8%25D0%25B5_%25D0%259A%25D1%2583%25D0%25BA%25D0%25B0][Расстояние Кука]])
+
+   #+BEGIN_SRC python :results file :exports results :noweb strip-export :tangle no
+     <<preparation>>
+     <<residuals_vs_leverage>>
+
+     figpath = '/tmp/residuals_vs_leverage.png'
+     plt.savefig(figpath)
+     return figpath
+   #+END_SRC
+
+* Какие $\alpha{}$ лучше использовать для Gradient Descent
+  Ng предлагает использовать такой порядок $\alpha$:  $0.001 \dots{} 0.003 \dots{} 0.01 \dots{} 0.03 \dots{} 0.1 \dots{} 0.3 \dots{} 1$
+* Когда использовать градиентный спуск (Gradient Descent), а когда Метод Наименьших Квадратов (Normal Equation / Linear Least Squares)
+  | Gradient Descent                                          | Normal Equation                                               |
+  |-----------------------------------------------------------+---------------------------------------------------------------|
+  | Необходимо подбирать коээфициент $\alpha{}$               | Нет необходимости подбирать $\alpha{}$                        |
+  | Требуется много итераций для поиска оптимального $\Theta$ | Не нужно итеративно повторять вычисления                      |
+  | Работает хорошо даже когда $\mathbf{n}$ велико            | Необходимо вычислять $(\mathbf{X}^\intercal \mathbf{X})^{-1}$ |
+  |                                                           | Очень медленно при больших $\mathbf{n}$: $\mathcal{O}(n^3)$   |
+  $\mathbf{n}$ = 1000 уже стоит использовать /Gradient Descent/.
+* Underfitting
+  используем слишком простую модель, в итоге получаем плохой результат для тренировочных данных и для тестовых данных.
+* Overfitting
+  используем слишком сложную модель, в итоге получаем идеальный результат для тренировочных данных (квадрат ошибок вплоть до 0),
+  но на тестовых данных всё будет плохо, так как модель заточена только под конкретный набор тренировочных данных.
+* Regularization
+  Добавляем слагаемое к $RSS + \lambda{} * \sum_{j=1}^{p}(\theta{}_j^2)$ для всех $\theta{} \in{} 1,\dots{},j$.
+  Таким образом мы уменьшаем значения $\theta{}$ даже для очень сложных многочленов, чтобы $J(\theta{})$ было минимальное.
+  Параметр $\lambda{}$ стоит брать поменьше, но не $0$, иначе это просто выключает регуляризацию.
+* Confusion matrix
+  Для classification-задач можно сделать такую матрицу значений
+  |               | Is Spam        | Is Real email  |
+  | Detected Spam | True Positive  | False Positive |
+  | Detected Real | False Negative | True Negative  |
+  в scikit это можно сделать следующим образом:
+  #+BEGIN_SRC python
+    from sklearn.metrics import confusion_matrix
+    from sklearn.metrics import classification_report
+
+    # Do some classifications
+
+    confusion_matrix(y_tested, y_predicted)  # -> [[52, 7], [3, 112]] for example
+    classification_report(y_tested, y_predicted) # -> table with columns [precision, recall, f1-score, support]
+  #+END_SRC
+** Precision (Positive Predicted Value / PPV)
+   $\frac{TruePositive}{TruePositive + FalsePositive}$ — отношение правильно помеченных как Spam к количеству всех помеченных как спам.
+** Recall (Sensitivity, Hit Rate)
+   $\frac{TruePositive}{TruePositive + FalseNegative}$ — отношение правильно помеченных как Spam к количеству всех Spam
+** F1 Score
+   $2 \cdot{} \frac{Precision \cdot{} recall}{precision + recall}$ — гармоническое среднее между precision и recall
+* Что делать если линейная регрессия на новых тестовых данных даёт большую ошибку
+** Собрать больше данных для обучения модели. (не всегда помогает)
+   - ПОлезно использовать train/test split, k-fold cross-validation
+** Уменьшить количество факторов (features)
+** Добавить факторы (features)
+** Добавить факторы больших порядков (x₁²,x₂²,x₁x₂,etc)
+   - Используем train/validate/test split.
+     1. Делим (перемешав) данные (x₁,x₂,…,y) на три части: train/validate/test (например 60%/20%/20%).
+     2. Строим для каждой степени (d - degree of polynomial) многочленов модель (подсчитываем $\Theta{}^{n}$).
+     3. Для каждого $\Theta{}^{n}$ считаем $J(\Theta{}^{n})$ на validate-наборе данных.
+     4. Выбираем степень полинома с наименьшим значением cost-function $J_{cv}(\Theta{}^{n})$.
+     5. Проверяем выбранную модель на test-наборе.
+** Уменьшить параметр регуляризации $\lambda{}$
+** Увеличить параметр регуляризации $\lambda{}$

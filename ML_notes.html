@@ -1,0 +1,822 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ru" xml:lang="ru">
+<head>
+<!-- 2020-03-31 Tue 18:26 -->
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Некоторые хитрости в ML</title>
+<meta name="generator" content="Org mode" />
+<meta name="author" content="Pavel" />
+<meta name="keywords" content="C struct union typedef bit-field" />
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  .title  { text-align: center;
+             margin-bottom: .2em; }
+  .subtitle { text-align: center;
+              font-size: medium;
+              font-weight: bold;
+              margin-top:0; }
+  .todo   { font-family: monospace; color: red; }
+  .done   { font-family: monospace; color: green; }
+  .priority { font-family: monospace; color: orange; }
+  .tag    { background-color: #eee; font-family: monospace;
+            padding: 2px; font-size: 80%; font-weight: normal; }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .org-right  { margin-left: auto; margin-right: 0px;  text-align: right; }
+  .org-left   { margin-left: 0px;  margin-right: auto; text-align: left; }
+  .org-center { margin-left: auto; margin-right: auto; text-align: center; }
+  .underline { text-decoration: underline; }
+  #postamble p, #preamble p { font-size: 90%; margin: .2em; }
+  p.verse { margin-left: 3%; }
+  pre {
+    border: 1px solid #ccc;
+    box-shadow: 3px 3px 3px #eee;
+    padding: 8pt;
+    font-family: monospace;
+    overflow: auto;
+    margin: 1.2em;
+  }
+  pre.src {
+    position: relative;
+    overflow: visible;
+    padding-top: 1.2em;
+  }
+  pre.src:before {
+    display: none;
+    position: absolute;
+    background-color: white;
+    top: -10px;
+    right: 10px;
+    padding: 3px;
+    border: 1px solid black;
+  }
+  pre.src:hover:before { display: inline;}
+  /* Languages per Org manual */
+  pre.src-asymptote:before { content: 'Asymptote'; }
+  pre.src-awk:before { content: 'Awk'; }
+  pre.src-C:before { content: 'C'; }
+  /* pre.src-C++ doesn't work in CSS */
+  pre.src-clojure:before { content: 'Clojure'; }
+  pre.src-css:before { content: 'CSS'; }
+  pre.src-D:before { content: 'D'; }
+  pre.src-ditaa:before { content: 'ditaa'; }
+  pre.src-dot:before { content: 'Graphviz'; }
+  pre.src-calc:before { content: 'Emacs Calc'; }
+  pre.src-emacs-lisp:before { content: 'Emacs Lisp'; }
+  pre.src-fortran:before { content: 'Fortran'; }
+  pre.src-gnuplot:before { content: 'gnuplot'; }
+  pre.src-haskell:before { content: 'Haskell'; }
+  pre.src-hledger:before { content: 'hledger'; }
+  pre.src-java:before { content: 'Java'; }
+  pre.src-js:before { content: 'Javascript'; }
+  pre.src-latex:before { content: 'LaTeX'; }
+  pre.src-ledger:before { content: 'Ledger'; }
+  pre.src-lisp:before { content: 'Lisp'; }
+  pre.src-lilypond:before { content: 'Lilypond'; }
+  pre.src-lua:before { content: 'Lua'; }
+  pre.src-matlab:before { content: 'MATLAB'; }
+  pre.src-mscgen:before { content: 'Mscgen'; }
+  pre.src-ocaml:before { content: 'Objective Caml'; }
+  pre.src-octave:before { content: 'Octave'; }
+  pre.src-org:before { content: 'Org mode'; }
+  pre.src-oz:before { content: 'OZ'; }
+  pre.src-plantuml:before { content: 'Plantuml'; }
+  pre.src-processing:before { content: 'Processing.js'; }
+  pre.src-python:before { content: 'Python'; }
+  pre.src-R:before { content: 'R'; }
+  pre.src-ruby:before { content: 'Ruby'; }
+  pre.src-sass:before { content: 'Sass'; }
+  pre.src-scheme:before { content: 'Scheme'; }
+  pre.src-screen:before { content: 'Gnu Screen'; }
+  pre.src-sed:before { content: 'Sed'; }
+  pre.src-sh:before { content: 'shell'; }
+  pre.src-sql:before { content: 'SQL'; }
+  pre.src-sqlite:before { content: 'SQLite'; }
+  /* additional languages in org.el's org-babel-load-languages alist */
+  pre.src-forth:before { content: 'Forth'; }
+  pre.src-io:before { content: 'IO'; }
+  pre.src-J:before { content: 'J'; }
+  pre.src-makefile:before { content: 'Makefile'; }
+  pre.src-maxima:before { content: 'Maxima'; }
+  pre.src-perl:before { content: 'Perl'; }
+  pre.src-picolisp:before { content: 'Pico Lisp'; }
+  pre.src-scala:before { content: 'Scala'; }
+  pre.src-shell:before { content: 'Shell Script'; }
+  pre.src-ebnf2ps:before { content: 'ebfn2ps'; }
+  /* additional language identifiers per "defun org-babel-execute"
+       in ob-*.el */
+  pre.src-cpp:before  { content: 'C++'; }
+  pre.src-abc:before  { content: 'ABC'; }
+  pre.src-coq:before  { content: 'Coq'; }
+  pre.src-groovy:before  { content: 'Groovy'; }
+  /* additional language identifiers from org-babel-shell-names in
+     ob-shell.el: ob-shell is the only babel language using a lambda to put
+     the execution function name together. */
+  pre.src-bash:before  { content: 'bash'; }
+  pre.src-csh:before  { content: 'csh'; }
+  pre.src-ash:before  { content: 'ash'; }
+  pre.src-dash:before  { content: 'dash'; }
+  pre.src-ksh:before  { content: 'ksh'; }
+  pre.src-mksh:before  { content: 'mksh'; }
+  pre.src-posh:before  { content: 'posh'; }
+  /* Additional Emacs modes also supported by the LaTeX listings package */
+  pre.src-ada:before { content: 'Ada'; }
+  pre.src-asm:before { content: 'Assembler'; }
+  pre.src-caml:before { content: 'Caml'; }
+  pre.src-delphi:before { content: 'Delphi'; }
+  pre.src-html:before { content: 'HTML'; }
+  pre.src-idl:before { content: 'IDL'; }
+  pre.src-mercury:before { content: 'Mercury'; }
+  pre.src-metapost:before { content: 'MetaPost'; }
+  pre.src-modula-2:before { content: 'Modula-2'; }
+  pre.src-pascal:before { content: 'Pascal'; }
+  pre.src-ps:before { content: 'PostScript'; }
+  pre.src-prolog:before { content: 'Prolog'; }
+  pre.src-simula:before { content: 'Simula'; }
+  pre.src-tcl:before { content: 'tcl'; }
+  pre.src-tex:before { content: 'TeX'; }
+  pre.src-plain-tex:before { content: 'Plain TeX'; }
+  pre.src-verilog:before { content: 'Verilog'; }
+  pre.src-vhdl:before { content: 'VHDL'; }
+  pre.src-xml:before { content: 'XML'; }
+  pre.src-nxml:before { content: 'XML'; }
+  /* add a generic configuration mode; LaTeX export needs an additional
+     (add-to-list 'org-latex-listings-langs '(conf " ")) in .emacs */
+  pre.src-conf:before { content: 'Configuration File'; }
+
+  table { border-collapse:collapse; }
+  caption.t-above { caption-side: top; }
+  caption.t-bottom { caption-side: bottom; }
+  td, th { vertical-align:top;  }
+  th.org-right  { text-align: center;  }
+  th.org-left   { text-align: center;   }
+  th.org-center { text-align: center; }
+  td.org-right  { text-align: right;  }
+  td.org-left   { text-align: left;   }
+  td.org-center { text-align: center; }
+  dt { font-weight: bold; }
+  .footpara { display: inline; }
+  .footdef  { margin-bottom: 1em; }
+  .figure { padding: 1em; }
+  .figure p { text-align: center; }
+  .inlinetask {
+    padding: 10px;
+    border: 2px solid gray;
+    margin: 10px;
+    background: #ffffcc;
+  }
+  #org-div-home-and-up
+   { text-align: right; font-size: 70%; white-space: nowrap; }
+  textarea { overflow-x: auto; }
+  .linenr { font-size: smaller }
+  .code-highlighted { background-color: #ffff00; }
+  .org-info-js_info-navigation { border-style: none; }
+  #org-info-js_console-label
+    { font-size: 10px; font-weight: bold; white-space: nowrap; }
+  .org-info-js_search-highlight
+    { background-color: #ffff00; color: #000000; font-weight: bold; }
+  .org-svg { width: 90%; }
+  /*]]>*/-->
+</style>
+<link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+
+<script type="text/javascript" src="org-info.js">
+/**
+ *
+ * @source: org-info.js
+ *
+ * @licstart  The following is the entire license notice for the
+ *  JavaScript code in org-info.js.
+ *
+ * Copyright (C) 2012-2019 Free Software Foundation, Inc.
+ *
+ *
+ * The JavaScript code in this tag is free software: you can
+ * redistribute it and/or modify it under the terms of the GNU
+ * General Public License (GNU GPL) as published by the Free Software
+ * Foundation, either version 3 of the License, or (at your option)
+ * any later version.  The code is distributed WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS
+ * FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+ *
+ * As additional permission under GNU GPL version 3 section 7, you
+ * may distribute non-source (e.g., minimized or compacted) forms of
+ * that code without the copy of the GNU GPL normally required by
+ * section 4, provided you include this license notice and a URL
+ * through which recipients can access the Corresponding Source.
+ *
+ * @licend  The above is the entire license notice
+ * for the JavaScript code in org-info.js.
+ *
+ */
+</script>
+
+<script type="text/javascript">
+
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+
+<!--/*--><![CDATA[/*><!--*/
+org_html_manager.set("TOC_DEPTH", "3");
+org_html_manager.set("LINK_HOME", "https://pimiento.github.io/");
+org_html_manager.set("LINK_UP", "https://pimiento.github.io/");
+org_html_manager.set("LOCAL_TOC", "1");
+org_html_manager.set("VIEW_BUTTONS", "0");
+org_html_manager.set("MOUSE_HINT", "underline");
+org_html_manager.set("FIXED_TOC", "0");
+org_html_manager.set("TOC", "1");
+org_html_manager.set("VIEW", "1");
+org_html_manager.setup();  // activate after the parameters are set
+/*]]>*///-->
+</script>
+<script type="text/javascript">
+/*
+@licstart  The following is the entire license notice for the
+JavaScript code in this tag.
+
+Copyright (C) 2012-2019 Free Software Foundation, Inc.
+
+The JavaScript code in this tag is free software: you can
+redistribute it and/or modify it under the terms of the GNU
+General Public License (GNU GPL) as published by the Free Software
+Foundation, either version 3 of the License, or (at your option)
+any later version.  The code is distributed WITHOUT ANY WARRANTY;
+without even the implied warranty of MERCHANTABILITY or FITNESS
+FOR A PARTICULAR PURPOSE.  See the GNU GPL for more details.
+
+As additional permission under GNU GPL version 3 section 7, you
+may distribute non-source (e.g., minimized or compacted) forms of
+that code without the copy of the GNU GPL normally required by
+section 4, provided you include this license notice and a URL
+through which recipients can access the Corresponding Source.
+
+
+@licend  The above is the entire license notice
+for the JavaScript code in this tag.
+*/
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+<script type="text/x-mathjax-config">
+    MathJax.Hub.Config({
+        displayAlign: "center",
+        displayIndent: "0em",
+
+        "HTML-CSS": { scale: 100,
+                        linebreaks: { automatic: "false" },
+                        webFont: "TeX"
+                       },
+        SVG: {scale: 100,
+              linebreaks: { automatic: "false" },
+              font: "TeX"},
+        NativeMML: {scale: 100},
+        TeX: { equationNumbers: {autoNumber: "AMS"},
+               MultLineWidth: "85%",
+               TagSide: "right",
+               TagIndent: ".8em"
+             }
+});
+</script>
+<script type="text/javascript"
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-AMS_HTML"></script>
+</head>
+<body>
+<div id="org-div-home-and-up">
+ <a accesskey="h" href="https://pimiento.github.io/"> UP </a>
+ |
+ <a accesskey="H" href="https://pimiento.github.io/"> HOME </a>
+</div><div id="content">
+<h1 class="title">Некоторые хитрости в ML</h1>
+<div id="table-of-contents">
+<h2>&#1057;&#1086;&#1076;&#1077;&#1088;&#1078;&#1072;&#1085;&#1080;&#1077;</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#org27f7687">1. Линейная регрессия (простая):</a></li>
+<li><a href="#org8e6099a">2. Порядок использования линейной регрессии (простой):</a></li>
+<li><a href="#orga3a72a4">3. Diagnostic plots in Python</a>
+<ul>
+<li><a href="#org77534f2">3.1. Residuals vs Fitted</a></li>
+<li><a href="#orgab1ddd7">3.2. Normal Q-Q Plot</a></li>
+<li><a href="#org5582895">3.3. Scale Location</a></li>
+<li><a href="#org357a427">3.4. Residuals vs Leverage</a></li>
+</ul>
+</li>
+<li><a href="#org0dc6981">4. Какие \(\alpha{}\) лучше использовать для Gradient Descent</a></li>
+<li><a href="#org814f44c">5. Когда использовать градиентный спуск (Gradient Descent), а когда Метод Наименьших Квадратов (Normal Equation / Linear Least Squares)</a></li>
+<li><a href="#org05dff26">6. Underfitting</a></li>
+<li><a href="#org09fc931">7. Overfitting</a></li>
+<li><a href="#orgf21e964">8. Regularization</a></li>
+<li><a href="#org66fb5ae">9. Confusion matrix</a>
+<ul>
+<li><a href="#org049a49b">9.1. Precision (Positive Predicted Value / PPV)</a></li>
+<li><a href="#orgd856811">9.2. Recall (Sensitivity, Hit Rate)</a></li>
+<li><a href="#orgb763409">9.3. F1 Score</a></li>
+</ul>
+</li>
+<li><a href="#org8bc9428">10. Что делать если линейная регрессия на новых тестовых данных даёт большую ошибку</a>
+<ul>
+<li><a href="#org857a783">10.1. Собрать больше данных для обучения модели. (не всегда помогает)</a></li>
+<li><a href="#org1d2811f">10.2. Уменьшить количество факторов (features)</a></li>
+<li><a href="#org9e12124">10.3. Добавить факторы (features)</a></li>
+<li><a href="#org72a4e88">10.4. Добавить факторы больших порядков (x₁²,x₂²,x₁x₂,etc)</a></li>
+<li><a href="#org596b122">10.5. Уменьшить параметр регуляризации \(\lambda{}\)</a></li>
+<li><a href="#org814dde7">10.6. Увеличить параметр регуляризации \(\lambda{}\)</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org27f7687" class="outline-2">
+<h2 id="org27f7687"><span class="section-number-2">1</span> Линейная регрессия (простая):</h2>
+<div class="outline-text-2" id="text-1">
+<p>
+\(Ŷ = \beta{}_{0} + \beta{}_{1}*X\)
+</p>
+
+<p>
+Где
+</p>
+
+<p>
+\(\beta{}_{1} = \frac{sd_{x}}{sd_{y}} * r_{xy}\),
+</p>
+
+<p>
+\(\beta{}_{0} = Ŷ - \beta_{1} * X\).
+</p>
+</div>
+</div>
+
+<div id="outline-container-org8e6099a" class="outline-2">
+<h2 id="org8e6099a"><span class="section-number-2">2</span> Порядок использования линейной регрессии (простой):</h2>
+<div class="outline-text-2" id="text-2">
+<ol class="org-ol">
+<li>Построить scatter plot и посмотреть, что данные подчиняются линейному закону.</li>
+<li>Посчитать \(R^{2}\) и выяснить подчиняются ли данные линейной корреляции.</li>
+<li>Проверить гомоскедастичность данных (homoscedasticity vs heteroscedasticity)</li>
+<li>Высчитать \(\beta_{0}\) и \(\beta_{1}\).</li>
+<li>Проверить нулевую гипотезу \(H_{0}: \beta_{1} = 0\)</li>
+</ol>
+</div>
+</div>
+<div id="outline-container-orga3a72a4" class="outline-2">
+<h2 id="orga3a72a4"><span class="section-number-2">3</span> Diagnostic plots in Python</h2>
+<div class="outline-text-2" id="text-3">
+<p>
+Используя R (или воспользоваться Rserve + pyRserve: <a href="https://www.rforge.net/Rserve/doc.html">https://www.rforge.net/Rserve/doc.html</a>) можно сделать очень быстро и просто
+</p>
+<div class="org-src-container">
+<pre class="src src-R"><span style="color: #7fffd4;">library</span>(MASS)
+model <span style="color: #7fffd4;">&lt;-</span> lm(medv ~ ., data=Boston)
+<span style="color: #7fffd4;">par</span>(mfrow=c(2,2))
+plot(model)
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="file:/tmp/Rcode.png" alt="Rcode.png" />
+</p>
+</div>
+
+<div class="org-src-container">
+<pre class="src src-python" id="orgfc94101"><span style="color: #a0ffff;">import</span> numpy <span style="color: #a0ffff;">as</span> np
+<span style="color: #a0ffff;">import</span> pandas <span style="color: #a0ffff;">as</span> pd
+<span style="color: #a0ffff;">import</span> seaborn <span style="color: #a0ffff;">as</span> sns
+<span style="color: #a0ffff;">import</span> statsmodels.api <span style="color: #a0ffff;">as</span> sm
+<span style="color: #a0ffff;">import</span> matplotlib.pyplot <span style="color: #a0ffff;">as</span> plt
+
+<span style="color: #a0ffff;">from</span> sklearn.datasets <span style="color: #a0ffff;">import</span> load_boston
+<span style="color: #a0ffff;">from</span> statsmodels.graphics.gofplots <span style="color: #a0ffff;">import</span> ProbPlot
+
+plt.style.use(<span style="color: #efca10;">'seaborn'</span>)  <span style="color: #FFd1d1;"># </span><span style="color: #FFd1d1;">pretty matplotlib plots</span>
+plt.rc(<span style="color: #efca10;">'font'</span>, size=14)
+plt.rc(<span style="color: #efca10;">'figure'</span>, titlesize=18)
+plt.rc(<span style="color: #efca10;">'axes'</span>, labelsize=15)
+plt.rc(<span style="color: #efca10;">'axes'</span>, titlesize=18)
+
+<span style="color: #eedd82;">boston</span> = load_boston()
+
+<span style="color: #eedd82;">X</span> = pd.DataFrame(boston.data, columns=boston.feature_names)
+<span style="color: #eedd82;">y</span> = pd.DataFrame(boston.target)
+
+<span style="color: #FFd1d1;"># </span><span style="color: #FFd1d1;">generate OLS model</span>
+<span style="color: #eedd82;">model</span> = sm.OLS(y, sm.add_constant(X))
+<span style="color: #eedd82;">model_fit</span> = model.fit()
+
+<span style="color: #FFd1d1;"># </span><span style="color: #FFd1d1;">create dataframe from X, y for easier plot handling</span>
+<span style="color: #eedd82;">dataframe</span> = pd.concat([X, y], axis=1)
+
+<span style="color: #FFd1d1;"># </span><span style="color: #FFd1d1;">model values</span>
+<span style="color: #eedd82;">model_fitted_y</span> = model_fit.fittedvalues
+<span style="color: #FFd1d1;"># </span><span style="color: #FFd1d1;">model residuals</span>
+<span style="color: #eedd82;">model_residuals</span> = model_fit.resid
+<span style="color: #FFd1d1;"># </span><span style="color: #FFd1d1;">normalized residuals</span>
+<span style="color: #eedd82;">model_norm_residuals</span> = model_fit.get_influence().resid_studentized_internal
+<span style="color: #FFd1d1;"># </span><span style="color: #FFd1d1;">absolute squared normalized residuals</span>
+<span style="color: #eedd82;">model_norm_residuals_abs_sqrt</span> = np.sqrt(np.<span style="color: #e0e0ff;">abs</span>(model_norm_residuals))
+<span style="color: #FFd1d1;"># </span><span style="color: #FFd1d1;">absolute residuals</span>
+<span style="color: #eedd82;">model_abs_resid</span> = np.<span style="color: #e0e0ff;">abs</span>(model_residuals)
+<span style="color: #FFd1d1;"># </span><span style="color: #FFd1d1;">leverage, from statsmodels internals</span>
+<span style="color: #eedd82;">model_leverage</span> = model_fit.get_influence().hat_matrix_diag
+<span style="color: #FFd1d1;"># </span><span style="color: #FFd1d1;">cook's distance, from statsmodels internals</span>
+<span style="color: #eedd82;">model_cooks</span> = model_fit.get_influence().cooks_distance[0]
+</pre>
+</div>
+</div>
+<div id="outline-container-org77534f2" class="outline-3">
+<h3 id="org77534f2"><span class="section-number-3">3.1</span> Residuals vs Fitted</h3>
+<div class="outline-text-3" id="text-3-1">
+<div class="org-src-container">
+<pre class="src src-python" id="orgc31cb50"><span style="color: #eedd82;">plot_lm_1</span> = plt.figure()
+<span style="color: #eedd82;">plot_lm_1.axes</span>[0] = sns.residplot(
+    model_fitted_y,
+    dataframe[dataframe.columns[-1]],
+    lowess=<span style="color: #7fffd4;">True</span>,
+    scatter_kws={<span style="color: #efca10;">'alpha'</span>: 0.5},
+    line_kws={<span style="color: #efca10;">'color'</span>: <span style="color: #efca10;">'red'</span>, <span style="color: #efca10;">'lw'</span>: 1, <span style="color: #efca10;">'alpha'</span>: 0.8}
+)
+
+plot_lm_1.axes[0].set_title(<span style="color: #efca10;">'Residuals vs Fitted'</span>)
+plot_lm_1.axes[0].set_xlabel(<span style="color: #efca10;">'Fitted values'</span>)
+plot_lm_1.axes[0].set_ylabel(<span style="color: #efca10;">'Residuals'</span>);
+</pre>
+</div>
+
+<p>
+Идеальный график Residuals (расстояние от реального значения до линии регрессии — остаток) vs Fitted (значение на линии регрессии) будет выглядеть как случайный шум, там не будет никаких видимых закономерностей в данных и красная линия будет прямой. На графике красная линия не прямая, это означает что мы упустили какую-то нелинейную корреляцию (underfitting the model). Возможно, необходимо было использовать квадратичную функцию регрессии.
+</p>
+
+
+<div class="figure">
+<p><img src="file:///tmp/residuals_vs_fitted.png" alt="residuals_vs_fitted.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-orgab1ddd7" class="outline-3">
+<h3 id="orgab1ddd7"><span class="section-number-3">3.2</span> Normal Q-Q Plot</h3>
+<div class="outline-text-3" id="text-3-2">
+<p>
+Проверим распределение остатков — в идеале оно должнобыть нормальным.
+</p>
+<div class="org-src-container">
+<pre class="src src-python" id="orgddca3a0"><span style="color: #eedd82;">QQ</span> = ProbPlot(model_norm_residuals)
+<span style="color: #eedd82;">plot_lm_2</span> = QQ.qqplot(line=<span style="color: #efca10;">'45'</span>, alpha=0.5, color=<span style="color: #efca10;">'#4C72B0'</span>, lw=1)
+plot_lm_2.axes[0].set_title(<span style="color: #efca10;">'Normal Q-Q'</span>)
+plot_lm_2.axes[0].set_xlabel(<span style="color: #efca10;">'Theoretical Quantiles'</span>)
+plot_lm_2.axes[0].set_ylabel(<span style="color: #efca10;">'Standardized Residuals'</span>);
+<span style="color: #FFd1d1;"># </span><span style="color: #FFd1d1;">annotations</span>
+<span style="color: #eedd82;">abs_norm_resid</span> = np.flip(np.argsort(np.<span style="color: #e0e0ff;">abs</span>(model_norm_residuals)), 0)
+<span style="color: #eedd82;">abs_norm_resid_top_3</span> = abs_norm_resid[:3]
+<span style="color: #a0ffff;">for</span> r, i <span style="color: #a0ffff;">in</span> <span style="color: #e0e0ff;">enumerate</span>(abs_norm_resid_top_3):
+    plot_lm_2.axes[0].annotate(
+        i,
+        xy=(np.flip(QQ.theoretical_quantiles, 0)[r], model_norm_residuals[i])
+    )
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="file:///tmp/normal_qq.png" alt="normal_qq.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org5582895" class="outline-3">
+<h3 id="org5582895"><span class="section-number-3">3.3</span> Scale Location</h3>
+<div class="outline-text-3" id="text-3-3">
+<p>
+Проверим страдают ли остатки (residuals) от непостоянной дисперсии — гетероскедастичность.
+</p>
+<div class="org-src-container">
+<pre class="src src-python" id="org76070ae">
+
+<span style="color: #eedd82;">plot_lm_3</span> = plt.figure()
+plt.scatter(model_fitted_y, model_norm_residuals_abs_sqrt, alpha=0.5)
+sns.regplot(
+    model_fitted_y,
+    model_norm_residuals_abs_sqrt,
+    scatter=<span style="color: #7fffd4;">False</span>,
+    ci=<span style="color: #7fffd4;">False</span>,
+    lowess=<span style="color: #7fffd4;">True</span>,
+    line_kws={<span style="color: #efca10;">'color'</span>: <span style="color: #efca10;">'red'</span>, <span style="color: #efca10;">'lw'</span>: 1, <span style="color: #efca10;">'alpha'</span>: 0.8}
+)
+plot_lm_3.axes[0].set_title(<span style="color: #efca10;">'Scale-Location'</span>)
+plot_lm_3.axes[0].set_xlabel(<span style="color: #efca10;">'Fitted values'</span>)
+plot_lm_3.axes[0].set_ylabel(<span style="color: #efca10;">'$\sqrt{|Standardized Residuals|}$'</span>)
+
+<span style="color: #FFd1d1;"># </span><span style="color: #FFd1d1;">annotations</span>
+<span style="color: #eedd82;">abs_sq_norm_resid</span> = np.flip(np.argsort(model_norm_residuals_abs_sqrt), 0)
+<span style="color: #eedd82;">abs_sq_norm_resid_top_3</span> = abs_sq_norm_resid[:3]
+<span style="color: #a0ffff;">for</span> i <span style="color: #a0ffff;">in</span> abs_norm_resid_top_3:
+    plot_lm_3.axes[0].annotate(
+        i,
+        xy=(model_fitted_y[i], model_norm_residuals_abs_sqrt[i])
+    );
+</pre>
+</div>
+
+
+<div class="figure">
+<p><img src="file:///tmp/scale_location.png" alt="scale_location.png" />
+</p>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org357a427" class="outline-3">
+<h3 id="org357a427"><span class="section-number-3">3.4</span> Residuals vs Leverage</h3>
+<div class="outline-text-3" id="text-3-4">
+<p>
+В отличие от выбросов, которые выделаются от остальных значений по \(y\), рычаги выделяются по значению \(x\). Из-за того что они имеют большую дистануию с остальными значениями независимой переменной, то линия регрессии будет склоняться к тому чтобы проходить через них, а значит эти "рычаги" имеют большое влияние на коэффициенты \(\beta{}\).
+</p>
+<div class="org-src-container">
+<pre class="src src-python" id="orgc6ede21">
+<span style="color: #eedd82;">plot_lm_4</span> = plt.figure();
+plt.scatter(model_leverage, model_norm_residuals, alpha=0.5);
+sns.regplot(
+    model_leverage,
+    model_norm_residuals,
+    scatter=<span style="color: #7fffd4;">False</span>,
+    ci=<span style="color: #7fffd4;">False</span>,
+    lowess=<span style="color: #7fffd4;">True</span>,
+    line_kws={<span style="color: #efca10;">'color'</span>: <span style="color: #efca10;">'red'</span>, <span style="color: #efca10;">'lw'</span>: 1, <span style="color: #efca10;">'alpha'</span>: 0.8}
+);
+plot_lm_4.axes[0].set_xlim(0, <span style="color: #e0e0ff;">max</span>(model_leverage)+0.01)
+plot_lm_4.axes[0].set_ylim(-3, 5)
+plot_lm_4.axes[0].set_title(<span style="color: #efca10;">'Residuals vs Leverage'</span>)
+plot_lm_4.axes[0].set_xlabel(<span style="color: #efca10;">'Leverage'</span>)
+plot_lm_4.axes[0].set_ylabel(<span style="color: #efca10;">'Standardized Residuals'</span>);
+
+<span style="color: #FFd1d1;"># </span><span style="color: #FFd1d1;">annotations</span>
+<span style="color: #eedd82;">leverage_top_3</span> = np.flip(np.argsort(model_cooks), 0)[:3]
+<span style="color: #a0ffff;">for</span> i <span style="color: #a0ffff;">in</span> leverage_top_3:
+    plot_lm_4.axes[0].annotate(
+        i,
+        xy=(model_leverage[i], model_norm_residuals[i])
+    );
+</pre>
+</div>
+
+<p>
+Точками "рычага" будут являться те точки, которые лежат за пределами значения \(0.5\). (<a href="http://www.machinelearning.ru/wiki/index.php?title=%D0%A0%D0%B0%D1%81%D1%81%D1%82%D0%BE%D1%8F%D0%BD%D0%B8%D0%B5_%D0%9A%D1%83%D0%BA%D0%B0">Расстояние Кука</a>)
+</p>
+
+
+<div class="figure">
+<p><img src="file:///tmp/residuals_vs_leverage.png" alt="residuals_vs_leverage.png" />
+</p>
+</div>
+</div>
+</div>
+</div>
+
+<div id="outline-container-org0dc6981" class="outline-2">
+<h2 id="org0dc6981"><span class="section-number-2">4</span> Какие \(\alpha{}\) лучше использовать для Gradient Descent</h2>
+<div class="outline-text-2" id="text-4">
+<p>
+Ng предлагает использовать такой порядок \(\alpha\):  \(0.001 \dots{} 0.003 \dots{} 0.01 \dots{} 0.03 \dots{} 0.1 \dots{} 0.3 \dots{} 1\)
+</p>
+</div>
+</div>
+<div id="outline-container-org814f44c" class="outline-2">
+<h2 id="org814f44c"><span class="section-number-2">5</span> Когда использовать градиентный спуск (Gradient Descent), а когда Метод Наименьших Квадратов (Normal Equation / Linear Least Squares)</h2>
+<div class="outline-text-2" id="text-5">
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<thead>
+<tr>
+<th scope="col" class="org-left">Gradient Descent</th>
+<th scope="col" class="org-left">Normal Equation</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="org-left">Необходимо подбирать коээфициент \(\alpha{}\)</td>
+<td class="org-left">Нет необходимости подбирать \(\alpha{}\)</td>
+</tr>
+
+<tr>
+<td class="org-left">Требуется много итераций для поиска оптимального \(\Theta\)</td>
+<td class="org-left">Не нужно итеративно повторять вычисления</td>
+</tr>
+
+<tr>
+<td class="org-left">Работает хорошо даже когда \(\mathbf{n}\) велико</td>
+<td class="org-left">Необходимо вычислять \((\mathbf{X}^\intercal \mathbf{X})^{-1}\)</td>
+</tr>
+
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Очень медленно при больших \(\mathbf{n}\): \(\mathcal{O}(n^3)\)</td>
+</tr>
+</tbody>
+</table>
+<p>
+\(\mathbf{n}\) = 1000 уже стоит использовать <i>Gradient Descent</i>.
+</p>
+</div>
+</div>
+<div id="outline-container-org05dff26" class="outline-2">
+<h2 id="org05dff26"><span class="section-number-2">6</span> Underfitting</h2>
+<div class="outline-text-2" id="text-6">
+<p>
+используем слишком простую модель, в итоге получаем плохой результат для тренировочных данных и для тестовых данных.
+</p>
+</div>
+</div>
+<div id="outline-container-org09fc931" class="outline-2">
+<h2 id="org09fc931"><span class="section-number-2">7</span> Overfitting</h2>
+<div class="outline-text-2" id="text-7">
+<p>
+используем слишком сложную модель, в итоге получаем идеальный результат для тренировочных данных (квадрат ошибок вплоть до 0),
+но на тестовых данных всё будет плохо, так как модель заточена только под конкретный набор тренировочных данных.
+</p>
+</div>
+</div>
+<div id="outline-container-orgf21e964" class="outline-2">
+<h2 id="orgf21e964"><span class="section-number-2">8</span> Regularization</h2>
+<div class="outline-text-2" id="text-8">
+<p>
+Добавляем слагаемое к \(RSS + \lambda{} * \sum_{j=1}^{p}(\theta{}_j^2)\) для всех \(\theta{} \in{} 1,\dots{},j\).
+Таким образом мы уменьшаем значения \(\theta{}\) даже для очень сложных многочленов, чтобы \(J(\theta{})\) было минимальное.
+Параметр \(\lambda{}\) стоит брать поменьше, но не \(0\), иначе это просто выключает регуляризацию.
+</p>
+</div>
+</div>
+<div id="outline-container-org66fb5ae" class="outline-2">
+<h2 id="org66fb5ae"><span class="section-number-2">9</span> Confusion matrix</h2>
+<div class="outline-text-2" id="text-9">
+<p>
+Для classification-задач можно сделать такую матрицу значений
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+
+
+<colgroup>
+<col  class="org-left" />
+
+<col  class="org-left" />
+
+<col  class="org-left" />
+</colgroup>
+<tbody>
+<tr>
+<td class="org-left">&#xa0;</td>
+<td class="org-left">Is Spam</td>
+<td class="org-left">Is Real email</td>
+</tr>
+
+<tr>
+<td class="org-left">Detected Spam</td>
+<td class="org-left">True Positive</td>
+<td class="org-left">False Positive</td>
+</tr>
+
+<tr>
+<td class="org-left">Detected Real</td>
+<td class="org-left">False Negative</td>
+<td class="org-left">True Negative</td>
+</tr>
+</tbody>
+</table>
+<p>
+в scikit это можно сделать следующим образом:
+</p>
+<div class="org-src-container">
+<pre class="src src-python"><span style="color: #a0ffff;">from</span> sklearn.metrics <span style="color: #a0ffff;">import</span> confusion_matrix
+<span style="color: #a0ffff;">from</span> sklearn.metrics <span style="color: #a0ffff;">import</span> classification_report
+
+<span style="color: #FFd1d1;"># </span><span style="color: #FFd1d1;">Do some classifications</span>
+
+confusion_matrix(y_tested, y_predicted)  <span style="color: #FFd1d1;"># </span><span style="color: #FFd1d1;">-&gt; [[52, 7], [3, 112]] for example</span>
+classification_report(y_tested, y_predicted) <span style="color: #FFd1d1;"># </span><span style="color: #FFd1d1;">-&gt; table with columns [precision,</span><span style="color: #ee82ee; background-color: #333333;"> recall, f1-score, support]</span>
+</pre>
+</div>
+</div>
+<div id="outline-container-org049a49b" class="outline-3">
+<h3 id="org049a49b"><span class="section-number-3">9.1</span> Precision (Positive Predicted Value / PPV)</h3>
+<div class="outline-text-3" id="text-9-1">
+<p>
+\(\frac{TruePositive}{TruePositive + FalsePositive}\) — отношение правильно помеченных как Spam к количеству всех помеченных как спам.
+</p>
+</div>
+</div>
+<div id="outline-container-orgd856811" class="outline-3">
+<h3 id="orgd856811"><span class="section-number-3">9.2</span> Recall (Sensitivity, Hit Rate)</h3>
+<div class="outline-text-3" id="text-9-2">
+<p>
+\(\frac{TruePositive}{TruePositive + FalseNegative}\) — отношение правильно помеченных как Spam к количеству всех Spam
+</p>
+</div>
+</div>
+<div id="outline-container-orgb763409" class="outline-3">
+<h3 id="orgb763409"><span class="section-number-3">9.3</span> F1 Score</h3>
+<div class="outline-text-3" id="text-9-3">
+<p>
+\(2 \cdot{} \frac{Precision \cdot{} recall}{precision + recall}\) — гармоническое среднее между precision и recall
+</p>
+</div>
+</div>
+</div>
+<div id="outline-container-org8bc9428" class="outline-2">
+<h2 id="org8bc9428"><span class="section-number-2">10</span> Что делать если линейная регрессия на новых тестовых данных даёт большую ошибку</h2>
+<div class="outline-text-2" id="text-10">
+</div>
+<div id="outline-container-org857a783" class="outline-3">
+<h3 id="org857a783"><span class="section-number-3">10.1</span> Собрать больше данных для обучения модели. (не всегда помогает)</h3>
+<div class="outline-text-3" id="text-10-1">
+<ul class="org-ul">
+<li>ПОлезно использовать train/test split, k-fold cross-validation</li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org1d2811f" class="outline-3">
+<h3 id="org1d2811f"><span class="section-number-3">10.2</span> Уменьшить количество факторов (features)</h3>
+</div>
+<div id="outline-container-org9e12124" class="outline-3">
+<h3 id="org9e12124"><span class="section-number-3">10.3</span> Добавить факторы (features)</h3>
+</div>
+<div id="outline-container-org72a4e88" class="outline-3">
+<h3 id="org72a4e88"><span class="section-number-3">10.4</span> Добавить факторы больших порядков (x₁²,x₂²,x₁x₂,etc)</h3>
+<div class="outline-text-3" id="text-10-4">
+<ul class="org-ul">
+<li>Используем train/validate/test split.
+<ol class="org-ol">
+<li>Делим (перемешав) данные (x₁,x₂,…,y) на три части: train/validate/test (например 60%/20%/20%).</li>
+<li>Строим для каждой степени (d - degree of polynomial) многочленов модель (подсчитываем \(\Theta{}^{n}\)).</li>
+<li>Для каждого \(\Theta{}^{n}\) считаем \(J(\Theta{}^{n})\) на validate-наборе данных.</li>
+<li>Выбираем степень полинома с наименьшим значением cost-function \(J_{cv}(\Theta{}^{n})\).</li>
+<li>Проверяем выбранную модель на test-наборе.</li>
+</ol></li>
+</ul>
+</div>
+</div>
+<div id="outline-container-org596b122" class="outline-3">
+<h3 id="org596b122"><span class="section-number-3">10.5</span> Уменьшить параметр регуляризации \(\lambda{}\)</h3>
+</div>
+<div id="outline-container-org814dde7" class="outline-3">
+<h3 id="org814dde7"><span class="section-number-3">10.6</span> Увеличить параметр регуляризации \(\lambda{}\)</h3>
+</div>
+</div>
+</div>
+<div id="postamble" class="status">
+<p class="author">&#1040;&#1074;&#1090;&#1086;&#1088;: Pavel</p>
+<p class="date">Created: 2020-03-31 Tue 18:26</p>
+<p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
+</div>
+</body>
+</html>
