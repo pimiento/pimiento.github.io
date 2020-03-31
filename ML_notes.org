@@ -22,7 +22,7 @@
   5. Проверить нулевую гипотезу $H_{0}: \beta_{1} = 0$
 * Diagnostic plots in Python
   Используя R (или воспользоваться Rserve + pyRserve: https://www.rforge.net/Rserve/doc.html) можно сделать очень быстро и просто
-  #+BEGIN_SRC R :exports both :results graphics :noweb no :file file:/tmp/Rcode.png
+  #+BEGIN_SRC R :exports both :results graphics :noweb no :file Rcode.png
     library(MASS)
     model <- lm(medv ~ ., data=Boston)
     par(mfrow=c(2,2))
@@ -124,7 +124,7 @@
      <<preparation>>
      <<normal_qq>>
 
-     figpath = '/tmp/normal_qq.png'
+     figpath = 'normal_qq.png'
      plt.savefig(figpath)
      return figpath
    #+END_SRC
