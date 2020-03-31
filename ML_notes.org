@@ -96,7 +96,7 @@
      <<preparation>>
      <<residuals_vs_fitted>>
 
-     figpath = '/tmp/residuals_vs_fitted.png'
+     figpath = 'residuals_vs_fitted.png'
      plt.savefig(figpath)
      return figpath
    #+END_SRC
@@ -163,7 +163,7 @@
      <<preparation>>
      <<scale_location>>
 
-     figpath = '/tmp/scale_location.png'
+     figpath = 'scale_location.png'
      plt.savefig(figpath)
      return figpath
    #+END_SRC
@@ -205,7 +205,7 @@
      <<preparation>>
      <<residuals_vs_leverage>>
 
-     figpath = '/tmp/residuals_vs_leverage.png'
+     figpath = 'residuals_vs_leverage.png'
      plt.savefig(figpath)
      return figpath
    #+END_SRC
