@@ -25,6 +25,30 @@
   1. Линейная зависимость переменных
   2. Нормальное распределение остатков
   3. Гомоскедастичность остатков
+     #+BEGIN_SRC R :exports both :results graphics :noweb strip-export :file RScedasticity.png
+       <<get_csv>>
+
+       fit_var <- lm(poverty~metro_res+white+hs_grad, df)
+       summary(fit_var)
+       fit_res <- fit_var$residuals
+
+       par(mfrow=c(1,2))
+       plot(
+         fit_res,
+         main = 'Анализ остатков',
+         xlab = 'Предсказанные значения',
+         ylab = 'Остатки'
+       )
+       points(fit_res, col = 'black', lwd=5, cex=.5)
+       abline(h = 0, col = 'red', lwd=2, lty=2)
+       qqnorm(fit_res, lwd=2)
+       qqline(fit_res, col='red', lwd=2)
+       par(mfrow=c(1,1))
+     #+END_SRC
+
+     #+RESULTS:
+     [[file:RScedasticity.png]]
+
   4. Проверка на мультиколлинеарность
      #+NAME: get_csv
      #+BEGIN_SRC R :exports none
