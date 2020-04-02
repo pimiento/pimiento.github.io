@@ -20,6 +20,74 @@
   3. Проверить гомоскедастичность данных (homoscedasticity vs heteroscedasticity)
   4. Высчитать $\beta_{0}$ и $\beta_{1}$.
   5. Проверить нулевую гипотезу $H_{0}: \beta_{1} = 0$
+
+* Требования к данным для регрессионного анализа
+  1. Линейная зависимость переменных
+  2. Нормальное распределение остатков
+  3. Гомоскедастичность остатков
+  4. Проверка на мультиколлинеарность
+     #+NAME: get_csv
+     #+BEGIN_SRC R :exports none
+       df <- read.csv('http://d396qusza40orc.cloudfront.net/statistics/lec_resources/states.csv')
+     #+END_SRC
+
+     #+BEGIN_SRC R :exports both :results graphics :noweb strip-export :file RGGally.png
+       library('GGally')
+
+       <<get_csv>>
+       ggpairs(df[,-1])
+     #+END_SRC
+
+     #+RESULTS:
+     [[file:RGGally.png]]
+
+     #+BEGIN_SRC R :exports both :results graphics :noweb strip-export :file Rpsych.png
+       library(psych)
+
+       <<get_csv>>
+       pairs.panels(
+         df[, -1],
+         method = "pearson",
+         hist.col = "cornflowerblue",
+         density = T,
+         ellipses = F
+       )
+     #+END_SRC
+
+     #+RESULTS:
+     [[file:Rpsych.png]]
+
+     #+BEGIN_SRC python :exports both :results file :noweb no
+       import pandas as pd
+       import matplotlib.pyplot as plt
+
+       DATA = pd.read_csv(
+           'http://d396qusza40orc.cloudfront.net/statistics/lec_resources/states.csv'
+       )
+
+       AXES = pd.plotting.scatter_matrix(
+           DATA, figsize=(6,6), diagonal='kde', grid=True
+       )
+
+       CORR = DATA.corr().values
+       for i, j in zip(*plt.np.triu_indices_from(AXES, k=1)):
+           AXES[i, j].annotate(
+               '%.3f' % CORR[i, j],
+               (0.8, 0.8),
+               xycoords='axes fraction',
+               ha='center',
+               va='center'
+           )
+
+       figpath = 'Py.png'
+       plt.savefig(figpath)
+       return figpath
+     #+END_SRC
+
+     #+RESULTS:
+     [[file:Py.png]]
+
+  5. Нормальное распределение переменных (желательно)
 * Diagnostic plots in Python
   Используя R (или воспользоваться Rserve + pyRserve: https://www.rforge.net/Rserve/doc.html) можно сделать очень быстро и просто
   #+BEGIN_SRC R :exports both :results graphics :noweb no :file Rcode.png
