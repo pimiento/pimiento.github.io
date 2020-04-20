@@ -22,19 +22,70 @@
   4. Высчитать $\beta_{0}$ и $\beta_{1}$.
   5. Проверить нулевую гипотезу $H_{0}: \beta_{1} = 0$
 
-* Порядок использования multiple regression                            :TODO:
+* Порядок использования multiple regression
   1. Посчитать F-статистику для данных и посмотреть вероятность нулевой гипотезы.
      Нулевая гипотеза для множественной регресси это: $H_{0}: \beta_{1} = \beta_{2} = ... = \beta_{n} = 0$
      против альтернативной гипотезы: $H_{a}: \nexists{} \beta_{j} \neq{} 0$. Посчитав F-значение для наших данных, необходимо вычислить $p$-вероятность такого значения в F-распределении.
+     #+BEGIN_SRC R :exports both :results output table :noweb strip-export
+       <<get_csv>>
+
+       lm.fit <- lm(poverty~.-state, data=df)
+       summary(lm.fit)$fstatistic
+     #+END_SRC
+
+     #+RESULTS:
+     :   value   numdf   dendf
+     : 20.5849  4.0000 46.0000
+
   2. Отобрать только значимые переменные.
      В некоторых случаях число переменных (features) $p$ может быть больше или равно числу измерений $n$. В таком случае, линейная регрессия будет работать медленно и некорректно.
      Необходимо выбрать только те переменные, которые действительно описывают нашу регрессию. Есть много вариантов такого выбора: Adjusted R^{2}, Forward selection, Backward selection, Mixed selection.
   3. Проверка качества нашей модели
      Необходимо проверить насколько хорошо наша модель описывает закон, которому подчиняются данные. Один из способов это проверить — посчитать $R^{2}$. Так же мы можем проверить какие переменные реально влияют на распределение данных. Если последовательно считать $R^{2}$ для $n+1$ переменной, то можно увидить значительно или нет изменяется значение $R^{2}$. Значение $R^{2}$ будет расти в любом случае при добавлении новой переменной, но иногда это тысячные, значит что переменная скорее мешает нашей модели чем объясняет её.
+     #+BEGIN_SRC R :exports both :results output table :noweb strip-export
+       <<get_csv>>
+
+       lm.fit <- lm(poverty~.-state, data=df)
+       summary(lm.fit)[c("r.squared", "adj.r.squared")]
+     #+END_SRC
+
+     #+RESULTS:
+     : $r.squared
+     : [1] 0.6415759
+     :
+     : $adj.r.squared
+     : [1] 0.6104086
+     :
+
   4. Посчитать доверительный интервал для наших предсказанных значений.
      В таком случае, предсказанное новое значение $\hat{Y} = \hat{f}(X)$  будет представлено интервалом значений.
+     #+BEGIN_SRC R :exports both :results output table :noweb strip-export
+       <<get_csv>>
+
+       lm.fit <- lm(poverty~.-state, data=df)
+       confint(lm.fit)
+     #+END_SRC
+
+     #+RESULTS:
+     :                   2.5 %      97.5 %
+     : (Intercept)  41.1343729 91.81867786
+     : metro_res    -0.0956751 -0.01697061
+     : white        -0.1146987  0.01840974
+     : hs_grad      -0.7658790 -0.34354762
+     : female_house -0.4391957  0.54028167
+
 * Требования к данным для регрессионного анализа
-  1. Линейная зависимость переменных. Для проверки, мы можем построить residuals vs. fitted values график. TODO
+  1. Линейная зависимость переменных. Для проверки, мы можем построить residuals vs. fitted values график.
+     #+BEGIN_SRC R :exports both :results graphics :noweb strip-export :file RResiduals_vs_Fitted.png
+       <<get_csv>>
+
+       lm.fit <- lm(poverty~.-state, data=df)
+       plot(predict(lm.fit), residuals(lm.fit))
+     #+END_SRC
+
+     #+RESULTS:
+     [[file:RResiduals_vs_Fitted.png]]
+
   2. Нормальное распределение остатков
   3. Гомоскедастичность остатков
      #+BEGIN_SRC R :exports both :results graphics :noweb strip-export :file RScedasticity.png
@@ -60,9 +111,18 @@
      #+RESULTS:
      [[file:RScedasticity.png]]
 
-  4. Выборсы. TODO
+  4. Выборсы.
      Выбросы (измерения, имеющие значительные отличия по $y_{i}$)  не значительно, но влияют на линейную регрессию. В частности, они уменьшают значение $R^{2}$
      Для того чтобы обнаружить выборсы, полезно воспользоваться *studentized residuals* графиком. Все точки, которые имеют значение studentized residual больше 3 — это выбросы.
+     #+BEGIN_SRC R :exports both :results graphics :noweb strip-export :file RResiduals_vs_studentized.png
+       <<get_csv>>
+
+       lm.fit <- lm(poverty~metro_res+white+hs_grad, df)
+       plot(residuals(lm.fit), rstudent(lm.fit))
+     #+END_SRC
+
+     #+RESULTS:
+     [[file:RResiduals_vs_studentized.png]]
 
   5. High Leverage Points (плечо?)
      В отличие от выбросов, high leverage points это точки, которые имеют значительно отличие по параметру X (в одной или нескольких плоскостях). Эти точки значительно влияют на регрессионную модель. Чтобы обнаружить такие точки, полезно построить график *leverage vs studentized residuals*
