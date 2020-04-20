@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="ru" xml:lang="ru">
 <head>
-<!-- 2020-04-20 Mon 12:25 -->
+<!-- 2020-04-20 Mon 14:23 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Некоторые хитрости в ML</title>
@@ -334,45 +334,45 @@ for the JavaScript code in this tag.
 <h2>&#1057;&#1086;&#1076;&#1077;&#1088;&#1078;&#1072;&#1085;&#1080;&#1077;</h2>
 <div id="text-table-of-contents">
 <ul>
-<li><a href="#org1f656fb">1. Линейная регрессия (простая):</a></li>
-<li><a href="#orgcc0c959">2. Порядок использования линейной регрессии (простой):</a></li>
-<li><a href="#org563e1d5">3. Порядок использования multiple regression&#xa0;&#xa0;&#xa0;<span class="tag"><span class="TODO">TODO</span></span></a></li>
-<li><a href="#org6b098ce">4. Требования к данным для регрессионного анализа</a></li>
-<li><a href="#org0e1de54">5. Diagnostic plots in Python</a>
+<li><a href="#org6522a36">1. Линейная регрессия (простая):</a></li>
+<li><a href="#org0c87228">2. Порядок использования линейной регрессии (простой):</a></li>
+<li><a href="#org34901d4">3. Порядок использования multiple regression&#xa0;&#xa0;&#xa0;<span class="tag"><span class="TODO">TODO</span></span></a></li>
+<li><a href="#org4a9964e">4. Требования к данным для регрессионного анализа</a></li>
+<li><a href="#org96816c7">5. Diagnostic plots in Python</a>
 <ul>
-<li><a href="#org3760ae4">5.1. Residuals vs Fitted</a></li>
-<li><a href="#orgd501e5f">5.2. Normal Q-Q Plot</a></li>
-<li><a href="#orga8ed4ac">5.3. Scale Location</a></li>
-<li><a href="#orge13c270">5.4. Residuals vs Leverage</a></li>
+<li><a href="#org216681a">5.1. Residuals vs Fitted</a></li>
+<li><a href="#orgad9eaae">5.2. Normal Q-Q Plot</a></li>
+<li><a href="#org54c8c64">5.3. Scale Location</a></li>
+<li><a href="#orge586c46">5.4. Residuals vs Leverage</a></li>
 </ul>
 </li>
-<li><a href="#org02f3ec9">6. Какие \(\alpha{}\) лучше использовать для Gradient Descent</a></li>
-<li><a href="#org036b732">7. Когда использовать градиентный спуск (Gradient Descent), а когда Метод Наименьших Квадратов (Normal Equation / Linear Least Squares)</a></li>
-<li><a href="#org9638939">8. Underfitting</a></li>
-<li><a href="#org1f81c78">9. Overfitting</a></li>
-<li><a href="#orge213348">10. Regularization</a></li>
-<li><a href="#org81499d1">11. Confusion matrix</a>
+<li><a href="#orgf33c405">6. Какие \(\alpha{}\) лучше использовать для Gradient Descent</a></li>
+<li><a href="#orgb478fee">7. Когда использовать градиентный спуск (Gradient Descent), а когда Метод Наименьших Квадратов (Normal Equation / Linear Least Squares)</a></li>
+<li><a href="#org90443e7">8. Underfitting</a></li>
+<li><a href="#orgaea028b">9. Overfitting</a></li>
+<li><a href="#org3267255">10. Regularization</a></li>
+<li><a href="#org2b10798">11. Confusion matrix</a>
 <ul>
-<li><a href="#org1edbfee">11.1. Precision (Positive Predicted Value / PPV)</a></li>
-<li><a href="#orgc6cf3d2">11.2. Recall (Sensitivity, Hit Rate)</a></li>
-<li><a href="#org3d0a298">11.3. F1 Score</a></li>
+<li><a href="#org39f3206">11.1. Precision (Positive Predicted Value / PPV)</a></li>
+<li><a href="#org5e58870">11.2. Recall (Sensitivity, Hit Rate)</a></li>
+<li><a href="#org185c4a6">11.3. F1 Score</a></li>
 </ul>
 </li>
-<li><a href="#orgfd3b73e">12. Что делать если линейная регрессия на новых тестовых данных даёт большую ошибку</a>
+<li><a href="#orga0d02fa">12. Что делать если линейная регрессия на новых тестовых данных даёт большую ошибку</a>
 <ul>
-<li><a href="#org2f8b83a">12.1. Собрать больше данных для обучения модели. (не всегда помогает)</a></li>
-<li><a href="#org946eb9c">12.2. Уменьшить количество факторов (features)</a></li>
-<li><a href="#org7738923">12.3. Добавить факторы (features)</a></li>
-<li><a href="#org06ccfbf">12.4. Добавить факторы больших порядков (x₁²,x₂²,x₁x₂,etc)</a></li>
-<li><a href="#org4a59782">12.5. Уменьшить параметр регуляризации \(\lambda{}\)</a></li>
-<li><a href="#org6baa9a9">12.6. Увеличить параметр регуляризации \(\lambda{}\)</a></li>
+<li><a href="#org364c1a9">12.1. Собрать больше данных для обучения модели. (не всегда помогает)</a></li>
+<li><a href="#org294e815">12.2. Уменьшить количество факторов (features)</a></li>
+<li><a href="#orgbf07e06">12.3. Добавить факторы (features)</a></li>
+<li><a href="#org5e5d6ec">12.4. Добавить факторы больших порядков (x₁²,x₂²,x₁x₂,etc)</a></li>
+<li><a href="#orgc7ae0c7">12.5. Уменьшить параметр регуляризации \(\lambda{}\)</a></li>
+<li><a href="#org5ff26ce">12.6. Увеличить параметр регуляризации \(\lambda{}\)</a></li>
 </ul>
 </li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org1f656fb" class="outline-2">
-<h2 id="org1f656fb"><span class="section-number-2">1</span> Линейная регрессия (простая):</h2>
+<div id="outline-container-org6522a36" class="outline-2">
+<h2 id="org6522a36"><span class="section-number-2">1</span> Линейная регрессия (простая):</h2>
 <div class="outline-text-2" id="text-1">
 <p>
 \(Ŷ = \beta{}_{0} + \beta{}_{1}*X\)
@@ -392,8 +392,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-orgcc0c959" class="outline-2">
-<h2 id="orgcc0c959"><span class="section-number-2">2</span> Порядок использования линейной регрессии (простой):</h2>
+<div id="outline-container-org0c87228" class="outline-2">
+<h2 id="org0c87228"><span class="section-number-2">2</span> Порядок использования линейной регрессии (простой):</h2>
 <div class="outline-text-2" id="text-2">
 <ol class="org-ol">
 <li>Построить scatter plot и посмотреть, что данные подчиняются линейному закону.</li>
@@ -406,8 +406,8 @@ for the JavaScript code in this tag.
 </div>
 </div>
 
-<div id="outline-container-org563e1d5" class="outline-2">
-<h2 id="org563e1d5"><span class="section-number-2">3</span> Порядок использования multiple regression&#xa0;&#xa0;&#xa0;<span class="tag"><span class="TODO">TODO</span></span></h2>
+<div id="outline-container-org34901d4" class="outline-2">
+<h2 id="org34901d4"><span class="section-number-2">3</span> Порядок использования multiple regression&#xa0;&#xa0;&#xa0;<span class="tag"><span class="TODO">TODO</span></span></h2>
 <div class="outline-text-2" id="text-3">
 <ol class="org-ol">
 <li>Посчитать F-статистику для данных и посмотреть вероятность нулевой гипотезы.
@@ -419,12 +419,12 @@ for the JavaScript code in this tag.
 <li>Проверка качества нашей модели
 Необходимо проверить насколько хорошо наша модель описывает закон, которому подчиняются данные. Один из способов это проверить — посчитать \(R^{2}\). Так же мы можем проверить какие переменные реально влияют на распределение данных. Если последовательно считать \(R^{2}\) для \(n+1\) переменной, то можно увидить значительно или нет изменяется значение \(R^{2}\). Значение \(R^{2}\) будет расти в любом случае при добавлении новой переменной, но иногда это тысячные, значит что переменная скорее мешает нашей модели чем объясняет её.</li>
 <li>Посчитать доверительный интервал для наших предсказанных значений.
-В таком случае, предсказанное новое значение \(\^{Y} = \^f(X)\)  будет представлено интервалом значений.</li>
+В таком случае, предсказанное новое значение \(\hat{Y} = \hat{f}(X)\)  будет представлено интервалом значений.</li>
 </ol>
 </div>
 </div>
-<div id="outline-container-org6b098ce" class="outline-2">
-<h2 id="org6b098ce"><span class="section-number-2">4</span> Требования к данным для регрессионного анализа</h2>
+<div id="outline-container-org4a9964e" class="outline-2">
+<h2 id="org4a9964e"><span class="section-number-2">4</span> Требования к данным для регрессионного анализа</h2>
 <div class="outline-text-2" id="text-4">
 <ol class="org-ol">
 <li>Линейная зависимость переменных. Для проверки, мы можем построить residuals vs. fitted values график. TODO</li>
@@ -555,15 +555,29 @@ plt.savefig(figpath)
 </div>
 
 <p>
-Другой способ проверки на мультиколлинеарность: высчитать <b>VIF</b> — <span class="underline">variance inflation factor</span>. Самое маленькое значение VIF = 1, это означает полное отсутствие коллинеарности, значение VIF от 5 до 10 сигнализирует о проблеме с коллинеарностью данных.
-</p></li>
+Другой способ проверки на мультиколлинеарность: высчитать <b>VIF</b> — <span class="underline">variance inflation factor</span>. Самое маленькое значение VIF = 1, это означает полное отсутствие коллинеарности, значение VIF от 5 до 10 сигнализирует о проблеме с коллинеарностью данных. Преимущество VIF в отличие от матрицы коллинеарности в том, что он считает коэффециент коллинеарности не только между двумя предикторами.
+</p>
+<div class="org-src-container">
+<pre class="src src-R"><span style="color: #7fffd4;">library</span>(car)
+
+
+fit_var <span style="color: #7fffd4;">&lt;-</span> lm(poverty~metro_res+white+hs_grad, df)
+vif(fit_var)
+</pre>
+</div>
+
+<pre class="example">
+metro_res     white   hs_grad
+ 1.146522  1.215062  1.072928
+
+</pre></li>
 
 <li>Нормальное распределение переменных (желательно)</li>
 </ol>
 </div>
 </div>
-<div id="outline-container-org0e1de54" class="outline-2">
-<h2 id="org0e1de54"><span class="section-number-2">5</span> Diagnostic plots in Python</h2>
+<div id="outline-container-org96816c7" class="outline-2">
+<h2 id="org96816c7"><span class="section-number-2">5</span> Diagnostic plots in Python</h2>
 <div class="outline-text-2" id="text-5">
 <p>
 Используя R (или воспользоваться Rserve + pyRserve: <a href="https://www.rforge.net/Rserve/doc.html">https://www.rforge.net/Rserve/doc.html</a>) можно сделать очень быстро и просто
@@ -583,7 +597,7 @@ plot(model)
 </div>
 
 <div class="org-src-container">
-<pre class="src src-python" id="orgefb16e3"><span style="color: #a0ffff;">import</span> numpy <span style="color: #a0ffff;">as</span> np
+<pre class="src src-python" id="org0278682"><span style="color: #a0ffff;">import</span> numpy <span style="color: #a0ffff;">as</span> np
 <span style="color: #a0ffff;">import</span> pandas <span style="color: #a0ffff;">as</span> pd
 <span style="color: #a0ffff;">import</span> seaborn <span style="color: #a0ffff;">as</span> sns
 <span style="color: #a0ffff;">import</span> statsmodels.api <span style="color: #a0ffff;">as</span> sm
@@ -627,11 +641,11 @@ plt.rc(<span style="color: #efca10;">'axes'</span>, titlesize=18)
 </pre>
 </div>
 </div>
-<div id="outline-container-org3760ae4" class="outline-3">
-<h3 id="org3760ae4"><span class="section-number-3">5.1</span> Residuals vs Fitted</h3>
+<div id="outline-container-org216681a" class="outline-3">
+<h3 id="org216681a"><span class="section-number-3">5.1</span> Residuals vs Fitted</h3>
 <div class="outline-text-3" id="text-5-1">
 <div class="org-src-container">
-<pre class="src src-python" id="orgfdf213f"><span style="color: #eedd82;">plot_lm_1</span> = plt.figure()
+<pre class="src src-python" id="orgade366c"><span style="color: #eedd82;">plot_lm_1</span> = plt.figure()
 <span style="color: #eedd82;">plot_lm_1.axes</span>[0] = sns.residplot(
     model_fitted_y,
     dataframe[dataframe.columns[-1]],
@@ -658,14 +672,14 @@ plot_lm_1.axes[0].set_ylabel(<span style="color: #efca10;">'Residuals'</span>);
 </div>
 </div>
 
-<div id="outline-container-orgd501e5f" class="outline-3">
-<h3 id="orgd501e5f"><span class="section-number-3">5.2</span> Normal Q-Q Plot</h3>
+<div id="outline-container-orgad9eaae" class="outline-3">
+<h3 id="orgad9eaae"><span class="section-number-3">5.2</span> Normal Q-Q Plot</h3>
 <div class="outline-text-3" id="text-5-2">
 <p>
 Проверим распределение остатков — в идеале оно должнобыть нормальным.
 </p>
 <div class="org-src-container">
-<pre class="src src-python" id="orgb612f57"><span style="color: #eedd82;">QQ</span> = ProbPlot(model_norm_residuals)
+<pre class="src src-python" id="orgd18ddcb"><span style="color: #eedd82;">QQ</span> = ProbPlot(model_norm_residuals)
 <span style="color: #eedd82;">plot_lm_2</span> = QQ.qqplot(line=<span style="color: #efca10;">'45'</span>, alpha=0.5, color=<span style="color: #efca10;">'#4C72B0'</span>, lw=1)
 plot_lm_2.axes[0].set_title(<span style="color: #efca10;">'Normal Q-Q'</span>)
 plot_lm_2.axes[0].set_xlabel(<span style="color: #efca10;">'Theoretical Quantiles'</span>)
@@ -689,14 +703,14 @@ plot_lm_2.axes[0].set_ylabel(<span style="color: #efca10;">'Standardized Residua
 </div>
 </div>
 
-<div id="outline-container-orga8ed4ac" class="outline-3">
-<h3 id="orga8ed4ac"><span class="section-number-3">5.3</span> Scale Location</h3>
+<div id="outline-container-org54c8c64" class="outline-3">
+<h3 id="org54c8c64"><span class="section-number-3">5.3</span> Scale Location</h3>
 <div class="outline-text-3" id="text-5-3">
 <p>
 Проверим страдают ли остатки (residuals) от непостоянной дисперсии — гетероскедастичность.
 </p>
 <div class="org-src-container">
-<pre class="src src-python" id="org486e886">
+<pre class="src src-python" id="orgbcaab47">
 
 <span style="color: #eedd82;">plot_lm_3</span> = plt.figure()
 plt.scatter(model_fitted_y, model_norm_residuals_abs_sqrt, alpha=0.5)
@@ -731,14 +745,14 @@ plot_lm_3.axes[0].set_ylabel(<span style="color: #efca10;">'$\sqrt{|Standardized
 </div>
 </div>
 
-<div id="outline-container-orge13c270" class="outline-3">
-<h3 id="orge13c270"><span class="section-number-3">5.4</span> Residuals vs Leverage</h3>
+<div id="outline-container-orge586c46" class="outline-3">
+<h3 id="orge586c46"><span class="section-number-3">5.4</span> Residuals vs Leverage</h3>
 <div class="outline-text-3" id="text-5-4">
 <p>
 В отличие от выбросов, которые выделаются от остальных значений по \(y\), рычаги выделяются по значению \(x\). Из-за того что они имеют большую дистануию с остальными значениями независимой переменной, то линия регрессии будет склоняться к тому чтобы проходить через них, а значит эти "рычаги" имеют большое влияние на коэффициенты \(\beta{}\).
 </p>
 <div class="org-src-container">
-<pre class="src src-python" id="org9cc478d">
+<pre class="src src-python" id="orgc93c009">
 <span style="color: #eedd82;">plot_lm_4</span> = plt.figure();
 plt.scatter(model_leverage, model_norm_residuals, alpha=0.5);
 sns.regplot(
@@ -778,16 +792,16 @@ plot_lm_4.axes[0].set_ylabel(<span style="color: #efca10;">'Standardized Residua
 </div>
 </div>
 
-<div id="outline-container-org02f3ec9" class="outline-2">
-<h2 id="org02f3ec9"><span class="section-number-2">6</span> Какие \(\alpha{}\) лучше использовать для Gradient Descent</h2>
+<div id="outline-container-orgf33c405" class="outline-2">
+<h2 id="orgf33c405"><span class="section-number-2">6</span> Какие \(\alpha{}\) лучше использовать для Gradient Descent</h2>
 <div class="outline-text-2" id="text-6">
 <p>
 Ng предлагает использовать такой порядок \(\alpha\):  \(0.001 \dots{} 0.003 \dots{} 0.01 \dots{} 0.03 \dots{} 0.1 \dots{} 0.3 \dots{} 1\)
 </p>
 </div>
 </div>
-<div id="outline-container-org036b732" class="outline-2">
-<h2 id="org036b732"><span class="section-number-2">7</span> Когда использовать градиентный спуск (Gradient Descent), а когда Метод Наименьших Квадратов (Normal Equation / Linear Least Squares)</h2>
+<div id="outline-container-orgb478fee" class="outline-2">
+<h2 id="orgb478fee"><span class="section-number-2">7</span> Когда использовать градиентный спуск (Gradient Descent), а когда Метод Наименьших Квадратов (Normal Equation / Linear Least Squares)</h2>
 <div class="outline-text-2" id="text-7">
 <table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
 
@@ -830,16 +844,16 @@ Ng предлагает использовать такой порядок \(\al
 </p>
 </div>
 </div>
-<div id="outline-container-org9638939" class="outline-2">
-<h2 id="org9638939"><span class="section-number-2">8</span> Underfitting</h2>
+<div id="outline-container-org90443e7" class="outline-2">
+<h2 id="org90443e7"><span class="section-number-2">8</span> Underfitting</h2>
 <div class="outline-text-2" id="text-8">
 <p>
 используем слишком простую модель, в итоге получаем плохой результат для тренировочных данных и для тестовых данных.
 </p>
 </div>
 </div>
-<div id="outline-container-org1f81c78" class="outline-2">
-<h2 id="org1f81c78"><span class="section-number-2">9</span> Overfitting</h2>
+<div id="outline-container-orgaea028b" class="outline-2">
+<h2 id="orgaea028b"><span class="section-number-2">9</span> Overfitting</h2>
 <div class="outline-text-2" id="text-9">
 <p>
 используем слишком сложную модель, в итоге получаем идеальный результат для тренировочных данных (квадрат ошибок вплоть до 0),
@@ -847,8 +861,8 @@ Ng предлагает использовать такой порядок \(\al
 </p>
 </div>
 </div>
-<div id="outline-container-orge213348" class="outline-2">
-<h2 id="orge213348"><span class="section-number-2">10</span> Regularization</h2>
+<div id="outline-container-org3267255" class="outline-2">
+<h2 id="org3267255"><span class="section-number-2">10</span> Regularization</h2>
 <div class="outline-text-2" id="text-10">
 <p>
 Добавляем слагаемое к \(RSS + \lambda{} * \sum_{j=1}^{p}(\theta{}_j^2)\) для всех \(\theta{} \in{} 1,\dots{},j\).
@@ -857,8 +871,8 @@ Ng предлагает использовать такой порядок \(\al
 </p>
 </div>
 </div>
-<div id="outline-container-org81499d1" class="outline-2">
-<h2 id="org81499d1"><span class="section-number-2">11</span> Confusion matrix</h2>
+<div id="outline-container-org2b10798" class="outline-2">
+<h2 id="org2b10798"><span class="section-number-2">11</span> Confusion matrix</h2>
 <div class="outline-text-2" id="text-11">
 <p>
 Для classification-задач можно сделать такую матрицу значений
@@ -907,24 +921,24 @@ classification_report(y_tested, y_predicted) <span style="color: #FFd1d1;"># </s
 </pre>
 </div>
 </div>
-<div id="outline-container-org1edbfee" class="outline-3">
-<h3 id="org1edbfee"><span class="section-number-3">11.1</span> Precision (Positive Predicted Value / PPV)</h3>
+<div id="outline-container-org39f3206" class="outline-3">
+<h3 id="org39f3206"><span class="section-number-3">11.1</span> Precision (Positive Predicted Value / PPV)</h3>
 <div class="outline-text-3" id="text-11-1">
 <p>
 \(\frac{TruePositive}{TruePositive + FalsePositive}\) — отношение правильно помеченных как Spam к количеству всех помеченных как спам.
 </p>
 </div>
 </div>
-<div id="outline-container-orgc6cf3d2" class="outline-3">
-<h3 id="orgc6cf3d2"><span class="section-number-3">11.2</span> Recall (Sensitivity, Hit Rate)</h3>
+<div id="outline-container-org5e58870" class="outline-3">
+<h3 id="org5e58870"><span class="section-number-3">11.2</span> Recall (Sensitivity, Hit Rate)</h3>
 <div class="outline-text-3" id="text-11-2">
 <p>
 \(\frac{TruePositive}{TruePositive + FalseNegative}\) — отношение правильно помеченных как Spam к количеству всех Spam
 </p>
 </div>
 </div>
-<div id="outline-container-org3d0a298" class="outline-3">
-<h3 id="org3d0a298"><span class="section-number-3">11.3</span> F1 Score</h3>
+<div id="outline-container-org185c4a6" class="outline-3">
+<h3 id="org185c4a6"><span class="section-number-3">11.3</span> F1 Score</h3>
 <div class="outline-text-3" id="text-11-3">
 <p>
 \(2 \cdot{} \frac{Precision \cdot{} recall}{precision + recall}\) — гармоническое среднее между precision и recall
@@ -932,26 +946,26 @@ classification_report(y_tested, y_predicted) <span style="color: #FFd1d1;"># </s
 </div>
 </div>
 </div>
-<div id="outline-container-orgfd3b73e" class="outline-2">
-<h2 id="orgfd3b73e"><span class="section-number-2">12</span> Что делать если линейная регрессия на новых тестовых данных даёт большую ошибку</h2>
+<div id="outline-container-orga0d02fa" class="outline-2">
+<h2 id="orga0d02fa"><span class="section-number-2">12</span> Что делать если линейная регрессия на новых тестовых данных даёт большую ошибку</h2>
 <div class="outline-text-2" id="text-12">
 </div>
-<div id="outline-container-org2f8b83a" class="outline-3">
-<h3 id="org2f8b83a"><span class="section-number-3">12.1</span> Собрать больше данных для обучения модели. (не всегда помогает)</h3>
+<div id="outline-container-org364c1a9" class="outline-3">
+<h3 id="org364c1a9"><span class="section-number-3">12.1</span> Собрать больше данных для обучения модели. (не всегда помогает)</h3>
 <div class="outline-text-3" id="text-12-1">
 <ul class="org-ul">
 <li>ПОлезно использовать train/test split, k-fold cross-validation</li>
 </ul>
 </div>
 </div>
-<div id="outline-container-org946eb9c" class="outline-3">
-<h3 id="org946eb9c"><span class="section-number-3">12.2</span> Уменьшить количество факторов (features)</h3>
+<div id="outline-container-org294e815" class="outline-3">
+<h3 id="org294e815"><span class="section-number-3">12.2</span> Уменьшить количество факторов (features)</h3>
 </div>
-<div id="outline-container-org7738923" class="outline-3">
-<h3 id="org7738923"><span class="section-number-3">12.3</span> Добавить факторы (features)</h3>
+<div id="outline-container-orgbf07e06" class="outline-3">
+<h3 id="orgbf07e06"><span class="section-number-3">12.3</span> Добавить факторы (features)</h3>
 </div>
-<div id="outline-container-org06ccfbf" class="outline-3">
-<h3 id="org06ccfbf"><span class="section-number-3">12.4</span> Добавить факторы больших порядков (x₁²,x₂²,x₁x₂,etc)</h3>
+<div id="outline-container-org5e5d6ec" class="outline-3">
+<h3 id="org5e5d6ec"><span class="section-number-3">12.4</span> Добавить факторы больших порядков (x₁²,x₂²,x₁x₂,etc)</h3>
 <div class="outline-text-3" id="text-12-4">
 <ul class="org-ul">
 <li>Используем train/validate/test split.
@@ -965,17 +979,17 @@ classification_report(y_tested, y_predicted) <span style="color: #FFd1d1;"># </s
 </ul>
 </div>
 </div>
-<div id="outline-container-org4a59782" class="outline-3">
-<h3 id="org4a59782"><span class="section-number-3">12.5</span> Уменьшить параметр регуляризации \(\lambda{}\)</h3>
+<div id="outline-container-orgc7ae0c7" class="outline-3">
+<h3 id="orgc7ae0c7"><span class="section-number-3">12.5</span> Уменьшить параметр регуляризации \(\lambda{}\)</h3>
 </div>
-<div id="outline-container-org6baa9a9" class="outline-3">
-<h3 id="org6baa9a9"><span class="section-number-3">12.6</span> Увеличить параметр регуляризации \(\lambda{}\)</h3>
+<div id="outline-container-org5ff26ce" class="outline-3">
+<h3 id="org5ff26ce"><span class="section-number-3">12.6</span> Увеличить параметр регуляризации \(\lambda{}\)</h3>
 </div>
 </div>
 </div>
 <div id="postamble" class="status">
 <p class="author">&#1040;&#1074;&#1090;&#1086;&#1088;: Pavel</p>
-<p class="date">Created: 2020-04-20 Mon 12:25</p>
+<p class="date">Created: 2020-04-20 Mon 14:23</p>
 <p class="validation"><a href="http://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
