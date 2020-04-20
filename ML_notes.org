@@ -12,7 +12,27 @@
 
   $\beta{}_{1} = \frac{sd_{x}}{sd_{y}} * r_{xy}$,
 
-  $\beta{}_{0} = Ŷ - \beta_{1} * X$.
+  $\beta{}_{0} = \hat{Y} - \beta_{1} * X$.
+
+  #+BEGIN_SRC R :exports both :results graphics :noweb strip-export :file RLinearModel.png
+    library(MASS)
+    lm.fit <- lm(medv~lstat, data=Boston)
+    plot(Boston$lstat, Boston$medv)
+    abline(lm.fit, lwd=2, col="red")
+  #+END_SRC
+
+  #+RESULTS:
+  [[file:RLinearModel.png]]
+
+  #+BEGIN_SRC R :exports both :results graphics :noweb strip-export :file RNonLinearModel.png
+    library(MASS)
+    lm.fit <- lm(medv~lstat+I(lstat^2), data=Boston)
+    plot(Boston$lstat, Boston$medv)
+    curve(predict(lm.fit, newdata=data.frame(lstat=x)), add=T, col="red", lwd=2)
+  #+END_SRC
+
+  #+RESULTS:
+  [[file:RNonLinearModel.png]]
 
 * Порядок использования линейной регрессии (простой):
   1. Построить scatter plot и посмотреть, что данные подчиняются линейному закону.
