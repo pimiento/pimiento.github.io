@@ -1,0 +1,201 @@
+#+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
+#+KEYWORDS: C struct union typedef bit-field
+#+HTML_LINK_HOME: https://pimiento.github.io/
+#+HTML_LINK_UP: https://pimiento.github.io/
+#+TITLE: Логистическая регрессия
+
+* $\hat{y}$
+  Это вероятность того, что $y = 1$ при текущих входных параметрах $x$
+  \begin{equation}
+  \hat{y} = P(y=1|x)
+  \\
+  \hat{y} = \sigma{}(w^{T}x + b)
+  \end{equation}
+
+* $z$
+  \begin{equation}
+  z = w^{T}x + b
+  \end{equation}
+* sigmoid function $\sigma{}$
+  Ограничивает значение $\hat{y}$ между $0$ и $1$.
+  \begin{equation}
+  \sigma{}(z) = \frac{1}{1+e^{-z}}
+  \end{equation}
+  - Если значение $z$ сильно больше $0$, то
+    \begin{equation}
+    \sigma{}(z) \approx{} \frac{1}{1+0} \approx{} 1
+    \end{equation}
+  - Если значение $z$ сильно меньше $0$, то
+    \begin{equation}
+    \sigma{}(z) \ approx{} \frac{1}{1+bignum} \approx{} 0
+    \end{equation}
+* Функции активации
+  - sigmoid :: $a = \frac{1}{1+e^{-z}}$
+    - Значения будут от 0 до 1.
+    - Стоит применять только для выходного слоя
+    - Andrew Ng рекомендует никогда не использовать эту функцию активации кроме как для выходного слоя
+    #+BEGIN_SRC python :results file :exports results
+      import matplotlib
+      matplotlib.use("Agg")
+
+      import matplotlib.pyplot as plt
+      from scipy.special import expit
+      import numpy as np
+
+      #define range of x-values
+      x = np.linspace(-10, 10, 100)
+
+      #calculate sigmoid function for each x-value
+      y = expit(x)
+
+      #create plot
+      plt.plot(x, y)
+      plt.xlabel('z', loc="right")
+      plt.ylabel("σ(z)", loc="top")
+      ax = plt.gca()
+      ax.spines[["left", "bottom"]].set_position(("data", 0))
+      ax.spines[["top", "right"]].set_visible(False)
+      ax.plot(1, 0, ">k", transform=ax.get_yaxis_transform(), clip_on=False)
+      ax.plot(0, 1, "^k", transform=ax.get_xaxis_transform(), clip_on=False)
+
+      #display plot
+      fname = "sigmoid_fun.png"
+      plt.savefig(fname)
+
+      return fname
+    #+END_SRC
+
+    #+RESULTS:
+    [[file:sigmoid_fun.png]]
+
+  - tanh ::  $a = \tanh(z) = \frac{e^{z}-e^{-z}}{e^{z}+e^{-z}}$
+    - Значения от -1 до 1, что значительнее удобнее чем [0,1] у сигмоиды в плане центрирования данных вокруг нуля.
+    - Почти всегда лучше чем сигмоида (исключение: выходной слой)
+    #+BEGIN_SRC python :results file :exports results
+      import matplotlib
+      matplotlib.use("Agg")
+
+      import matplotlib.pyplot as plt
+      import numpy as np
+
+      #define range of x-values
+      x = np.linspace(-10, 10, 100)
+
+      #calculate tanh function for each x-value
+      y = np.tanh(x)
+
+      #create plot
+      plt.plot(x, y)
+      plt.xlabel('z', loc="right")
+      plt.ylabel("tanh(z)", loc="top")
+      ax = plt.gca()
+      ax.spines[["left", "bottom"]].set_position(("data", 0))
+      ax.spines[["top", "right"]].set_visible(False)
+      ax.plot(1, 0, ">k", transform=ax.get_yaxis_transform(), clip_on=False)
+      ax.plot(0, 1, "^k", transform=ax.get_xaxis_transform(), clip_on=False)
+
+      #display plot
+      fname = "tanh_fun.png"
+      plt.savefig(fname)
+
+      return fname
+    #+END_SRC
+
+    #+RESULTS:
+    [[file:tanh_fun.png]]
+
+  - ReLU (Rectified Linear Unit) :: $a = max(x, 0)$
+    - подходит для большинства случаев
+    - работает быстрее всего
+
+      #+BEGIN_SRC python :results file :exports results
+        import matplotlib
+        matplotlib.use("Agg")
+
+        import matplotlib.pyplot as plt
+        import numpy as np
+
+        #define range of x-values
+        x = np.linspace(-10, 10, 100)
+
+        #calculate ReLU function for each x-value
+        y = np.maximum(x, 0)
+
+        #create plot
+        plt.plot(x, y)
+        plt.xlabel('z', loc="right")
+        plt.ylabel("ReLU(z)", loc="top")
+        ax = plt.gca()
+        ax.spines[["left", "bottom"]].set_position(("data", 0))
+        ax.spines[["top", "right"]].set_visible(False)
+        ax.plot(1, 0, ">k", transform=ax.get_yaxis_transform(), clip_on=False)
+        ax.plot(0, 1, "^k", transform=ax.get_xaxis_transform(), clip_on=False)
+
+        #display plot
+        fname = "relu_fun.png"
+        plt.savefig(fname)
+
+        return fname
+    #+END_SRC
+
+    #+RESULTS:
+    [[file:relu_fun.png]]
+
+  - Leaky ReLU :: $a = max(0.01z, z)$
+    - Работает лучше чем ReLU, но редко используется на практике
+    - Решает проблему ReLU с тем, что для отрицательных значений backpropagation будет занулять параметры
+  #+BEGIN_SRC python :results file :exports results
+    import matplotlib
+    matplotlib.use("Agg")
+
+    import matplotlib.pyplot as plt
+    from scipy.special import expit
+    import numpy as np
+
+    #define range of x-values
+    x = np.linspace(-10, 10, 100)
+
+    #calculate Leaky ReLU function for each x-value
+    y = np.where(x > 0, x, x*0.01)
+
+    #create plot
+    plt.plot(x, y)
+    plt.xlabel('z', loc="right")
+    plt.ylabel("LReLU(z)", loc="top")
+    ax = plt.gca()
+    ax.spines[["left", "bottom"]].set_position(("data", 0))
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.plot(1, 0, ">k", transform=ax.get_yaxis_transform(), clip_on=False)
+    ax.plot(0, 1, "^k", transform=ax.get_xaxis_transform(), clip_on=False)
+
+    #display plot
+    fname = "leaky_relu_fun.png"
+    plt.savefig(fname)
+
+    return fname
+  #+END_SRC
+
+  #+RESULTS:
+  [[file:leaky_relu_fun.png]]
+
+* Вычисление размеров матриц
+  $z^{[l]} = w^{T}x + b$
+  - $L$ :: глубина нейройной сети (количество слоёв, кроме входных параметров)
+  - $n^{[l]}$ :: количество нейронов в слое $l$
+  - $|z^{[l]}|$ :: $z^{[l]} : (n^{[l]}, 1)$
+  - $|a^{[l]}|$ :: $a^{[l]} : (n^{[l]}, 1)$
+  - $|x^{[l]}|$ :: $x^{[l]} : (n^{[l-1]}, 1)$
+  - $|w^{[l]}|$ :: $w^{[l]} : (n^{[l]}, n^{[l-1]})$
+  - $|dw^{[l]}|$ :: $dw^{[l]} : (n^{[l]}, n^{[l-1]})$
+  - $|b^{[l]}|$ :: $b^{[l]} : (n^{[l]}, 1)$
+  - $|db^{[l]}|$ :: $db^{[l]} : (n^{[l]}, 1)$
+  - $m$ :: размер тренировчоных данных
+  - $|Z^{[l]}|$ :: $Z^{[l]} : (n^{[l]}, m)$
+  - $|dZ^{[l]}|$ :: $dZ^{[l]} : (n^{[l]}, m)$
+  - $|A^{[l]}|$ :: $A^{[l]} : (n^{[l]}, m)$
+  - $|dA^{[l]}|$ :: $dA^{[l]} : (n^{[l]}, m)$
+  - $|W^{[l]}|$ :: $W^{[l]} : (n^{[l]}, n^{[l-1]})$
+  - $|X^{[l]}|$ :: $X^{[l]} : (n^{[l-1]}, m)$
+  - $|B^{[l]}|$ :: $B^{[l]} : (n^{[l]}, 1)$
