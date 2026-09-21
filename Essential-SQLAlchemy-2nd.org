@@ -1,13 +1,12 @@
 #+OPTIONS: H:3 num:t toc:t \n:nil @:t ::t |:t ^:{} _:{} -:t f:t *:t <:t todo:t
+#+KEYWORDS: sqlalchemy alembic orm
+#+PROPERTY: header-args :eval never-export :exports both :noweb yes
 #+INFOJS_OPT: view:t toc:t ltoc:t mouse:underline buttons:0 path:org-info.js
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="solarized-dark.css" />
 #+HTML_LINK_HOME: https://pimiento.github.io/
 #+HTML_LINK_UP: https://pimiento.github.io/
-#+KEYWORDS: sqlalchemy alembic orm
 #+TITLE: Essential SQLAlchemy (v1/v2)
-:PROPERTIES:
-:header-args:python: :exports both
-:END:
+
 * Chapter 1: Schema and Types
 
 ** SQLAlchemy v1
@@ -150,7 +149,7 @@
 #+END_SRC
 
 #+NAME: E1
-#+BEGIN_SRC python :session ch1 :results none :tangle ch1-v1.py :noweb tangle :shebang "#!/usr/bin/env python3"
+#+BEGIN_SRC python :session ch1 :results none :tangle ch1-v1.py :shebang "#!/usr/bin/env python3"
   <<A1>>
   <<B1>>
   <<C1>>
@@ -163,7 +162,7 @@
 
 
 ** SQLAlchemy v2
-#+BEGIN_SRC python :results none :tangle ch1-v2.py :noweb tangle :shebang "#!/usr/bin/env python3"
+#+BEGIN_SRC python :results none :tangle ch1-v2.py :shebang "#!/usr/bin/env python3"
   #!/usr/bin/env python3
   from datetime import datetime
   from decimal import Decimal
@@ -3871,7 +3870,7 @@ Table(
   session = Session()
 #+END_SRC
 
-#+BEGIN_SRC python :noweb yes :results none
+#+BEGIN_SRC python :results none
   <<MyBase>>
   <<User>>
   <<Order>>
@@ -4870,3 +4869,31 @@ Table(
       for u in session.scalars(stmt):
           print(u)
 #+END_SRC
+
+* Chapter 8: Understanding the Session and Exceptions
+
+** SQLAlchemy v1
+:PROPERTIES:
+:header-args:python: :session *ch8-v1* :tangle ch8-v1.py :cache yes
+:END:
+
+#+BEGIN_SRC python :shebang "#!/usr/bin/env python3" :results none
+  from sqlalchemy import create_engine
+  from sqlalchemy.orm import sessionmaker
+
+  engine = create_engine("sqlite:///:memory:")
+  Session = sessionmaker(bind=engine)
+  session = Session()
+
+  <<MyBase>>
+  <<User>>
+  <<Order>>
+  <<LineItem>>
+
+  Base.metadata.create_all(engine)
+#+END_SRC
+
+** SQLAlchemy v2
+:PROPERTIES:
+:header-args:python: :session *ch8-v2* :tangle ch8-v2.py :cache yes
+:END:
