@@ -5,7 +5,9 @@
 #+HTML_LINK_UP: https://pimiento.github.io/
 #+KEYWORDS: sqlalchemy alembic orm
 #+TITLE: Essential SQLAlchemy (v1/v2)
-
+:PROPERTIES:
+:header-args:python: :exports both
+:END:
 * Chapter 1: Schema and Types
 
 ** SQLAlchemy v1
