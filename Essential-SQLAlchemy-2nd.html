@@ -3,7 +3,7 @@
 "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en">
 <head>
-<!-- 2026-09-25 Пт 15:24 -->
+<!-- 2026-09-25 Пт 15:42 -->
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Essential SQLAlchemy (v1/v2)</title>
@@ -227,111 +227,111 @@ org_html_manager.setup();  // activate after the parameters are set
 <h2>Table of Contents</h2>
 <div id="text-table-of-contents" role="doc-toc">
 <ul>
-<li><a href="#orga6d84a7">1. Chapter 1: Schema and Types</a>
+<li><a href="#orgb9db5f5">1. Chapter 1: Schema and Types</a>
 <ul>
-<li><a href="#org5ef41a8">1.1. SQLAlchemy v1</a></li>
-<li><a href="#org2afa9be">1.2. SQLAlchemy v2</a></li>
+<li><a href="#orgeb7a6b6">1.1. SQLAlchemy v1</a></li>
+<li><a href="#orge4037cb">1.2. SQLAlchemy v2</a></li>
 </ul>
 </li>
-<li><a href="#org421e350">2. Chapter 2: Working with Data via SQLAlchemy Core</a>
+<li><a href="#org1fd93ca">2. Chapter 2: Working with Data via SQLAlchemy Core</a>
 <ul>
-<li><a href="#orgdb1032d">2.1. SQLAlchemy v1</a>
+<li><a href="#org0580e32">2.1. SQLAlchemy v1</a>
 <ul>
-<li><a href="#org144f49e">2.1.1. Insert Data</a></li>
-<li><a href="#org70e9c21">2.1.2. Querying Data</a></li>
-<li><a href="#orgc38e6ac">2.1.3. Updating Data</a></li>
-<li><a href="#org609e472">2.1.4. Deleting Data</a></li>
-<li><a href="#orgdb5f03f">2.1.5. Joins</a></li>
+<li><a href="#org69b5fcf">2.1.1. Insert Data</a></li>
+<li><a href="#org54ea68d">2.1.2. Querying Data</a></li>
+<li><a href="#org6ecbe86">2.1.3. Updating Data</a></li>
+<li><a href="#org792f100">2.1.4. Deleting Data</a></li>
+<li><a href="#org6265c66">2.1.5. Joins</a></li>
 </ul>
 </li>
-<li><a href="#orgc64a64b">2.2. SQLAlchemy v2</a>
+<li><a href="#org444dfdc">2.2. SQLAlchemy v2</a>
 <ul>
-<li><a href="#org36dd782">2.2.1. Insert Data</a></li>
-<li><a href="#orgcf9d5a3">2.2.2. Querying Data</a></li>
-<li><a href="#orgb58be70">2.2.3. Updating Data</a></li>
-<li><a href="#orgcf615ac">2.2.4. Deleting Data</a></li>
-<li><a href="#org0d6f46d">2.2.5. Joins</a></li>
+<li><a href="#org679e3bb">2.2.1. Insert Data</a></li>
+<li><a href="#org213cf4a">2.2.2. Querying Data</a></li>
+<li><a href="#org156f7d7">2.2.3. Updating Data</a></li>
+<li><a href="#org97176d2">2.2.4. Deleting Data</a></li>
+<li><a href="#org67c3b24">2.2.5. Joins</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#orge5519fd">3. Chapter 3: Exceptions and Transactions</a>
+<li><a href="#orgd0184c1">3. Chapter 3: Exceptions and Transactions</a>
 <ul>
-<li><a href="#org0239aea">3.1. SQLAlchemy v1</a>
+<li><a href="#orgb2f2066">3.1. SQLAlchemy v1</a>
 <ul>
-<li><a href="#org3be8490">3.1.1. AttributeError</a></li>
-<li><a href="#org5bbc523">3.1.2. IntegrityError</a></li>
-<li><a href="#org1ee99e0">3.1.3. Transactions</a></li>
+<li><a href="#org9215219">3.1.1. AttributeError</a></li>
+<li><a href="#orgbfffd05">3.1.2. IntegrityError</a></li>
+<li><a href="#org904d798">3.1.3. Transactions</a></li>
 </ul>
 </li>
-<li><a href="#orgc38349b">3.2. SQLAlchemy v2</a></li>
+<li><a href="#org936672b">3.2. SQLAlchemy v2</a></li>
 </ul>
 </li>
-<li><a href="#orgc119950">4. Chapter 4: Testing</a>
+<li><a href="#orga2f1082">4. Chapter 4: Testing</a>
 <ul>
 <li>
 <ul>
-<li><a href="#org01bd4af">4.0.1. UnitTest</a></li>
-<li><a href="#orge63747c">4.0.2. pytest</a></li>
+<li><a href="#org35e07ee">4.0.1. UnitTest</a></li>
+<li><a href="#orgcf4e7bd">4.0.2. pytest</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#orgf80f7b9">5. Chapter 5: Reflection</a>
+<li><a href="#org0313e00">5. Chapter 5: Reflection</a>
 <ul>
-<li><a href="#org86370ca">5.1. SQLAlchemy v2</a>
+<li><a href="#orgf0045b5">5.1. SQLAlchemy v2</a>
 <ul>
-<li><a href="#org0a0cc35">5.1.1. Reflecting a Whole Database</a></li>
+<li><a href="#org1f319a4">5.1.1. Reflecting a Whole Database</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#orgb7f23ab">6. Chapter 6: Defining Schema with SQLAlchemy ORM</a>
+<li><a href="#orgf772fec">6. Chapter 6: Defining Schema with SQLAlchemy ORM</a>
 <ul>
-<li><a href="#orgf8251fd">6.1. SQLAlchemy v1</a>
+<li><a href="#org5770627">6.1. SQLAlchemy v1</a>
 <ul>
-<li><a href="#orga25c0a8">6.1.1. Keys, Constraints, and Indexes</a></li>
-<li><a href="#orgd1d989b">6.1.2. Relationships</a></li>
+<li><a href="#org99a3c58">6.1.1. Keys, Constraints, and Indexes</a></li>
+<li><a href="#orga0bd002">6.1.2. Relationships</a></li>
 </ul>
 </li>
-<li><a href="#org2aebaea">6.2. SQLAlchemy v2</a>
+<li><a href="#org5fcd8b2">6.2. SQLAlchemy v2</a>
 <ul>
-<li><a href="#org8ad8ce6">6.2.1. Keys, Constraints, and Indexes</a></li>
-<li><a href="#org229846d">6.2.2. Relationships</a></li>
+<li><a href="#org771a86a">6.2.1. Keys, Constraints, and Indexes</a></li>
+<li><a href="#org9bd6f60">6.2.2. Relationships</a></li>
 </ul>
 </li>
 </ul>
 </li>
-<li><a href="#org14b483a">7. Chapter 7: Working with Data via SQLAlchemy ORM</a>
+<li><a href="#org016b2fb">7. Chapter 7: Working with Data via SQLAlchemy ORM</a>
 <ul>
-<li><a href="#org998d0b0">7.1. SQLAlchemy v1</a>
+<li><a href="#org31aa137">7.1. SQLAlchemy v1</a>
 <ul>
-<li><a href="#orgc5ca3a5">7.1.1. Inserting Data</a></li>
-<li><a href="#orga0deb33">7.1.2. Querying Data</a></li>
-<li><a href="#orga98ec73">7.1.3. Updating Data</a></li>
-<li><a href="#org0a2ab7e">7.1.4. Deleting Data</a></li>
-<li><a href="#orgeacc138">7.1.5. Relations</a></li>
-<li><a href="#orgcbca193">7.1.6. Joins</a></li>
-<li><a href="#orga7372ea">7.1.7. Grouping</a></li>
-<li><a href="#orgcb7b3c4">7.1.8. Chaining</a></li>
-<li><a href="#org12db691">7.1.9. Raw Queries</a></li>
+<li><a href="#orgb4063bd">7.1.1. Inserting Data</a></li>
+<li><a href="#orgfd43373">7.1.2. Querying Data</a></li>
+<li><a href="#orgd48eb71">7.1.3. Updating Data</a></li>
+<li><a href="#orgdaef558">7.1.4. Deleting Data</a></li>
+<li><a href="#org87a40fa">7.1.5. Relations</a></li>
+<li><a href="#org8c57ddd">7.1.6. Joins</a></li>
+<li><a href="#org5c27d7c">7.1.7. Grouping</a></li>
+<li><a href="#org81b35c7">7.1.8. Chaining</a></li>
+<li><a href="#orge76b0af">7.1.9. Raw Queries</a></li>
 </ul>
 </li>
-<li><a href="#orgdb639f7">7.2. SQLAlchemy v2</a></li>
+<li><a href="#orgb5e9a56">7.2. SQLAlchemy v2</a></li>
 </ul>
 </li>
-<li><a href="#orgafab8b8">8. Chapter 8: Understanding the Session and Exceptions</a>
+<li><a href="#orgdbb268d">8. Chapter 8: Understanding the Session and Exceptions</a>
 <ul>
-<li><a href="#org265225f">8.1. SQLAlchemy v1</a>
+<li><a href="#orgd359d4f">8.1. SQLAlchemy v1</a>
 <ul>
-<li><a href="#org33422d1">8.1.1. The SQLALchemy Session</a></li>
-<li><a href="#org3313963">8.1.2. Exceptions</a></li>
-<li><a href="#org1391fb5">8.1.3. Transactions</a></li>
+<li><a href="#orge716d33">8.1.1. The SQLALchemy Session</a></li>
+<li><a href="#org931a3ea">8.1.2. Exceptions</a></li>
+<li><a href="#org6ddfc87">8.1.3. Transactions</a></li>
 </ul>
 </li>
-<li><a href="#orgac91cbc">8.2. SQLAlchemy v2</a>
+<li><a href="#org9bec002">8.2. SQLAlchemy v2</a>
 <ul>
-<li><a href="#orgd213ef6">8.2.1. Transactions</a></li>
+<li><a href="#org91cdd81">8.2.1. Transactions</a></li>
 </ul>
 </li>
 </ul>
@@ -339,12 +339,12 @@ org_html_manager.setup();  // activate after the parameters are set
 </ul>
 </div>
 </div>
-<div id="outline-container-orga6d84a7" class="outline-2">
-<h2 id="orga6d84a7"><span class="section-number-2">1.</span> Chapter 1: Schema and Types</h2>
+<div id="outline-container-orgb9db5f5" class="outline-2">
+<h2 id="orgb9db5f5"><span class="section-number-2">1.</span> Chapter 1: Schema and Types</h2>
 <div class="outline-text-2" id="text-1">
 </div>
-<div id="outline-container-org5ef41a8" class="outline-3">
-<h3 id="org5ef41a8"><span class="section-number-3">1.1.</span> SQLAlchemy v1</h3>
+<div id="outline-container-orgeb7a6b6" class="outline-3">
+<h3 id="orgeb7a6b6"><span class="section-number-3">1.1.</span> SQLAlchemy v1</h3>
 <div class="outline-text-3" id="text-1-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>import sqlalchemy
@@ -357,7 +357,7 @@ print(sqlalchemy.__version__)
 </pre>
 
 <div class="org-src-container">
-<pre class="src src-python" id="org81924ca"><code>from sqlalchemy import MetaData
+<pre class="src src-python" id="orgb4618b5"><code>from sqlalchemy import MetaData
 
 metadata = MetaData()
 </code></pre>
@@ -365,7 +365,7 @@ metadata = MetaData()
 
 
 <div class="org-src-container">
-<pre class="src src-python" id="org7c205b0"><code>from sqlalchemy import Table, Column, Integer, Numeric, String, CheckConstraint
+<pre class="src src-python" id="orge7b9b7d"><code>from sqlalchemy import Table, Column, Integer, Numeric, String, CheckConstraint
 
 cookies = Table(
     "cookies",
@@ -382,7 +382,7 @@ cookies = Table(
 </div>
 
 <div class="org-src-container">
-<pre class="src src-python" id="org35e86a1"><code>from datetime import datetime
+<pre class="src src-python" id="org9fbe5d9"><code>from datetime import datetime
 from sqlalchemy import DateTime, PrimaryKeyConstraint, UniqueConstraint
 
 users = Table(
@@ -461,13 +461,13 @@ orders -[hidden]down- users
 </div>
 
 
-<div id="orgcf144e8" class="figure">
+<div id="org2146a1f" class="figure">
 <p><img src="er.png" alt="er.png" />
 </p>
 </div>
 
 <div class="org-src-container">
-<pre class="src src-python" id="org0437c5d"><code>from sqlalchemy import ForeignKey, Boolean
+<pre class="src src-python" id="orgda59f9a"><code>from sqlalchemy import ForeignKey, Boolean
 
 orders = Table(
     "orders",
@@ -491,7 +491,7 @@ line_items = Table(
 </div>
 
 <div class="org-src-container">
-<pre class="src src-python" id="orgdaba928"><code>from sqlalchemy import MetaData
+<pre class="src src-python" id="orgf967b15"><code>from sqlalchemy import MetaData
 
 metadata = MetaData()
 from sqlalchemy import Table, Column, Integer, Numeric, String, CheckConstraint
@@ -551,8 +551,8 @@ metadata.create_all(engine)
 </div>
 </div>
 </div>
-<div id="outline-container-org2afa9be" class="outline-3">
-<h3 id="org2afa9be"><span class="section-number-3">1.2.</span> SQLAlchemy v2</h3>
+<div id="outline-container-orge4037cb" class="outline-3">
+<h3 id="orge4037cb"><span class="section-number-3">1.2.</span> SQLAlchemy v2</h3>
 <div class="outline-text-3" id="text-1-2">
 <div class="org-src-container">
 <pre class="src src-python"><code>#!/usr/bin/env python3
@@ -661,12 +661,12 @@ if __name__ == "__main__":
 </div>
 </div>
 </div>
-<div id="outline-container-org421e350" class="outline-2">
-<h2 id="org421e350"><span class="section-number-2">2.</span> Chapter 2: Working with Data via SQLAlchemy Core</h2>
+<div id="outline-container-org1fd93ca" class="outline-2">
+<h2 id="org1fd93ca"><span class="section-number-2">2.</span> Chapter 2: Working with Data via SQLAlchemy Core</h2>
 <div class="outline-text-2" id="text-2">
 </div>
-<div id="outline-container-orgdb1032d" class="outline-3">
-<h3 id="orgdb1032d"><span class="section-number-3">2.1.</span> SQLAlchemy v1</h3>
+<div id="outline-container-org0580e32" class="outline-3">
+<h3 id="org0580e32"><span class="section-number-3">2.1.</span> SQLAlchemy v1</h3>
 <div class="outline-text-3" id="text-2-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>from datetime import datetime
@@ -763,8 +763,8 @@ metadata.create_all(engine)
 </code></pre>
 </div>
 </div>
-<div id="outline-container-org144f49e" class="outline-4">
-<h4 id="org144f49e"><span class="section-number-4">2.1.1.</span> Insert Data</h4>
+<div id="outline-container-org69b5fcf" class="outline-4">
+<h4 id="org69b5fcf"><span class="section-number-4">2.1.1.</span> Insert Data</h4>
 <div class="outline-text-4" id="text-2-1-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>ins = cookies.insert().values(
@@ -901,8 +901,8 @@ result.inserted_primary_key_rows
 </div>
 </div>
 </div>
-<div id="outline-container-org70e9c21" class="outline-4">
-<h4 id="org70e9c21"><span class="section-number-4">2.1.2.</span> Querying Data</h4>
+<div id="outline-container-org54ea68d" class="outline-4">
+<h4 id="org54ea68d"><span class="section-number-4">2.1.2.</span> Querying Data</h4>
 <div class="outline-text-4" id="text-2-1-2">
 <div class="org-src-container">
 <pre class="src src-python"><code>from sqlalchemy.sql import select
@@ -924,7 +924,7 @@ results
 </div>
 </div>
 <ol class="org-ol">
-<li><a id="orgd5bb224"></a>ResultProxy<br />
+<li><a id="org7bfaa77"></a>ResultProxy<br />
 <div class="outline-text-5" id="text-2-1-2-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>first_row = results[0]
@@ -947,7 +947,7 @@ for record in rp:
 </div>
 </div>
 </li>
-<li><a id="org745fc0c"></a>Controlling the Columns in the Query<br />
+<li><a id="org6fb9061"></a>Controlling the Columns in the Query<br />
 <div class="outline-text-5" id="text-2-1-2-2">
 <div class="org-src-container">
 <pre class="src src-python"><code>s = select(cookies.c.cookie_name, cookies.c.quantity)
@@ -959,7 +959,7 @@ print(result)
 </div>
 </div>
 </li>
-<li><a id="orgf2665be"></a>Ordering<br />
+<li><a id="org0c85316"></a>Ordering<br />
 <div class="outline-text-5" id="text-2-1-2-3">
 <div class="org-src-container">
 <pre class="src src-python"><code>s = select(cookies.c.cookie_name, cookies.c.quantity)
@@ -980,7 +980,7 @@ rp.fetchall()
 </div>
 </div>
 </li>
-<li><a id="org467c7dc"></a>Limiting<br />
+<li><a id="org08ba308"></a>Limiting<br />
 <div class="outline-text-5" id="text-2-1-2-4">
 <div class="org-src-container">
 <pre class="src src-python"><code>s = select(cookies.c.cookie_name, cookies.c.quantity)
@@ -992,7 +992,7 @@ print([result.cookie_name for result in rp])
 </div>
 </div>
 </li>
-<li><a id="orge43dfaf"></a>Functions and Labels<br />
+<li><a id="orgfe68850"></a>Functions and Labels<br />
 <div class="outline-text-5" id="text-2-1-2-5">
 <div class="org-src-container">
 <pre class="src src-python"><code>from sqlalchemy.sql import func
@@ -1022,7 +1022,7 @@ print(record.inventory_count)
 </div>
 </div>
 </li>
-<li><a id="orgfcdd62a"></a>Filtering<br />
+<li><a id="orgfb99e0d"></a>Filtering<br />
 <div class="outline-text-5" id="text-2-1-2-6">
 <div class="org-src-container">
 <pre class="src src-python"><code>s = select(cookies).where(cookies.c.cookie_name == "chocolate chip")
@@ -1061,7 +1061,7 @@ s = select(
 </div>
 </div>
 </li>
-<li><a id="orge26d13c"></a>Conjunctions<br />
+<li><a id="orgbe7731b"></a>Conjunctions<br />
 <div class="outline-text-5" id="text-2-1-2-7">
 <div class="org-src-container">
 <pre class="src src-python"><code>from sqlalchemy import and_, or_, not_
@@ -1082,8 +1082,8 @@ s = select(cookies).where(and_(cookies.c.quantity &gt; 23, cookies.c.unit_cost &
 </li>
 </ol>
 </div>
-<div id="outline-container-orgc38e6ac" class="outline-4">
-<h4 id="orgc38e6ac"><span class="section-number-4">2.1.3.</span> Updating Data</h4>
+<div id="outline-container-org6ecbe86" class="outline-4">
+<h4 id="org6ecbe86"><span class="section-number-4">2.1.3.</span> Updating Data</h4>
 <div class="outline-text-4" id="text-2-1-3">
 <div class="org-src-container">
 <pre class="src src-python"><code>from sqlalchemy import update
@@ -1113,8 +1113,8 @@ result = connection.execute(s).first()
 </div>
 </div>
 </div>
-<div id="outline-container-org609e472" class="outline-4">
-<h4 id="org609e472"><span class="section-number-4">2.1.4.</span> Deleting Data</h4>
+<div id="outline-container-org792f100" class="outline-4">
+<h4 id="org792f100"><span class="section-number-4">2.1.4.</span> Deleting Data</h4>
 <div class="outline-text-4" id="text-2-1-4">
 <div class="org-src-container">
 <pre class="src src-python"><code>from sqlalchemy import delete
@@ -1133,8 +1133,8 @@ len(result)
 </div>
 </div>
 </div>
-<div id="outline-container-orgdb5f03f" class="outline-4">
-<h4 id="orgdb5f03f"><span class="section-number-4">2.1.5.</span> Joins</h4>
+<div id="outline-container-org6265c66" class="outline-4">
+<h4 id="org6265c66"><span class="section-number-4">2.1.5.</span> Joins</h4>
 <div class="outline-text-4" id="text-2-1-5">
 <div class="org-src-container">
 <pre class="src src-python"><code>customer_list = [
@@ -1232,8 +1232,8 @@ result = connection.execute(cookiemon_orders)
 </div>
 </div>
 </div>
-<div id="outline-container-orgc64a64b" class="outline-3">
-<h3 id="orgc64a64b"><span class="section-number-3">2.2.</span> SQLAlchemy v2</h3>
+<div id="outline-container-org444dfdc" class="outline-3">
+<h3 id="org444dfdc"><span class="section-number-3">2.2.</span> SQLAlchemy v2</h3>
 <div class="outline-text-3" id="text-2-2">
 <div class="org-src-container">
 <pre class="src src-python"><code>from datetime import datetime
@@ -1331,8 +1331,8 @@ metadata.create_all(connection)
 </code></pre>
 </div>
 </div>
-<div id="outline-container-org36dd782" class="outline-4">
-<h4 id="org36dd782"><span class="section-number-4">2.2.1.</span> Insert Data</h4>
+<div id="outline-container-org679e3bb" class="outline-4">
+<h4 id="org679e3bb"><span class="section-number-4">2.2.1.</span> Insert Data</h4>
 <div class="outline-text-4" id="text-2-2-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>ins = cookies.insert().values(
@@ -1419,8 +1419,8 @@ result.rowcount
 </div>
 </div>
 </div>
-<div id="outline-container-orgcf9d5a3" class="outline-4">
-<h4 id="orgcf9d5a3"><span class="section-number-4">2.2.2.</span> Querying Data</h4>
+<div id="outline-container-org213cf4a" class="outline-4">
+<h4 id="org213cf4a"><span class="section-number-4">2.2.2.</span> Querying Data</h4>
 <div class="outline-text-4" id="text-2-2-2">
 <div class="org-src-container">
 <pre class="src src-python"><code>from sqlalchemy import select
@@ -1439,7 +1439,7 @@ results
 </div>
 </div>
 <ol class="org-ol">
-<li><a id="orgd1fde0b"></a>Result<br />
+<li><a id="org5f4f82f"></a>Result<br />
 <div class="outline-text-5" id="text-2-2-2-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>first_row = results[0]
@@ -1459,7 +1459,7 @@ for record in rp:
 </div>
 </div>
 </li>
-<li><a id="org98032d0"></a>Controlling the Columns in the Query<br />
+<li><a id="org1dd7dfa"></a>Controlling the Columns in the Query<br />
 <div class="outline-text-5" id="text-2-2-2-2">
 <div class="org-src-container">
 <pre class="src src-python"><code>s = select(cookies.c.cookie_name, cookies.c.quantity)
@@ -1471,7 +1471,7 @@ print(result)
 </div>
 </div>
 </li>
-<li><a id="orgb4940c2"></a>Ordering<br />
+<li><a id="org7b4dd89"></a>Ordering<br />
 <div class="outline-text-5" id="text-2-2-2-3">
 <div class="org-src-container">
 <pre class="src src-python"><code>s = select(cookies.c.cookie_name, cookies.c.quantity)
@@ -1492,7 +1492,7 @@ rp.all()
 </div>
 </div>
 </li>
-<li><a id="orgdfbabab"></a>Limiting<br />
+<li><a id="org76f1647"></a>Limiting<br />
 <div class="outline-text-5" id="text-2-2-2-4">
 <div class="org-src-container">
 <pre class="src src-python"><code>s = select(cookies.c.cookie_name, cookies.c.quantity)
@@ -1504,7 +1504,7 @@ print([result.cookie_name for result in rp])
 </div>
 </div>
 </li>
-<li><a id="org503a258"></a>Functions and Labels<br />
+<li><a id="orgdd29bef"></a>Functions and Labels<br />
 <div class="outline-text-5" id="text-2-2-2-5">
 <div class="org-src-container">
 <pre class="src src-python"><code>from sqlalchemy import func
@@ -1534,7 +1534,7 @@ print(record.inventory_count)
 </div>
 </div>
 </li>
-<li><a id="org7be3a50"></a>Filtering<br />
+<li><a id="org3314fed"></a>Filtering<br />
 <div class="outline-text-5" id="text-2-2-2-6">
 <div class="org-src-container">
 <pre class="src src-python"><code>s = select(cookies).where(cookies.c.cookie_name == "chocolate chip")
@@ -1573,7 +1573,7 @@ s = select(
 </div>
 </div>
 </li>
-<li><a id="org6e6ef89"></a>Conjunctions<br />
+<li><a id="orgf765095"></a>Conjunctions<br />
 <div class="outline-text-5" id="text-2-2-2-7">
 <div class="org-src-container">
 <pre class="src src-python"><code>from sqlalchemy import and_, or_
@@ -1594,8 +1594,8 @@ s = select(cookies).where(and_(cookies.c.quantity &gt; 23, cookies.c.unit_cost &
 </li>
 </ol>
 </div>
-<div id="outline-container-orgb58be70" class="outline-4">
-<h4 id="orgb58be70"><span class="section-number-4">2.2.3.</span> Updating Data</h4>
+<div id="outline-container-org156f7d7" class="outline-4">
+<h4 id="org156f7d7"><span class="section-number-4">2.2.3.</span> Updating Data</h4>
 <div class="outline-text-4" id="text-2-2-3">
 <div class="org-src-container">
 <pre class="src src-python"><code>from sqlalchemy import update
@@ -1626,8 +1626,8 @@ result = connection.execute(s).first()
 </div>
 </div>
 </div>
-<div id="outline-container-orgcf615ac" class="outline-4">
-<h4 id="orgcf615ac"><span class="section-number-4">2.2.4.</span> Deleting Data</h4>
+<div id="outline-container-org97176d2" class="outline-4">
+<h4 id="org97176d2"><span class="section-number-4">2.2.4.</span> Deleting Data</h4>
 <div class="outline-text-4" id="text-2-2-4">
 <div class="org-src-container">
 <pre class="src src-python"><code>from sqlalchemy import delete
@@ -1647,8 +1647,8 @@ len(result)
 </div>
 </div>
 </div>
-<div id="outline-container-org0d6f46d" class="outline-4">
-<h4 id="org0d6f46d"><span class="section-number-4">2.2.5.</span> Joins</h4>
+<div id="outline-container-org67c3b24" class="outline-4">
+<h4 id="org67c3b24"><span class="section-number-4">2.2.5.</span> Joins</h4>
 <div class="outline-text-4" id="text-2-2-5">
 <div class="org-src-container">
 <pre class="src src-python"><code>customer_list = [
@@ -1747,12 +1747,12 @@ result = connection.execute(cookiemon_orders)
 </div>
 </div>
 </div>
-<div id="outline-container-orge5519fd" class="outline-2">
-<h2 id="orge5519fd"><span class="section-number-2">3.</span> Chapter 3: Exceptions and Transactions</h2>
+<div id="outline-container-orgd0184c1" class="outline-2">
+<h2 id="orgd0184c1"><span class="section-number-2">3.</span> Chapter 3: Exceptions and Transactions</h2>
 <div class="outline-text-2" id="text-3">
 </div>
-<div id="outline-container-org0239aea" class="outline-3">
-<h3 id="org0239aea"><span class="section-number-3">3.1.</span> SQLAlchemy v1</h3>
+<div id="outline-container-orgb2f2066" class="outline-3">
+<h3 id="orgb2f2066"><span class="section-number-3">3.1.</span> SQLAlchemy v1</h3>
 <div class="outline-text-3" id="text-3-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>import sys
@@ -1854,8 +1854,8 @@ metadata.create_all(engine)
 </code></pre>
 </div>
 </div>
-<div id="outline-container-org3be8490" class="outline-4">
-<h4 id="org3be8490"><span class="section-number-4">3.1.1.</span> AttributeError</h4>
+<div id="outline-container-org9215219" class="outline-4">
+<h4 id="org9215219"><span class="section-number-4">3.1.1.</span> AttributeError</h4>
 <div class="outline-text-4" id="text-3-1-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>import logging
@@ -1881,8 +1881,8 @@ except AttributeError as exc:
 </div>
 </div>
 </div>
-<div id="outline-container-org5bbc523" class="outline-4">
-<h4 id="org5bbc523"><span class="section-number-4">3.1.2.</span> IntegrityError</h4>
+<div id="outline-container-orgbfffd05" class="outline-4">
+<h4 id="orgbfffd05"><span class="section-number-4">3.1.2.</span> IntegrityError</h4>
 <div class="outline-text-4" id="text-3-1-2">
 <div class="org-src-container">
 <pre class="src src-python"><code>from sqlalchemy.exc import IntegrityError
@@ -1904,8 +1904,8 @@ except IntegrityError as exc:
 </div>
 </div>
 </div>
-<div id="outline-container-org1ee99e0" class="outline-4">
-<h4 id="org1ee99e0"><span class="section-number-4">3.1.3.</span> Transactions</h4>
+<div id="outline-container-org904d798" class="outline-4">
+<h4 id="org904d798"><span class="section-number-4">3.1.3.</span> Transactions</h4>
 <div class="outline-text-4" id="text-3-1-3">
 <div class="org-src-container">
 <pre class="src src-python"><code>ins = cookies.insert()
@@ -2023,8 +2023,8 @@ except IntegrityError:
 </div>
 </div>
 </div>
-<div id="outline-container-orgc38349b" class="outline-3">
-<h3 id="orgc38349b"><span class="section-number-3">3.2.</span> SQLAlchemy v2</h3>
+<div id="outline-container-org936672b" class="outline-3">
+<h3 id="org936672b"><span class="section-number-3">3.2.</span> SQLAlchemy v2</h3>
 <div class="outline-text-3" id="text-3-2">
 <div class="org-src-container">
 <pre class="src src-python"><code>#!/usr/bin/env python3
@@ -2275,8 +2275,8 @@ except IntegrityError:
 </div>
 </div>
 </div>
-<div id="outline-container-orgc119950" class="outline-2">
-<h2 id="orgc119950"><span class="section-number-2">4.</span> Chapter 4: Testing</h2>
+<div id="outline-container-orga2f1082" class="outline-2">
+<h2 id="orga2f1082"><span class="section-number-2">4.</span> Chapter 4: Testing</h2>
 <div class="outline-text-2" id="text-4">
 <div class="org-src-container">
 <pre class="src src-python"><code>from datetime import datetime
@@ -2451,8 +2451,8 @@ def get_orders_by_customer(
 </code></pre>
 </div>
 </div>
-<div id="outline-container-org01bd4af" class="outline-4">
-<h4 id="org01bd4af"><span class="section-number-4">4.0.1.</span> UnitTest</h4>
+<div id="outline-container-org35e07ee" class="outline-4">
+<h4 id="org35e07ee"><span class="section-number-4">4.0.1.</span> UnitTest</h4>
 <div class="outline-text-4" id="text-4-0-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>import unittest
@@ -2626,8 +2626,8 @@ class TestApp(unittest.TestCase):
 </div>
 </div>
 </div>
-<div id="outline-container-orge63747c" class="outline-4">
-<h4 id="orge63747c"><span class="section-number-4">4.0.2.</span> pytest</h4>
+<div id="outline-container-orgcf4e7bd" class="outline-4">
+<h4 id="orgcf4e7bd"><span class="section-number-4">4.0.2.</span> pytest</h4>
 <div class="outline-text-4" id="text-4-0-2">
 <div class="org-src-container">
 <pre class="src src-python"><code>from decimal import Decimal
@@ -2824,12 +2824,12 @@ def test_orders_by_customer(mock_conn, cookie_orders):
 </div>
 </div>
 </div>
-<div id="outline-container-orgf80f7b9" class="outline-2">
-<h2 id="orgf80f7b9"><span class="section-number-2">5.</span> Chapter 5: Reflection</h2>
+<div id="outline-container-org0313e00" class="outline-2">
+<h2 id="org0313e00"><span class="section-number-2">5.</span> Chapter 5: Reflection</h2>
 <div class="outline-text-2" id="text-5">
 </div>
-<div id="outline-container-org86370ca" class="outline-3">
-<h3 id="org86370ca"><span class="section-number-3">5.1.</span> SQLAlchemy v2</h3>
+<div id="outline-container-orgf0045b5" class="outline-3">
+<h3 id="orgf0045b5"><span class="section-number-3">5.1.</span> SQLAlchemy v2</h3>
 <div class="outline-text-3" id="text-5-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>from sqlalchemy import MetaData, create_engine
@@ -2868,8 +2868,8 @@ repr(res)
 </code></pre>
 </div>
 </div>
-<div id="outline-container-org0a0cc35" class="outline-4">
-<h4 id="org0a0cc35"><span class="section-number-4">5.1.1.</span> Reflecting a Whole Database</h4>
+<div id="outline-container-org1f319a4" class="outline-4">
+<h4 id="org1f319a4"><span class="section-number-4">5.1.1.</span> Reflecting a Whole Database</h4>
 <div class="outline-text-4" id="text-5-1-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>metadata.reflect(bind=engine)
@@ -2880,15 +2880,15 @@ list(metadata.tables.keys())
 </div>
 </div>
 </div>
-<div id="outline-container-orgb7f23ab" class="outline-2">
-<h2 id="orgb7f23ab"><span class="section-number-2">6.</span> Chapter 6: Defining Schema with SQLAlchemy ORM</h2>
+<div id="outline-container-orgf772fec" class="outline-2">
+<h2 id="orgf772fec"><span class="section-number-2">6.</span> Chapter 6: Defining Schema with SQLAlchemy ORM</h2>
 <div class="outline-text-2" id="text-6">
 </div>
-<div id="outline-container-orgf8251fd" class="outline-3">
-<h3 id="orgf8251fd"><span class="section-number-3">6.1.</span> SQLAlchemy v1</h3>
+<div id="outline-container-org5770627" class="outline-3">
+<h3 id="org5770627"><span class="section-number-3">6.1.</span> SQLAlchemy v1</h3>
 <div class="outline-text-3" id="text-6-1">
 <div class="org-src-container">
-<pre class="src src-python" id="org17ecddf"><code>import re
+<pre class="src src-python" id="org34a6c86"><code>import re
 import logging
 from ruff_format import format_string
 from sqlalchemy import Table, Column, Integer, Numeric, String
@@ -2935,7 +2935,7 @@ Cookie.display()
 </code></pre>
 </div>
 
-<pre class="example" id="orgcb71c7f">
+<pre class="example" id="orga4b4584">
 Table(
     "cookies",
     MetaData(),
@@ -2956,7 +2956,7 @@ Table(
 </pre>
 
 <div class="org-src-container">
-<pre class="src src-python" id="org51d0a53"><code>from datetime import datetime
+<pre class="src src-python" id="orgae8b9d9"><code>from datetime import datetime
 from sqlalchemy import DateTime
 
 class User(Base, MyBase):
@@ -2974,7 +2974,7 @@ User.display()
 </code></pre>
 </div>
 
-<pre class="example" id="org6827176">
+<pre class="example" id="orgb3d96b4">
 Table(
     "users",
     MetaData(),
@@ -2991,8 +2991,8 @@ Table(
 )
 </pre>
 </div>
-<div id="outline-container-orga25c0a8" class="outline-4">
-<h4 id="orga25c0a8"><span class="section-number-4">6.1.1.</span> Keys, Constraints, and Indexes</h4>
+<div id="outline-container-org99a3c58" class="outline-4">
+<h4 id="org99a3c58"><span class="section-number-4">6.1.1.</span> Keys, Constraints, and Indexes</h4>
 <div class="outline-text-4" id="text-6-1-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>class SomeDataClass(Base):
@@ -3005,11 +3005,11 @@ Table(
 </div>
 </div>
 </div>
-<div id="outline-container-orgd1d989b" class="outline-4">
-<h4 id="orgd1d989b"><span class="section-number-4">6.1.2.</span> Relationships</h4>
+<div id="outline-container-orga0bd002" class="outline-4">
+<h4 id="orga0bd002"><span class="section-number-4">6.1.2.</span> Relationships</h4>
 <div class="outline-text-4" id="text-6-1-2">
 <div class="org-src-container">
-<pre class="src src-python" id="org90ddbf1"><code>from sqlalchemy import ForeignKey, Boolean
+<pre class="src src-python" id="org5311803"><code>from sqlalchemy import ForeignKey, Boolean
 from sqlalchemy.orm import relationship, backref
 
 
@@ -3027,7 +3027,7 @@ Order.display()
 </code></pre>
 </div>
 
-<pre class="example" id="org8535f2e">
+<pre class="example" id="org53470b3">
 Table(
     "orders",
     MetaData(),
@@ -3049,7 +3049,7 @@ Table(
 One-to-One
 </p>
 <div class="org-src-container">
-<pre class="src src-python" id="org522c11f"><code>class LineItem(Base, MyBase):
+<pre class="src src-python" id="org845e0c2"><code>class LineItem(Base, MyBase):
     __tablename__ = "line_items"
 
     line_item_id = Column(Integer(), primary_key=True)
@@ -3064,7 +3064,7 @@ LineItem.display()
 </code></pre>
 </div>
 
-<pre class="example" id="org4f14ee7">
+<pre class="example" id="orgbc53233">
 Table(
     "line_items",
     MetaData(),
@@ -3105,8 +3105,8 @@ Base.metadata.create_all(engine)
 </div>
 </div>
 </div>
-<div id="outline-container-org2aebaea" class="outline-3">
-<h3 id="org2aebaea"><span class="section-number-3">6.2.</span> SQLAlchemy v2</h3>
+<div id="outline-container-org5fcd8b2" class="outline-3">
+<h3 id="org5fcd8b2"><span class="section-number-3">6.2.</span> SQLAlchemy v2</h3>
 <div class="outline-text-3" id="text-6-2">
 <div class="org-src-container">
 <pre class="src src-python"><code>import re
@@ -3173,7 +3173,7 @@ Cookie.display()
 </code></pre>
 </div>
 
-<pre class="example" id="org8c1b5e9">
+<pre class="example" id="orge1af23f">
 Table(
     "cookies",
     MetaData(),
@@ -3216,7 +3216,7 @@ User.display()
 </code></pre>
 </div>
 
-<pre class="example" id="orgb51c5ee">
+<pre class="example" id="orgc97c49b">
 Table(
     "users",
     MetaData(),
@@ -3242,8 +3242,8 @@ Table(
 )
 </pre>
 </div>
-<div id="outline-container-org8ad8ce6" class="outline-4">
-<h4 id="org8ad8ce6"><span class="section-number-4">6.2.1.</span> Keys, Constraints, and Indexes</h4>
+<div id="outline-container-org771a86a" class="outline-4">
+<h4 id="org771a86a"><span class="section-number-4">6.2.1.</span> Keys, Constraints, and Indexes</h4>
 <div class="outline-text-4" id="text-6-2-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>from sqlalchemy import CheckConstraint, ForeignKeyConstraint
@@ -3262,8 +3262,8 @@ class SomeDataClass(Base):
 </div>
 </div>
 </div>
-<div id="outline-container-org229846d" class="outline-4">
-<h4 id="org229846d"><span class="section-number-4">6.2.2.</span> Relationships</h4>
+<div id="outline-container-org9bd6f60" class="outline-4">
+<h4 id="org9bd6f60"><span class="section-number-4">6.2.2.</span> Relationships</h4>
 <div class="outline-text-4" id="text-6-2-2">
 <div class="org-src-container">
 <pre class="src src-python"><code>class Order(Base, MyBase):
@@ -3283,7 +3283,7 @@ Order.display()
 </code></pre>
 </div>
 
-<pre class="example" id="org168afff">
+<pre class="example" id="org0b65520">
 Table(
     "orders",
     MetaData(),
@@ -3322,7 +3322,7 @@ LineItem.display()
 </code></pre>
 </div>
 
-<pre class="example" id="org2619124">
+<pre class="example" id="orgee5f673">
 Table(
     "line_items",
     MetaData(),
@@ -3353,7 +3353,7 @@ Table(
 </code></pre>
 </div>
 
-<pre class="example" id="org46466ed">
+<pre class="example" id="orgf6ad906">
 Table(
     "orders",
     MetaData(),
@@ -3398,12 +3398,12 @@ with Session(engine) as session:
 </div>
 </div>
 </div>
-<div id="outline-container-org14b483a" class="outline-2">
-<h2 id="org14b483a"><span class="section-number-2">7.</span> Chapter 7: Working with Data via SQLAlchemy ORM</h2>
+<div id="outline-container-org016b2fb" class="outline-2">
+<h2 id="org016b2fb"><span class="section-number-2">7.</span> Chapter 7: Working with Data via SQLAlchemy ORM</h2>
 <div class="outline-text-2" id="text-7">
 </div>
-<div id="outline-container-org998d0b0" class="outline-3">
-<h3 id="org998d0b0"><span class="section-number-3">7.1.</span> SQLAlchemy v1</h3>
+<div id="outline-container-org31aa137" class="outline-3">
+<h3 id="org31aa137"><span class="section-number-3">7.1.</span> SQLAlchemy v1</h3>
 <div class="outline-text-3" id="text-7-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>from sqlalchemy import create_engine
@@ -3507,8 +3507,8 @@ Base.metadata.create_all(engine)
 </code></pre>
 </div>
 </div>
-<div id="outline-container-orgc5ca3a5" class="outline-4">
-<h4 id="orgc5ca3a5"><span class="section-number-4">7.1.1.</span> Inserting Data</h4>
+<div id="outline-container-orgb4063bd" class="outline-4">
+<h4 id="orgb4063bd"><span class="section-number-4">7.1.1.</span> Inserting Data</h4>
 <div class="outline-text-4" id="text-7-1-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>cc_cookie = Cookie(
@@ -3599,8 +3599,8 @@ None
 </pre>
 </div>
 </div>
-<div id="outline-container-orga0deb33" class="outline-4">
-<h4 id="orga0deb33"><span class="section-number-4">7.1.2.</span> Querying Data</h4>
+<div id="outline-container-orgfd43373" class="outline-4">
+<h4 id="orgfd43373"><span class="section-number-4">7.1.2.</span> Querying Data</h4>
 <div class="outline-text-4" id="text-7-1-2">
 <div class="org-src-container">
 <pre class="src src-python"><code>cookies = session.query(Cookie).all()
@@ -3608,7 +3608,7 @@ print(cookies)
 </code></pre>
 </div>
 
-<pre class="example" id="orge90d64e">
+<pre class="example" id="orgcbc77aa">
 [Cookie(
     cookie_id="1",
     cookie_name="chocolate chip",
@@ -3653,7 +3653,7 @@ print(cookies)
 </pre>
 </div>
 <ol class="org-ol">
-<li><a id="org9280ea0"></a>Controlling the Columns in the Query<br />
+<li><a id="org9b0ea00"></a>Controlling the Columns in the Query<br />
 <div class="outline-text-5" id="text-7-1-2-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>session.query(Cookie.cookie_name, Cookie.quantity).first()
@@ -3677,7 +3677,7 @@ print(cookies)
 </table>
 </div>
 </li>
-<li><a id="org94f4760"></a>Ordering<br />
+<li><a id="org9f3a9db"></a>Ordering<br />
 <div class="outline-text-5" id="text-7-1-2-2">
 <div class="org-src-container">
 <pre class="src src-python"><code>results = [('quantity', 'cookie_name')]
@@ -3802,7 +3802,7 @@ summary
 </table>
 </div>
 </li>
-<li><a id="org7003462"></a>Limiting<br />
+<li><a id="orga2ce865"></a>Limiting<br />
 <div class="outline-text-5" id="text-7-1-2-3">
 <div class="org-src-container">
 <pre class="src src-python"><code>query = session.query(Cookie).order_by(Cookie.quantity)[:2]
@@ -3829,7 +3829,7 @@ summary
 </table>
 </div>
 </li>
-<li><a id="org6145ab4"></a>Functions and Labels<br />
+<li><a id="orgd481287"></a>Functions and Labels<br />
 <div class="outline-text-5" id="text-7-1-2-4">
 <div class="org-src-container">
 <pre class="src src-python"><code>from sqlalchemy import func
@@ -3879,7 +3879,7 @@ rec_count
 </table>
 </div>
 </li>
-<li><a id="orgc814492"></a>Filtering<br />
+<li><a id="org04d9afe"></a>Filtering<br />
 <div class="outline-text-5" id="text-7-1-2-5">
 <div class="org-src-container">
 <pre class="src src-python"><code>record = session.query(Cookie).filter(Cookie.cookie_name == "chocolate chip").first()
@@ -3934,7 +3934,7 @@ Cookie(
 </table>
 </div>
 </li>
-<li><a id="org41cdc38"></a>Operators<br />
+<li><a id="orge6ead65"></a>Operators<br />
 <div class="outline-text-5" id="text-7-1-2-6">
 <div class="org-src-container">
 <pre class="src src-python"><code>results = session.query(Cookie.cookie_name, "SKU-" + Cookie.cookie_sku).all()
@@ -4026,7 +4026,7 @@ query = session.query(
 </table>
 </div>
 </li>
-<li><a id="org2f4fd5e"></a>Conjunctions<br />
+<li><a id="orgb8bbcb9"></a>Conjunctions<br />
 <div class="outline-text-5" id="text-7-1-2-7">
 <div class="org-src-container">
 <pre class="src src-python"><code>query = session.query(Cookie).filter(Cookie.quantity &gt; 23, Cookie.unit_cost &lt; 0.40)
@@ -4082,8 +4082,8 @@ query = session.query(Cookie).filter(
 </li>
 </ol>
 </div>
-<div id="outline-container-orga98ec73" class="outline-4">
-<h4 id="orga98ec73"><span class="section-number-4">7.1.3.</span> Updating Data</h4>
+<div id="outline-container-orgd48eb71" class="outline-4">
+<h4 id="orgd48eb71"><span class="section-number-4">7.1.3.</span> Updating Data</h4>
 <div class="outline-text-4" id="text-7-1-3">
 <div class="org-src-container">
 <pre class="src src-python"><code>query = session.query(Cookie)
@@ -4112,8 +4112,8 @@ cc_cookie.quantity
 </pre>
 </div>
 </div>
-<div id="outline-container-org0a2ab7e" class="outline-4">
-<h4 id="org0a2ab7e"><span class="section-number-4">7.1.4.</span> Deleting Data</h4>
+<div id="outline-container-orgdaef558" class="outline-4">
+<h4 id="orgdaef558"><span class="section-number-4">7.1.4.</span> Deleting Data</h4>
 <div class="outline-text-4" id="text-7-1-4">
 <div class="org-src-container">
 <pre class="src src-python"><code>query = session.query(Cookie)
@@ -4149,8 +4149,8 @@ None
 </pre>
 </div>
 </div>
-<div id="outline-container-orgeacc138" class="outline-4">
-<h4 id="orgeacc138"><span class="section-number-4">7.1.5.</span> Relations</h4>
+<div id="outline-container-org87a40fa" class="outline-4">
+<h4 id="org87a40fa"><span class="section-number-4">7.1.5.</span> Relations</h4>
 <div class="outline-text-4" id="text-7-1-5">
 <div class="org-src-container">
 <pre class="src src-python"><code>cookiemon = User(
@@ -4211,8 +4211,8 @@ session.commit()
 </div>
 </div>
 </div>
-<div id="outline-container-orgcbca193" class="outline-4">
-<h4 id="orgcbca193"><span class="section-number-4">7.1.6.</span> Joins</h4>
+<div id="outline-container-org8c57ddd" class="outline-4">
+<h4 id="org8c57ddd"><span class="section-number-4">7.1.6.</span> Joins</h4>
 <div class="outline-text-4" id="text-7-1-6">
 <div class="org-src-container">
 <pre class="src src-python"><code>query = (
@@ -4275,8 +4275,8 @@ session.commit()
 </table>
 </div>
 </div>
-<div id="outline-container-orga7372ea" class="outline-4">
-<h4 id="orga7372ea"><span class="section-number-4">7.1.7.</span> Grouping</h4>
+<div id="outline-container-org5c27d7c" class="outline-4">
+<h4 id="org5c27d7c"><span class="section-number-4">7.1.7.</span> Grouping</h4>
 <div class="outline-text-4" id="text-7-1-7">
 <div class="org-src-container">
 <pre class="src src-python"><code>query = (
@@ -4316,8 +4316,8 @@ query
 </table>
 </div>
 </div>
-<div id="outline-container-orgcb7b3c4" class="outline-4">
-<h4 id="orgcb7b3c4"><span class="section-number-4">7.1.8.</span> Chaining</h4>
+<div id="outline-container-org81b35c7" class="outline-4">
+<h4 id="org81b35c7"><span class="section-number-4">7.1.8.</span> Chaining</h4>
 <div class="outline-text-4" id="text-7-1-8">
 <div class="org-src-container">
 <pre class="src src-python"><code>def get_orders_by_customer(
@@ -4484,8 +4484,8 @@ get_orders_by_customer("cakeeater")
 </table>
 </div>
 </div>
-<div id="outline-container-org12db691" class="outline-4">
-<h4 id="org12db691"><span class="section-number-4">7.1.9.</span> Raw Queries</h4>
+<div id="outline-container-orge76b0af" class="outline-4">
+<h4 id="orge76b0af"><span class="section-number-4">7.1.9.</span> Raw Queries</h4>
 <div class="outline-text-4" id="text-7-1-9">
 <div class="org-src-container">
 <pre class="src src-python"><code>from sqlalchemy import text
@@ -4509,8 +4509,8 @@ User(
 </div>
 </div>
 </div>
-<div id="outline-container-orgdb639f7" class="outline-3">
-<h3 id="orgdb639f7"><span class="section-number-3">7.2.</span> SQLAlchemy v2</h3>
+<div id="outline-container-orgb5e9a56" class="outline-3">
+<h3 id="orgb5e9a56"><span class="section-number-3">7.2.</span> SQLAlchemy v2</h3>
 <div class="outline-text-3" id="text-7-2">
 <div class="org-src-container">
 <pre class="src src-python"><code>#!/usr/bin/env python3
@@ -4980,8 +4980,8 @@ with Session(engine) as session:
 </div>
 </div>
 </div>
-<div id="outline-container-orgafab8b8" class="outline-2">
-<h2 id="orgafab8b8"><span class="section-number-2">8.</span> Chapter 8: Understanding the Session and Exceptions</h2>
+<div id="outline-container-orgdbb268d" class="outline-2">
+<h2 id="orgdbb268d"><span class="section-number-2">8.</span> Chapter 8: Understanding the Session and Exceptions</h2>
 <div class="outline-text-2" id="text-8">
 <dl class="org-dl">
 <dt>Transient</dt><dd>объект <b>не находится в сессии</b>, ровно как и <b>не находится в базе данных</b></dd>
@@ -4990,8 +4990,8 @@ with Session(engine) as session:
 <dt>Detached</dt><dd>объект <b>больше не в сессии</b>, но <b>содержит запись в базе данных</b></dd>
 </dl>
 </div>
-<div id="outline-container-org265225f" class="outline-3">
-<h3 id="org265225f"><span class="section-number-3">8.1.</span> SQLAlchemy v1</h3>
+<div id="outline-container-orgd359d4f" class="outline-3">
+<h3 id="orgd359d4f"><span class="section-number-3">8.1.</span> SQLAlchemy v1</h3>
 <div class="outline-text-3" id="text-8-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>from sqlalchemy import create_engine
@@ -5092,8 +5092,8 @@ Base.metadata.create_all(engine)
 </code></pre>
 </div>
 </div>
-<div id="outline-container-org33422d1" class="outline-4">
-<h4 id="org33422d1"><span class="section-number-4">8.1.1.</span> The SQLALchemy Session</h4>
+<div id="outline-container-orge716d33" class="outline-4">
+<h4 id="orge716d33"><span class="section-number-4">8.1.1.</span> The SQLALchemy Session</h4>
 <div class="outline-text-4" id="text-8-1-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>from sqlalchemy import inspect
@@ -5109,7 +5109,7 @@ cc_cookie = Cookie(
 </div>
 
 <div class="org-src-container">
-<pre class="src src-python" id="org31b6e0f"><code>insp = inspect(cc_cookie)
+<pre class="src src-python" id="org3c1c28e"><code>insp = inspect(cc_cookie)
 [
     (state, getattr(insp, state))
     for state in ["transient", "pending", "persistent", "detached"]
@@ -5297,12 +5297,12 @@ History: History(added=['Change chocolate chip'], unchanged=(), deleted=())
 </pre>
 </div>
 </div>
-<div id="outline-container-org3313963" class="outline-4">
-<h4 id="org3313963"><span class="section-number-4">8.1.2.</span> Exceptions</h4>
+<div id="outline-container-org931a3ea" class="outline-4">
+<h4 id="org931a3ea"><span class="section-number-4">8.1.2.</span> Exceptions</h4>
 <div class="outline-text-4" id="text-8-1-2">
 </div>
 <ol class="org-ol">
-<li><a id="org12e967b"></a>MultipleResultsFound<br />
+<li><a id="org37d39ad"></a>MultipleResultsFound<br />
 <div class="outline-text-5" id="text-8-1-2-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>import logging
@@ -5324,7 +5324,7 @@ except sqlalchemy.exc.MultipleResultsFound:
 </code></pre>
 </div>
 
-<pre class="example" id="org775e7d8">
+<pre class="example" id="org4d4050c">
 ERROR:root:более одной записи в таблице Cookie
 Traceback (most recent call last):
   File "/tmp/babel-0NE78C/python-ZcRDHC", line 14, in &lt;module&gt;
@@ -5347,7 +5347,7 @@ sqlalchemy.exc.MultipleResultsFound: Multiple rows were found when exactly one w
 </pre>
 </div>
 </li>
-<li><a id="org62cb281"></a>NoResultFound<br />
+<li><a id="orgf512939"></a>NoResultFound<br />
 <div class="outline-text-5" id="text-8-1-2-2">
 <div class="org-src-container">
 <pre class="src src-python"><code>try:
@@ -5357,7 +5357,7 @@ except sqlalchemy.exc.NoResultFound:
 </code></pre>
 </div>
 
-<pre class="example" id="org0be24a0">
+<pre class="example" id="org414dac2">
 ERROR:root:нет записей в таблице Order
 Traceback (most recent call last):
   File "/tmp/babel-0NE78C/python-gFJXyQ", line 2, in &lt;module&gt;
@@ -5381,7 +5381,7 @@ sqlalchemy.exc.NoResultFound: No row was found when one was required
 </pre>
 </div>
 </li>
-<li><a id="org8f5993b"></a>DetachedInstanceError<br />
+<li><a id="orgcc51d66"></a>DetachedInstanceError<br />
 <div class="outline-text-5" id="text-8-1-2-3">
 <div class="org-src-container">
 <pre class="src src-python"><code>cookiemon = User(
@@ -5411,7 +5411,7 @@ except sqlalchemy.orm.exc.DetachedInstanceError:
 </code></pre>
 </div>
 
-<pre class="example" id="orgfc8a44f">
+<pre class="example" id="orgb3aa385">
 ERROR:root:order уже отвязан от сессии, нельзя получить его relationship
 Traceback (most recent call last):
   File "/tmp/babel-0NE78C/python-K8DLx5", line 22, in &lt;module&gt;
@@ -5434,8 +5434,8 @@ sqlalchemy.orm.exc.DetachedInstanceError: Parent instance &lt;Order at 0x7f47bd8
 </li>
 </ol>
 </div>
-<div id="outline-container-org1391fb5" class="outline-4">
-<h4 id="org1391fb5"><span class="section-number-4">8.1.3.</span> Transactions</h4>
+<div id="outline-container-org6ddfc87" class="outline-4">
+<h4 id="org6ddfc87"><span class="section-number-4">8.1.3.</span> Transactions</h4>
 <div class="outline-text-4" id="text-8-1-3">
 <div class="org-src-container">
 <pre class="src src-python"><code>import sqlalchemy as sa
@@ -5619,7 +5619,7 @@ except sa.exc.IntegrityError:
 </code></pre>
 </div>
 
-<pre class="example" id="orgff6bdbc">
+<pre class="example" id="org9bfbc26">
 ERROR:root:order_id: 2
 Traceback (most recent call last):
   File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
@@ -5754,7 +5754,7 @@ except sa.exc.InvalidRequestError:
 </code></pre>
 </div>
 
-<pre class="example" id="orgd0b596c">
+<pre class="example" id="orgdf76930">
 ERROR:root:нужен rollback
 Traceback (most recent call last):
   File "/tmp/babel-0NE78C/python-aSjO6i", line 2, in &lt;module&gt;
@@ -5841,12 +5841,12 @@ ERROR:root:CHECK constraint failed: quantity_positive
 </div>
 </div>
 </div>
-<div id="outline-container-orgac91cbc" class="outline-3">
-<h3 id="orgac91cbc"><span class="section-number-3">8.2.</span> SQLAlchemy v2</h3>
+<div id="outline-container-org9bec002" class="outline-3">
+<h3 id="org9bec002"><span class="section-number-3">8.2.</span> SQLAlchemy v2</h3>
 <div class="outline-text-3" id="text-8-2">
 </div>
-<div id="outline-container-orgd213ef6" class="outline-4">
-<h4 id="orgd213ef6"><span class="section-number-4">8.2.1.</span> Transactions</h4>
+<div id="outline-container-org91cdd81" class="outline-4">
+<h4 id="org91cdd81"><span class="section-number-4">8.2.1.</span> Transactions</h4>
 <div class="outline-text-4" id="text-8-2-1">
 <div class="org-src-container">
 <pre class="src src-python"><code>#!/usr/bin/env python3
@@ -6064,7 +6064,7 @@ print(session.execute(stmt).all())
 
 def trans_ship_it(order_id: int) -&gt; None:
     try:
-        with session.nested_begin():
+        with session.begin_nested():
             order = session.get(Order, order_id)
             if order is None:
                 raise ValueError(f"Order {order_id} not found")
@@ -6082,7 +6082,7 @@ print(session.execute(stmt).all())
 </code></pre>
 </div>
 
-<pre class="example" id="org67817ea">
+<pre class="example" id="org0bcb0ae">
 shipped order ID: 1
 [('chocolate chip', 3), ('dark chocolate chip', 1)]
 ERROR:root:order_id: 2
@@ -6102,10 +6102,10 @@ sqlite3.IntegrityError: CHECK constraint failed: quantity_positive
 The above exception was the direct cause of the following exception:
 
 Traceback (most recent call last):
-  File "/tmp/babel-0NE78C/python-VGomxl", line 201, in &lt;module&gt;
+  File "/tmp/babel-0NE78C/python-UPMPa9", line 201, in &lt;module&gt;
     ship_it(2)
     ~~~~~~~^^^
-  File "/tmp/babel-0NE78C/python-VGomxl", line 191, in ship_it
+  File "/tmp/babel-0NE78C/python-UPMPa9", line 191, in ship_it
     session.commit()
     ~~~~~~~~~~~~~~^^
   File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2035, in commit
@@ -6213,7 +6213,7 @@ sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) CHECK constraint failed:
 (Background on this error at: https://sqlalche.me/e/20/gkpj)
 ERROR:root:нужен rollback
 Traceback (most recent call last):
-  File "/tmp/babel-0NE78C/python-VGomxl", line 206, in &lt;module&gt;
+  File "/tmp/babel-0NE78C/python-UPMPa9", line 206, in &lt;module&gt;
     print(session.execute(stmt).all())
           ~~~~~~~~~~~~~~~^^^^^^
   File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2373, in execute
@@ -6244,6 +6244,8 @@ sqlalchemy.exc.PendingRollbackError: This Session's transaction has been rolled 
 [parameters: (-8, 2)]
 (Background on this error at: https://sqlalche.me/e/20/gkpj) (Background on this error at: https://sqlalche.me/e/20/7s2a)
 [('chocolate chip', 3), ('dark chocolate chip', 1)]
+ERROR:root:CHECK constraint failed: quantity_positive
+[('chocolate chip', 3), ('dark chocolate chip', 1)]
 </pre>
 </div>
 </div>
@@ -6251,7 +6253,7 @@ sqlalchemy.exc.PendingRollbackError: This Session's transaction has been rolled 
 </div>
 </div>
 <div id="postamble" class="status">
-<p class="date">Created: 2026-09-25 Пт 15:24</p>
+<p class="date">Created: 2026-09-25 Пт 15:42</p>
 <p class="validation"><a href="https://validator.w3.org/check?uri=referer">Validate</a></p>
 </div>
 </body>
