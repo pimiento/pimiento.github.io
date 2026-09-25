@@ -4871,10 +4871,13 @@ Table(
 #+END_SRC
 
 * Chapter 8: Understanding the Session and Exceptions
-
+- Transient :: объект *не находится в сессии*, ровно как и *не находится в базе данных*
+- Pending :: объект был *добавлен в сессию* методом /add()/, но ещё не был закоммичен
+- Persistent :: объкт *в сессии* и *содержит соответствующую запись в базе*
+- Detached :: объект *больше не в сессии*, но *содержит запись в базе данных*
 ** SQLAlchemy v1
 :PROPERTIES:
-:header-args:python: :session *ch8-v1* :tangle ch8-v1.py :cache yes
+:header-args:python: :session *ch8-v1* :tangle ch8-v1.py :cache yes :noweb yes
 :END:
 
 #+BEGIN_SRC python :shebang "#!/usr/bin/env python3" :results none
@@ -4893,7 +4896,1011 @@ Table(
   Base.metadata.create_all(engine)
 #+END_SRC
 
-** SQLAlchemy v2
+*** The SQLALchemy Session
+#+BEGIN_SRC python :results none
+  from sqlalchemy import inspect
+
+  cc_cookie = Cookie(
+          cookie_name="chocolate chip",
+          cookie_recipe_url="http://some.aweso.me/cookie/recipe.html",
+          cookie_sku="CC01",
+          quantity="12",
+          unit_cost=0.50,
+  )
+#+END_SRC
+
+#+NAME: inspect_state
+#+BEGIN_SRC python :results table
+  insp = inspect(cc_cookie)
+  [
+      (state, getattr(insp, state))
+      for state in ["transient", "pending", "persistent", "detached"]
+  ]
+#+END_SRC
+
+#+RESULTS[5b92b5e6a2e5ebbe508787b0f819dcb13c3dac91]: inspect_state
+| transient  | True  |
+| pending    | False |
+| persistent | False |
+| detached   | False |
+
+#+BEGIN_SRC python :results table
+  session.add(cc_cookie)
+  <<inspect_state>>
+#+END_SRC
+
+#+RESULTS[0378d1b2c44b7e1c975841f7ed5c2996a7549d8f]:
+| transient  | False |
+| pending    | True  |
+| persistent | False |
+| detached   | False |
+
+#+BEGIN_SRC python :results table
+  session.commit()
+  <<inspect_state>>
+#+END_SRC
+
+#+RESULTS[7ee412ff6ac55f300185fc0b8c2253bba4975e13]:
+| transient  | False |
+| pending    | False |
+| persistent | True  |
+| detached   | False |
+
+#+BEGIN_SRC python :results table
+  session.expunge(cc_cookie)
+  <<inspect_state>>
+#+END_SRC
+
+#+RESULTS[3b976cab1dcea5b45840e1343035aec8a9737cdc]:
+| transient  | False |
+| pending    | False |
+| persistent | False |
+| detached   | True  |
+
+#+BEGIN_SRC python :results value
+  session.add(cc_cookie)
+  cc_cookie.cookie_name = "Change chocolate chip"
+  insp.modified
+#+END_SRC
+
+#+RESULTS[d5921158c04975974281520c2b1b2eb22ea396b4]:
+: True
+
+#+BEGIN_SRC python :results output
+  for attr, attr_state in insp.attrs.items():
+      if attr_state.history.has_changes():
+          print('{}: {}'.format(attr, attr_state.value))
+          print('History: {}\n'.format(attr_state.history))
+          
+#+END_SRC
+
+#+RESULTS[6e8df47d932c957791f332b1e631530a757fbbff]:
+: cookie_name: Change chocolate chip
+: History: History(added=['Change chocolate chip'], unchanged=(), deleted=())
+
+*** Exceptions
+
+**** MultipleResultsFound
+#+BEGIN_SRC python :results output
+  import logging
+  import sqlalchemy
+
+  dcc = Cookie(
+      cookie_name="dark chocolate chip",
+      cookie_recipe_url="http://some.aweso.me/cookie/recipe_dark.html",
+      cookie_sku="CC02",
+      quantity="1",
+      unit_cost=0.75,
+  )
+  session.add(dcc)
+  session.commit()
+  try:
+      results = session.query(Cookie).one()
+  except sqlalchemy.exc.MultipleResultsFound:
+      logging.exception("более одной записи в таблице Cookie")
+#+END_SRC
+
+#+RESULTS[dca1360ecf2861d3a9f15154a7cfcb97d2ebf854]:
+#+begin_example
+ERROR:root:более одной записи в таблице Cookie
+Traceback (most recent call last):
+  File "/tmp/babel-0NE78C/python-ZcRDHC", line 14, in <module>
+    results = session.query(Cookie).one()
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/query.py", line 2815, in one
+    return self._iter().one()  # type: ignore
+           ~~~~~~~~~~~~~~~~^^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/result.py", line 1867, in one
+    return self._only_one_row(
+           ~~~~~~~~~~~~~~~~~~^
+        raise_for_second_row=True, raise_for_none=True, scalar=False
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/result.py", line 852, in _only_one_row
+    raise exc.MultipleResultsFound(
+    ...<4 lines>...
+    )
+sqlalchemy.exc.MultipleResultsFound: Multiple rows were found when exactly one was required
+#+end_example
+**** NoResultFound
+#+BEGIN_SRC python :results output
+  try:
+      session.query(Order).one()
+  except sqlalchemy.exc.NoResultFound:
+      logging.exception("нет записей в таблице Order")
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+ERROR:root:нет записей в таблице Order
+Traceback (most recent call last):
+  File "/tmp/babel-0NE78C/python-gFJXyQ", line 2, in <module>
+    session.query(Order).one()
+    ~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/query.py", line 2815, in one
+    return self._iter().one()  # type: ignore
+           ~~~~~~~~~~~~~~~~^^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/result.py", line 1867, in one
+    return self._only_one_row(
+           ~~~~~~~~~~~~~~~~~~^
+        raise_for_second_row=True, raise_for_none=True, scalar=False
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/result.py", line 799, in _only_one_row
+    raise exc.NoResultFound(
+        "No row was found when one was required"
+    )
+sqlalchemy.exc.NoResultFound: No row was found when one was required
+#+end_example
+**** DetachedInstanceError
+#+BEGIN_SRC python :results output
+  cookiemon = User(
+      username="cookiemon",
+      email_address="mon@cookie.com",
+      phone="111-111-1111",
+      password="password",
+  )
+  session.add(cookiemon)
+  o1 = Order()
+  o1.user = cookiemon
+  session.add(o1)
+
+  cc = session.query(Cookie).filter(Cookie.cookie_name == "Change chocolate chip").one()
+  line1 = LineItem(order=o1, cookie=cc, quantity=2, extended_cost=1.00)
+
+  session.add(line1)
+  session.commit()
+
+  order = session.query(Order).first()
+  session.expunge(order)
+
+  try:
+      order.line_items
+  except sqlalchemy.orm.exc.DetachedInstanceError:
+      logging.exception("order уже отвязан от сессии, нельзя получить его relationship")
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+ERROR:root:order уже отвязан от сессии, нельзя получить его relationship
+Traceback (most recent call last):
+  File "/tmp/babel-0NE78C/python-K8DLx5", line 22, in <module>
+    order.line_items
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/attributes.py", line 569, in __get__
+    return self.impl.get(state, dict_)  # type: ignore[no-any-return]
+           ~~~~~~~~~~~~~^^^^^^^^^^^^^^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/attributes.py", line 1096, in get
+    value = self._fire_loader_callables(state, key, passive)
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/attributes.py", line 1131, in _fire_loader_callables
+    return self.callable_(state, passive)
+           ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/strategies.py", line 929, in _load_for_state
+    raise orm_exc.DetachedInstanceError(
+    ...<3 lines>...
+    )
+sqlalchemy.orm.exc.DetachedInstanceError: Parent instance <Order at 0x7f47bd840c20> is not bound to a Session; lazy load operation of attribute 'line_items' cannot proceed (Background on this error at: https://sqlalche.me/e/20/bhk3)
+#+end_example
+*** Transactions
 :PROPERTIES:
-:header-args:python: :session *ch8-v2* :tangle ch8-v2.py :cache yes
+:header-args:python: :session *ch8-tr-v1* :tangle ch8-tr-v1.py :cache yes :noweb yes
 :END:
+#+BEGIN_SRC python :results none :shebang "#!/usr/bin/env python3"
+  import sqlalchemy as sa
+  from sqlalchemy import create_engine
+  from sqlalchemy.orm import sessionmaker
+
+  engine = create_engine("sqlite:///:memory:")
+
+  Session = sessionmaker(bind=engine)
+  session = Session()
+
+  from datetime import datetime
+
+  from sqlalchemy import (
+      Boolean,
+      CheckConstraint,
+      Column,
+      DateTime,
+      ForeignKey,
+      Integer,
+      Numeric,
+      String,
+      Table,
+  )
+  from sqlalchemy.ext.declarative import declarative_base
+  from sqlalchemy.orm import backref, relationship
+
+  Base = declarative_base()
+
+
+  class Cookie(Base):
+      __tablename__ = "cookies"
+      __table_args__ = (CheckConstraint("quantity >= 0", name="quantity_positive"),)
+      cookie_id = Column(Integer, primary_key=True)
+      cookie_name = Column(String(50), index=True)
+      cookie_recipe_url = Column(String(255))
+      cookie_sku = Column(String(55))
+      quantity = Column(Integer())
+      unit_cost = Column(Numeric(12, 2))
+
+      def __init__(self, name, recipe_url=None, sku=None, quantity=0, unit_cost=0.00):
+          self.cookie_name = name
+          self.cookie_recipe_url = recipe_url
+          self.cookie_sku = sku
+          self.quantity = quantity
+          self.unit_cost = unit_cost
+
+      def __repr__(self):
+          return (
+              "Cookie(cookie_name='{self.cookie_name}', "
+              "cookie_recipe_url='{self.cookie_recipe_url}', "
+              "cookie_sku='{self.cookie_sku}', "
+              "quantity={self.quantity}, "
+              "unit_cost={self.unit_cost})".format(self=self)
+          )
+
+
+  class User(Base):
+      __tablename__ = "users"
+      user_id = Column(Integer(), primary_key=True)
+      username = Column(String(15), nullable=False, unique=True)
+      email_address = Column(String(255), nullable=False)
+      phone = Column(String(20), nullable=False)
+      password = Column(String(25), nullable=False)
+      created_on = Column(DateTime(), default=datetime.now)
+      updated_on = Column(DateTime(), default=datetime.now, onupdate=datetime.now)
+
+      def __init__(self, username, email_address, phone, password):
+          self.username = username
+          self.email_address = email_address
+          self.phone = phone
+          self.password = password
+
+      def __repr__(self):
+          return (
+              "User(username='{self.username}', "
+              "email_address='{self.email_address}', "
+              "phone='{self.phone}', "
+              "password='{self.password}')".format(self=self)
+          )
+
+
+  class Order(Base):
+      __tablename__ = "orders"
+      order_id = Column(Integer(), primary_key=True)
+      user_id = Column(Integer(), ForeignKey("users.user_id"))
+      shipped = Column(Boolean(), default=False)
+      user = relationship("User", backref=backref("orders", order_by=order_id))
+
+      def __repr__(self):
+          return "Order(user_id={self.user_id}, " "shipped={self.shipped})".format(
+              self=self
+          )
+
+
+  class LineItem(Base):
+      __tablename__ = "line_items"
+      line_item_id = Column(Integer(), primary_key=True)
+      order_id = Column(Integer(), ForeignKey("orders.order_id"))
+      cookie_id = Column(Integer(), ForeignKey("cookies.cookie_id"))
+      quantity = Column(Integer())
+      extended_cost = Column(Numeric(12, 2))
+      order = relationship("Order", backref=backref("line_items", order_by=line_item_id))
+      cookie = relationship("Cookie", uselist=False)
+
+      def __repr__(self):
+          return (
+              "LineItem(order_id={self.order_id}, "
+              "cookie_id={self.cookie_id}, "
+              "quantity={self.quantity}, "
+              "extended_cost={self.extended_cost})".format(self=self)
+          )
+
+
+  Base.metadata.create_all(engine)
+  cookiemon = User("cookiemon", "mon@cookie.com", "111-111-1111", "password")
+  cc = Cookie(
+      "chocolate chip", "http://some.aweso.me/cookie/recipe.html", "CC01", 12, 0.50
+  )
+  dcc = Cookie(
+      "dark chocolate chip",
+      "http://some.aweso.me/cookie/recipe_dark.html",
+      "CC02",
+      1,
+      0.75,
+  )
+  session.add(cookiemon)
+  session.add(cc)
+  session.add(dcc)
+  o1 = Order()
+  o1.user = cookiemon
+  session.add(o1)
+  line1 = LineItem(order=o1, cookie=cc, quantity=9, extended_cost=4.50)
+  session.add(line1)
+  session.commit()
+  o2 = Order()
+  o2.user = cookiemon
+  session.add(o2)
+  line1 = LineItem(order=o2, cookie=cc, quantity=2, extended_cost=1.50)
+  line2 = LineItem(order=o2, cookie=dcc, quantity=9, extended_cost=6.75)
+  session.add(line1)
+  session.add(line2)
+  session.commit()
+
+
+  def ship_it(order_id: str) -> None:
+      """
+      принимает order_id, удаляет cookies из доступного числа,
+      помечает заказ как shipped
+      """
+
+      order = session.query(Order).get(order_id)
+      for li in order.line_items:
+          li.cookie.quantity = li.cookie.quantity - li.quantity
+          session.add(li.cookie)
+      order.shipped = True
+      session.add(order)
+      session.commit()
+      print(f"shipped order ID: {order_id}")
+#+END_SRC
+
+#+BEGIN_SRC python :results output
+  ship_it(1)
+  print(session.query(Cookie.cookie_name, Cookie.quantity).all())
+#+END_SRC
+
+#+RESULTS:
+: shipped order ID: 1
+: [('chocolate chip', 3), ('dark chocolate chip', 1)]
+
+#+BEGIN_SRC python :results output
+  import logging
+
+  try:
+      ship_it(2)
+  except sa.exc.IntegrityError:
+      logging.exception("order_id: 2")
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+ERROR:root:order_id: 2
+Traceback (most recent call last):
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.IntegrityError: CHECK constraint failed: quantity_positive
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/tmp/babel-0NE78C/python-y32EFG", line 4, in <module>
+    ship_it(2)
+    ~~~~~~~^^^
+  File "<string>", line 156, in ship_it
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2035, in commit
+    trans.commit(_to_root=True)
+    ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+  File "<string>", line 2, in commit
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 1316, in commit
+    self._prepare_impl()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "<string>", line 2, in _prepare_impl
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+    ret_value = fn(self, *arg, **kw)
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 1290, in _prepare_impl
+    self.session.flush()
+    ~~~~~~~~~~~~~~~~~~^^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4353, in flush
+    self._flush(objects)
+    ~~~~~~~~~~~^^^^^^^^^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4488, in _flush
+    with util.safe_reraise():
+         ~~~~~~~~~~~~~~~~~^^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/util/langhelpers.py", line 122, in __exit__
+    raise exc_value.with_traceback(exc_tb)
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4449, in _flush
+    flush_context.execute()
+    ~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py", line 465, in execute
+    rec.execute(self)
+    ~~~~~~~~~~~^^^^^^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py", line 641, in execute
+    util.preloaded.orm_persistence.save_obj(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self.mapper,
+        ^^^^^^^^^^^^
+        uow.states_for_mapper_hierarchy(self.mapper, False, False),
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+        uow,
+        ^^^^
+    )
+    ^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py", line 86, in save_obj
+    _emit_update_statements(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        base_mapper,
+        ^^^^^^^^^^^^
+    ...<3 lines>...
+        update,
+        ^^^^^^^
+    )
+    ^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py", line 913, in _emit_update_statements
+    c = connection.execute(
+        statement, multiparams, execution_options=execution_options
+    )
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1421, in execute
+    return meth(
+        self,
+        distilled_parameters,
+        execution_options or NO_OPTIONS,
+    )
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+    return connection._execute_clauseelement(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        self, distilled_params, execution_options
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1643, in _execute_clauseelement
+    ret = self._execute_context(
+        dialect,
+    ...<8 lines>...
+        cache_hit=cache_hit,
+    )
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1848, in _execute_context
+    return self._exec_single_context(
+           ~~~~~~~~~~~~~~~~~~~~~~~~~^
+        dialect, context, statement, parameters
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1988, in _exec_single_context
+    self._handle_dbapi_exception(
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+        e, str_statement, effective_parameters, cursor, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 2365, in _handle_dbapi_exception
+    raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+    self.dialect.do_execute(
+    ~~~~~~~~~~~~~~~~~~~~~~~^
+        cursor, str_statement, effective_parameters, context
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+    cursor.execute(statement, parameters)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) CHECK constraint failed: quantity_positive
+[SQL: UPDATE cookies SET quantity=? WHERE cookies.cookie_id = ?]
+[parameters: (-8, 2)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj)
+#+end_example
+
+#+BEGIN_SRC python :results output
+  try:
+      print(session.query(Cookie.cookie_name, Cookie.quantity).all())
+  except sa.exc.InvalidRequestError:
+      logging.exception("нужен rollback")
+#+END_SRC
+
+#+RESULTS:
+#+begin_example
+ERROR:root:нужен rollback
+Traceback (most recent call last):
+  File "/tmp/babel-0NE78C/python-aSjO6i", line 2, in <module>
+    print(session.query(Cookie.cookie_name, Cookie.quantity).all())
+          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/query.py", line 2711, in all
+    return self._iter().all()  # type: ignore
+           ~~~~~~~~~~^^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/query.py", line 2864, in _iter
+    result: Union[ScalarResult[_T], Result[_T]] = self.session.execute(
+                                                  ~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+        params,
+        ^^^^^^^
+        execution_options={"_sa_orm_load_options": self.load_options},
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2373, in execute
+    return self._execute_internal(
+           ~~~~~~~~~~~~~~~~~~~~~~^
+        statement,
+        ^^^^^^^^^^
+    ...<4 lines>...
+        _add_event=_add_event,
+        ^^^^^^^^^^^^^^^^^^^^^^
+    )
+    ^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2261, in _execute_internal
+    conn = self._connection_for_bind(bind)
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2113, in _connection_for_bind
+    return trans._connection_for_bind(engine, execution_options)
+           ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "<string>", line 2, in _connection_for_bind
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 101, in _go
+    self._raise_for_prerequisite_state(fn.__name__, current_state)
+    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 975, in _raise_for_prerequisite_state
+    raise sa_exc.PendingRollbackError(
+    ...<6 lines>...
+    )
+sqlalchemy.exc.PendingRollbackError: This Session's transaction has been rolled back due to a previous exception during flush. To begin a new transaction with this Session, first issue Session.rollback(). Original exception was: (sqlite3.IntegrityError) CHECK constraint failed: quantity_positive
+[SQL: UPDATE cookies SET quantity=? WHERE cookies.cookie_id = ?]
+[parameters: (-8, 2)]
+(Background on this error at: https://sqlalche.me/e/20/gkpj) (Background on this error at: https://sqlalche.me/e/20/7s2a)
+#+end_example
+
+#+BEGIN_SRC python :results output
+  session.rollback()
+  print(session.query(Cookie.cookie_name, Cookie.quantity).all())
+#+END_SRC
+
+#+RESULTS:
+: [('chocolate chip', 3), ('dark chocolate chip', 1)]
+
+#+BEGIN_SRC python :results output
+  def trans_ship_it (order_id:str) -> None:
+      """ship_it с поддержкой отката транзакции"""
+      order = session.query(Order).get(order_id)
+      for li in order.line_items:
+          li.cookie.quantity = li.cookie.quantity - li.quantity
+          session.add(li.cookie)
+      order.shipped = True
+      session.add(order)
+      try:
+          session.commit()
+          print(f"shipped order ID: {order_id}")
+      except sa.exc.IntegrityError as error:
+          logging.error(error.orig)
+          session.rollback()
+
+  trans_ship_it(2)
+  print(session.query(Cookie.cookie_name, Cookie.quantity).all())
+#+END_SRC
+
+#+RESULTS:
+: ERROR:root:CHECK constraint failed: quantity_positive
+: [('chocolate chip', 3), ('dark chocolate chip', 1)]
+
+
+** SQLAlchemy v2
+
+*** Transactions
+:PROPERTIES:
+:header-args:python: :session *ch8-tr-v2* :tangle ch8-tr-v2.py :cache yes
+:END:
+#+BEGIN_SRC python :results output :shebang "#!/usr/bin/env python3"
+  #!/usr/bin/env python3
+  import logging
+  from datetime import datetime
+  from decimal import Decimal
+
+  import sqlalchemy as sa
+  from sqlalchemy import (
+      Boolean,
+      CheckConstraint,
+      DateTime,
+      ForeignKey,
+      Integer,
+      Numeric,
+      String,
+      create_engine,
+      select,
+  )
+  from sqlalchemy.orm import (
+      DeclarativeBase,
+      Mapped,
+      Session,
+      mapped_column,
+      relationship,
+      sessionmaker,
+  )
+
+  engine = create_engine("sqlite:///:memory:")
+  SessionLocal = sessionmaker(bind=engine)
+  session = SessionLocal()
+
+
+  class Base(DeclarativeBase):
+      pass
+
+
+  class Cookie(Base):
+      __tablename__ = "cookies"
+      __table_args__ = (CheckConstraint("quantity >= 0", name="quantity_positive"),)
+
+      cookie_id: Mapped[int] = mapped_column(primary_key=True)
+      cookie_name: Mapped[str] = mapped_column(String(50), index=True)
+      cookie_recipe_url: Mapped[str | None] = mapped_column(String(255))
+      cookie_sku: Mapped[str | None] = mapped_column(String(55))
+      quantity: Mapped[int] = mapped_column(Integer(), default=0)
+      unit_cost: Mapped[Decimal] = mapped_column(Numeric(12, 2), default=Decimal("0.00"))
+
+      def __init__(
+          self,
+          name: str,
+          recipe_url: str | None = None,
+          sku: str | None = None,
+          quantity: int = 0,
+          unit_cost: float | Decimal = 0.00,
+      ) -> None:
+          self.cookie_name = name
+          self.cookie_recipe_url = recipe_url
+          self.cookie_sku = sku
+          self.quantity = quantity
+          self.unit_cost = Decimal(str(unit_cost))
+
+      def __repr__(self) -> str:
+          return (
+              f"Cookie(cookie_name='{self.cookie_name}', "
+              f"cookie_recipe_url='{self.cookie_recipe_url}', "
+              f"cookie_sku='{self.cookie_sku}', "
+              f"quantity={self.quantity}, "
+              f"unit_cost={self.unit_cost})"
+          )
+
+
+  class User(Base):
+      __tablename__ = "users"
+
+      user_id: Mapped[int] = mapped_column(primary_key=True)
+      username: Mapped[str] = mapped_column(String(15), nullable=False, unique=True)
+      email_address: Mapped[str] = mapped_column(String(255), nullable=False)
+      phone: Mapped[str] = mapped_column(String(20), nullable=False)
+      password: Mapped[str] = mapped_column(String(25), nullable=False)
+      created_on: Mapped[datetime] = mapped_column(DateTime(), default=datetime.now)
+      updated_on: Mapped[datetime] = mapped_column(
+          DateTime(), default=datetime.now, onupdate=datetime.now
+      )
+
+      orders: Mapped[list["Order"]] = relationship(
+          back_populates="user", order_by="Order.order_id"
+      )
+
+      def __init__(
+          self, username: str, email_address: str, phone: str, password: str
+      ) -> None:
+          self.username = username
+          self.email_address = email_address
+          self.phone = phone
+          self.password = password
+
+      def __repr__(self) -> str:
+          return (
+              f"User(username='{self.username}', "
+              f"email_address='{self.email_address}', "
+              f"phone='{self.phone}', "
+              f"password='{self.password}')"
+          )
+
+
+  class Order(Base):
+      __tablename__ = "orders"
+
+      order_id: Mapped[int] = mapped_column(primary_key=True)
+      user_id: Mapped[int | None] = mapped_column(ForeignKey("users.user_id"))
+      shipped: Mapped[bool] = mapped_column(Boolean(), default=False)
+
+      user: Mapped["User | None"] = relationship(back_populates="orders")
+      line_items: Mapped[list["LineItem"]] = relationship(
+          back_populates="order", order_by="LineItem.line_item_id"
+      )
+
+      def __repr__(self) -> str:
+          return f"Order(user_id={self.user_id}, shipped={self.shipped})"
+
+
+  class LineItem(Base):
+      __tablename__ = "line_items"
+
+      line_item_id: Mapped[int] = mapped_column(primary_key=True)
+      order_id: Mapped[int | None] = mapped_column(ForeignKey("orders.order_id"))
+      cookie_id: Mapped[int | None] = mapped_column(ForeignKey("cookies.cookie_id"))
+      quantity: Mapped[int] = mapped_column(Integer())
+      extended_cost: Mapped[Decimal] = mapped_column(Numeric(12, 2))
+
+      order: Mapped["Order | None"] = relationship(back_populates="line_items")
+      cookie: Mapped["Cookie | None"] = relationship(uselist=False)
+
+      def __repr__(self) -> str:
+          return (
+              f"LineItem(order_id={self.order_id}, "
+              f"cookie_id={self.cookie_id}, "
+              f"quantity={self.quantity}, "
+              f"extended_cost={self.extended_cost})"
+          )
+
+
+  Base.metadata.create_all(engine)
+
+  cookiemon = User("cookiemon", "mon@cookie.com", "111-111-1111", "password")
+  cc = Cookie(
+      "chocolate chip", "http://some.aweso.me/cookie/recipe.html", "CC01", 12, 0.50
+  )
+  dcc = Cookie(
+      "dark chocolate chip",
+      "http://some.aweso.me/cookie/recipe_dark.html",
+      "CC02",
+      1,
+      0.75,
+  )
+  session.add(cookiemon)
+  session.add(cc)
+  session.add(dcc)
+
+  o1 = Order()
+  o1.user = cookiemon
+  session.add(o1)
+  line1 = LineItem(order=o1, cookie=cc, quantity=9, extended_cost=4.50)
+  session.add(line1)
+  session.commit()
+
+  o2 = Order()
+  o2.user = cookiemon
+  session.add(o2)
+  line1 = LineItem(order=o2, cookie=cc, quantity=2, extended_cost=1.50)
+  line2 = LineItem(order=o2, cookie=dcc, quantity=9, extended_cost=6.75)
+  session.add(line1)
+  session.add(line2)
+  session.commit()
+
+
+  def ship_it(order_id: int) -> None:
+      """
+      принимает order_id, удаляет cookies из доступного числа,
+      помечает заказ как shipped
+      """
+      order = session.get(Order, order_id)
+      if order is None:
+          raise ValueError(f"Order {order_id} not found")
+
+      for li in order.line_items:
+          assert li.cookie is not None
+          li.cookie.quantity = li.cookie.quantity - li.quantity
+          session.add(li.cookie)
+      order.shipped = True
+      session.add(order)
+      session.commit()
+      print(f"shipped order ID: {order_id}")
+
+
+  ship_it(1)
+
+  stmt = select(Cookie.cookie_name, Cookie.quantity)
+  print(session.execute(stmt).all())
+
+  try:
+      ship_it(2)
+  except sa.exc.IntegrityError:
+      logging.exception("order_id: 2")
+
+  try:
+      print(session.execute(stmt).all())
+  except sa.exc.InvalidRequestError:
+      logging.exception("нужен rollback")
+
+  session.rollback()
+  print(session.execute(stmt).all())
+
+
+  def trans_ship_it(order_id: int) -> None:
+      try:
+          with session.nested_begin():
+              order = session.get(Order, order_id)
+              if order is None:
+                  raise ValueError(f"Order {order_id} not found")
+              for li in order.line_items:
+                  assert li.cookie is not None
+                  li.cookie.quantity -= li.quantity
+              order.shipped = True
+          print(f"shipped order ID: {order_id}")
+      except sa.exc.IntegrityError as error:
+          logging.error(error.orig)
+
+
+  trans_ship_it(2)
+  print(session.execute(stmt).all())
+#+END_SRC
+
+#+RESULTS[a47407ad9a3195076bce967c19c880f1bb5d3ce9]:
+#+begin_example
+  shipped order ID: 1
+  [('chocolate chip', 3), ('dark chocolate chip', 1)]
+  ERROR:root:order_id: 2
+  Traceback (most recent call last):
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+      self.dialect.do_execute(
+      ~~~~~~~~~~~~~~~~~~~~~~~^
+          cursor, str_statement, effective_parameters, context
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      )
+      ^
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+      cursor.execute(statement, parameters)
+      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  sqlite3.IntegrityError: CHECK constraint failed: quantity_positive
+
+  The above exception was the direct cause of the following exception:
+
+  Traceback (most recent call last):
+    File "/tmp/babel-0NE78C/python-VGomxl", line 201, in <module>
+      ship_it(2)
+      ~~~~~~~^^^
+    File "/tmp/babel-0NE78C/python-VGomxl", line 191, in ship_it
+      session.commit()
+      ~~~~~~~~~~~~~~^^
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2035, in commit
+      trans.commit(_to_root=True)
+      ~~~~~~~~~~~~^^^^^^^^^^^^^^^
+    File "<string>", line 2, in commit
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+      ret_value = fn(self, *arg, **kw)
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 1316, in commit
+      self._prepare_impl()
+      ~~~~~~~~~~~~~~~~~~^^
+    File "<string>", line 2, in _prepare_impl
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 137, in _go
+      ret_value = fn(self, *arg, **kw)
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 1290, in _prepare_impl
+      self.session.flush()
+      ~~~~~~~~~~~~~~~~~~^^
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4353, in flush
+      self._flush(objects)
+      ~~~~~~~~~~~^^^^^^^^^
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4488, in _flush
+      with util.safe_reraise():
+           ~~~~~~~~~~~~~~~~~^^
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/util/langhelpers.py", line 122, in __exit__
+      raise exc_value.with_traceback(exc_tb)
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 4449, in _flush
+      flush_context.execute()
+      ~~~~~~~~~~~~~~~~~~~~~^^
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py", line 465, in execute
+      rec.execute(self)
+      ~~~~~~~~~~~^^^^^^
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/unitofwork.py", line 641, in execute
+      util.preloaded.orm_persistence.save_obj(
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+          self.mapper,
+          ^^^^^^^^^^^^
+          uow.states_for_mapper_hierarchy(self.mapper, False, False),
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+          uow,
+          ^^^^
+      )
+      ^
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py", line 86, in save_obj
+      _emit_update_statements(
+      ~~~~~~~~~~~~~~~~~~~~~~~^
+          base_mapper,
+          ^^^^^^^^^^^^
+      ...<3 lines>...
+          update,
+          ^^^^^^^
+      )
+      ^
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/persistence.py", line 913, in _emit_update_statements
+      c = connection.execute(
+          statement, multiparams, execution_options=execution_options
+      )
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1421, in execute
+      return meth(
+          self,
+          distilled_parameters,
+          execution_options or NO_OPTIONS,
+      )
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/sql/elements.py", line 526, in _execute_on_connection
+      return connection._execute_clauseelement(
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+          self, distilled_params, execution_options
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      )
+      ^
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1643, in _execute_clauseelement
+      ret = self._execute_context(
+          dialect,
+      ...<8 lines>...
+          cache_hit=cache_hit,
+      )
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1848, in _execute_context
+      return self._exec_single_context(
+             ~~~~~~~~~~~~~~~~~~~~~~~~~^
+          dialect, context, statement, parameters
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      )
+      ^
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1988, in _exec_single_context
+      self._handle_dbapi_exception(
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^
+          e, str_statement, effective_parameters, cursor, context
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      )
+      ^
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 2365, in _handle_dbapi_exception
+      raise sqlalchemy_exception.with_traceback(exc_info[2]) from e
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/base.py", line 1969, in _exec_single_context
+      self.dialect.do_execute(
+      ~~~~~~~~~~~~~~~~~~~~~~~^
+          cursor, str_statement, effective_parameters, context
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+      )
+      ^
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/engine/default.py", line 952, in do_execute
+      cursor.execute(statement, parameters)
+      ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^
+  sqlalchemy.exc.IntegrityError: (sqlite3.IntegrityError) CHECK constraint failed: quantity_positive
+  [SQL: UPDATE cookies SET quantity=? WHERE cookies.cookie_id = ?]
+  [parameters: (-8, 2)]
+  (Background on this error at: https://sqlalche.me/e/20/gkpj)
+  ERROR:root:нужен rollback
+  Traceback (most recent call last):
+    File "/tmp/babel-0NE78C/python-VGomxl", line 206, in <module>
+      print(session.execute(stmt).all())
+            ~~~~~~~~~~~~~~~^^^^^^
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2373, in execute
+      return self._execute_internal(
+             ~~~~~~~~~~~~~~~~~~~~~~^
+          statement,
+          ^^^^^^^^^^
+      ...<4 lines>...
+          _add_event=_add_event,
+          ^^^^^^^^^^^^^^^^^^^^^^
+      )
+      ^
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2261, in _execute_internal
+      conn = self._connection_for_bind(bind)
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 2113, in _connection_for_bind
+      return trans._connection_for_bind(engine, execution_options)
+             ~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "<string>", line 2, in _connection_for_bind
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/state_changes.py", line 101, in _go
+      self._raise_for_prerequisite_state(fn.__name__, current_state)
+      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    File "/home/octopus/study/Python/sqlalchemy-study/.venv/lib/python3.14/site-packages/sqlalchemy/orm/session.py", line 975, in _raise_for_prerequisite_state
+      raise sa_exc.PendingRollbackError(
+      ...<6 lines>...
+      )
+  sqlalchemy.exc.PendingRollbackError: This Session's transaction has been rolled back due to a previous exception during flush. To begin a new transaction with this Session, first issue Session.rollback(). Original exception was: (sqlite3.IntegrityError) CHECK constraint failed: quantity_positive
+  [SQL: UPDATE cookies SET quantity=? WHERE cookies.cookie_id = ?]
+  [parameters: (-8, 2)]
+  (Background on this error at: https://sqlalche.me/e/20/gkpj) (Background on this error at: https://sqlalche.me/e/20/7s2a)
+  [('chocolate chip', 3), ('dark chocolate chip', 1)]
+#+end_example
